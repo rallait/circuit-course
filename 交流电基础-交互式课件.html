@@ -1,0 +1,4024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>交流电基础 · 交互式课件</title>
+<style>
+  :root{
+    --bg:#0a0e13; --bg2:#0d1319; --panel:#111922; --panel2:#16202b;
+    --line:#1f2a36; --line2:#2b3947; --text:#e7eef7; --muted:#8c9cb0; --dim:#5d6d80;
+    --accent:#2dd4bf; --accent2:#38bdf8; --warn:#fbbf24; --danger:#f87171; --ok:#4ade80;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",sans-serif;
+    font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden;
+  }
+  button{font-family:inherit}
+  ::selection{background:rgba(45,212,191,.28)}
+
+  .app{display:flex;height:100vh;overflow:hidden}
+  .sidebar{width:254px;flex:0 0 254px;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 14px 14px}
+  .brand{display:flex;align-items:center;gap:10px;padding:2px 6px 18px;border-bottom:1px solid var(--line)}
+  .brand-mark{width:30px;height:30px;border-radius:9px;flex:0 0 30px;background:linear-gradient(135deg,#2dd4bf,#0ea5e9);display:flex;align-items:center;justify-content:center;color:#04141a;font-size:16px;font-weight:700}
+  .brand-title{font-size:15px;font-weight:600;letter-spacing:.5px}
+  .brand-sub{font-size:11px;color:var(--dim);margin-top:-2px}
+  .nav{display:flex;flex-direction:column;gap:4px;margin-top:14px;flex:1;overflow-y:auto}
+  .nav-item{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;text-align:left;transition:background .15s,color .15s,border-color .15s}
+  .nav-item:hover{background:#121b25;color:var(--text)}
+  .nav-item.active{background:linear-gradient(90deg,rgba(45,212,191,.15),rgba(45,212,191,.02));border-color:rgba(45,212,191,.34);color:#d9fdf7}
+  .nav-no{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;width:18px;flex:0 0 18px}
+  .nav-item.active .nav-no{color:var(--accent)}
+  .nav-text{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .side-foot{padding-top:12px;border-top:1px solid var(--line)}
+  .prog{height:4px;border-radius:2px;background:#1b2531;overflow:hidden}
+  .prog-bar{height:100%;width:12%;background:linear-gradient(90deg,#2dd4bf,#38bdf8);border-radius:2px;transition:width .3s}
+  .prog-text{font-size:11px;color:var(--dim);margin-top:7px}
+  .main{flex:1;min-width:0;overflow-y:auto;overflow-x:hidden}
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 26px;background:rgba(10,14,19,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .topbar h2{margin:0;font-size:16px;font-weight:600}
+  .topbar .crumb{font-size:12px;color:var(--dim);margin-top:-2px}
+  .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;min-width:0}
+  .offline{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;white-space:nowrap}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(74,222,128,.15)}
+  .audio-ctl{display:flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:999px;padding:4px 8px 4px 4px;background:#0d141b;max-width:100%;flex-wrap:wrap}
+  .au-btn{border:1px solid var(--line2);background:#141d27;color:var(--muted);font-size:11px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
+  .au-btn:hover{color:var(--text)}
+  .au-btn.off{color:#fca5a5;border-color:rgba(248,113,113,.45)}
+  #auVol{width:84px;height:16px;accent-color:#38bdf8;cursor:pointer}
+  #auMode{background:#141d27;color:var(--muted);border:1px solid var(--line2);border-radius:999px;font-size:11px;padding:4px 6px;outline:none}
+  @media (max-width:720px){.topbar{flex-wrap:wrap;gap:10px;padding:12px 14px}.top-right{width:100%;justify-content:flex-start}.offline{display:none}}
+
+  .views{padding:22px 26px 40px;max-width:1400px}
+  .view{display:none;animation:fade .22s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .view-head{margin-bottom:18px}
+  .view-head h1{margin:0 0 6px;font-size:22px;font-weight:600;letter-spacing:.4px}
+  .view-head p{margin:0;color:var(--muted);font-size:13px;max-width:820px}
+
+  .block{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px 20px;margin-bottom:16px}
+  .block-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .block-no{font-size:11px;color:var(--accent);border:1px solid rgba(45,212,191,.34);border-radius:6px;padding:1px 6px;font-variant-numeric:tabular-nums}
+  .block-head h2{margin:0;font-size:15px;font-weight:600;letter-spacing:.3px}
+  .block-hint{margin-left:auto;font-size:12px;color:var(--dim)}
+
+  .tip{margin:12px 0 0;padding:10px 13px;background:linear-gradient(90deg,rgba(56,189,248,.08),rgba(56,189,248,0));border-left:2px solid var(--accent2);border-radius:0 8px 8px 0;font-size:13px;color:#b6c6d8}
+  .tip b{color:#e7eef7}
+  .tip em{font-style:normal;color:var(--accent)}
+
+  .tr{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+  .tr-stage{position:relative;border:1px solid var(--line);border-radius:14px;background:#0b1017;overflow:hidden}
+  .tr-stage canvas{display:block;width:100%;height:400px}
+  .tr-stage canvas.short{height:320px}
+  .tr-legend{position:absolute;top:10px;right:12px;display:flex;gap:12px;font-size:11px;color:var(--muted);background:rgba(11,16,23,.82);border:1px solid var(--line);border-radius:999px;padding:3px 10px;z-index:2}
+  .tr-legend i{display:inline-block;width:14px;height:2px;margin-right:4px;vertical-align:middle}
+  .tr-side{min-width:0}
+  .tr-side .ctrl{margin-bottom:11px}
+  .tr-btns{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px}
+  .tr-btns .btn{flex:1 1 30%;padding:8px 6px;font-size:12.5px;white-space:nowrap}
+  .tr-read{border-top:1px dashed var(--line);padding-top:4px}
+  .tr-read .kv{padding:6px 2px;font-size:12.5px}
+  .tr-note{font-size:11.5px;color:var(--dim);line-height:1.75;margin:6px 0 0}
+  .kv{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:7px 2px;border-bottom:1px dashed #1b2531;font-size:13px}
+  .kv:last-child{border-bottom:0}
+  .kv span{color:var(--muted)}
+  .kv b{font-variant-numeric:tabular-nums;color:var(--text);font-weight:600}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 15px 16px}
+  .panel h3{margin:0 0 12px;font-size:13px;font-weight:600;color:#c3d1e0;letter-spacing:.6px}
+  .ctrl{margin-bottom:14px}
+  .ctrl:last-of-type{margin-bottom:6px}
+  .ctrl-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted)}
+  .ctrl-top b{color:var(--text);font-weight:600;font-size:14px;font-variant-numeric:tabular-nums}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;background:#22303f;outline:none;margin:11px 0 0}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--accent);border:2px solid #0a0e13;box-shadow:0 0 0 3px rgba(45,212,191,.16);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid #0a0e13;cursor:pointer}
+  .btn{flex:1;padding:9px 10px;border-radius:9px;border:1px solid var(--line2);background:#17212c;color:#cfdceb;font-size:13px;cursor:pointer;transition:.15s}
+  .btn:hover{background:#1d2937;border-color:#3a4b5d}
+  .btn:active{transform:translateY(1px)}
+  .btn.on{background:rgba(45,212,191,.14);border-color:rgba(45,212,191,.5);color:#a7f3e8}
+
+  .ac-eq{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 12px}
+  .ac-eq div{background:#0c131b;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;color:#cfe0f0}
+  .ac-eq em{font-style:normal;display:block;font-size:11px;color:var(--dim);margin-top:3px}
+  .ac-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .ac-card{background:#0c131b;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .ac-card h3{margin:0 0 6px;font-size:13px;color:#dbe7f3}
+  .ac-card p{margin:0;font-size:12.5px;color:#9fb0c2;line-height:1.8}
+  .ac-card .num{display:inline-block;margin-top:8px;font-size:11px;color:#fcd34d;border:1px solid rgba(251,191,36,.3);border-radius:6px;padding:1px 7px;font-variant-numeric:tabular-nums}
+  .ac-card .num.ok{color:#bbf7d0;border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.06)}
+  .ac-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .formula-row{display:flex;flex-wrap:wrap;gap:10px;margin:2px 0 4px}
+  .formula-row div{background:#0c131b;border:1px solid var(--line);border-radius:9px;padding:6px 12px;font-size:14px;color:#9df3e6;font-variant-numeric:tabular-nums}
+  .formula-row div span{color:var(--dim);font-size:11px;margin-left:6px}
+  .ac-note{font-size:12px;color:#8b9dae;line-height:1.8;margin:8px 0 0}
+  .ac-note b{color:#cfe0f0}
+  .ac-list{margin:0;padding-left:18px;font-size:12.5px;color:#9fb0c2;line-height:1.9}
+  .ac-list b{color:#cfe0f0}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px}
+  .chip{padding:6px 13px;font-size:12px;border-radius:999px;border:1px solid var(--line);background:#111922;color:var(--muted);cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--line2);color:var(--text)}
+  .chip.on{border-color:rgba(45,212,191,.5);background:rgba(45,212,191,.12);color:#a7f3e8}
+  .wires{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px}
+  .wire{flex:1 1 72px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:9px;border:1px dashed var(--line2);background:#0d141b;color:#cfe0f0;font-size:12.5px;cursor:grab;transition:.15s;font-family:inherit}
+  .wire:hover{border-color:rgba(45,212,191,.5)}
+  .wire.on{border-color:rgba(45,212,191,.6);background:rgba(45,212,191,.12);color:#a7f3e8}
+  .wire.drag{opacity:.35}
+  .wire i{width:10px;height:10px;border-radius:2px;display:inline-block;flex:0 0 10px}
+
+  .chip i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+  .conv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+  .conv-in{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 12px;font-size:12px;color:#9fb0c2}
+  .num-in{width:100px;background:#0b1219;border:1px solid var(--line);border-radius:8px;color:#eaf3ff;padding:6px 9px;font-size:13px;font-variant-numeric:tabular-nums}
+  .num-in:focus{outline:none;border-color:#3c5a70}
+  .num-in.ok{border-color:rgba(74,222,128,.55)}
+  .num-in.bad{border-color:rgba(248,113,113,.55)}
+  select.num-in{width:112px;padding:6px 6px}
+  .conv-big{display:flex;align-items:baseline;gap:10px;background:#0c131b;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 10px}
+  .conv-big b{font-size:26px;color:#eaf3ff;font-variant-numeric:tabular-nums;line-height:1.2}
+  .conv-big span{font-size:11.5px;color:var(--dim)}
+  .conv-big .tag{margin-left:auto;font-size:11px;border-radius:999px;padding:2px 9px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .conv-big .tag.ok{color:#bbf7d0;border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.08)}
+
+  .cap-tbl-wrap{overflow-x:auto;margin:2px 0 10px}
+  .cap-tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:520px}
+  .cap-tbl th,.cap-tbl td{padding:8px 10px;border-bottom:1px solid #17212c;text-align:left;vertical-align:top;line-height:1.6}
+  .cap-tbl th{color:var(--dim);font-weight:500;font-size:11px;white-space:nowrap}
+  .cap-tbl td:first-child{color:#eaf3ff;font-weight:600;white-space:nowrap}
+  .cap-tbl tr.rec td{background:rgba(45,212,191,.07)}
+
+  .quiz{margin-top:14px;background:#0c131b;border:1px solid var(--line);border-radius:12px;padding:14px 16px 16px}
+  .quiz .q{font-size:13px;color:#d3e0ee;margin:0 0 10px;line-height:1.7}
+  .quiz .q em{font-style:normal;color:var(--accent);margin-right:7px;font-size:12px}
+  .opts{display:flex;flex-direction:column;gap:7px}
+  .opt{text-align:left;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:#111922;color:#b9c8d8;font-size:13px;cursor:pointer;transition:.15s}
+  .opt:hover{border-color:var(--line2);background:#141d27}
+  .opt.ok{border-color:rgba(74,222,128,.5);background:rgba(74,222,128,.1);color:#bbf7d0}
+  .opt.bad{border-color:rgba(248,113,113,.5);background:rgba(248,113,113,.09);color:#fecaca}
+  .opt.dim{opacity:.5}
+  .fb{display:none;margin-top:11px;font-size:12px;line-height:1.8;color:#9fb0c2;border-top:1px dashed #1b2531;padding-top:10px}
+  .fb.show{display:block}
+  .fb b{color:var(--text)}
+  .fb .good{color:var(--ok)}
+  .fb .bad{color:var(--danger)}
+  .scorebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#0c131b;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+  .scorebar b{font-size:20px;color:#a7f3e8;font-variant-numeric:tabular-nums}
+  .scorebar span{font-size:12px;color:var(--dim)}
+  .scorebar .btn{flex:0 0 auto;padding:6px 14px;font-size:12px}
+  .scorebar p{flex:1 1 240px;margin:0;font-size:12px;color:#9fb0c2;line-height:1.6}
+
+  .phase-box{background:#0c131b;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:2px 0 8px;font-size:12px;color:#9fb0c2;line-height:1.7}
+  .phase-box b{color:#eaf3ff;font-variant-numeric:tabular-nums}
+  .statrow{display:flex;justify-content:space-between;font-size:12px;padding:5px 2px;border-bottom:1px dashed #17212c}
+  .statrow span{color:var(--dim)}
+  .statrow b{color:#eaf3ff;font-variant-numeric:tabular-nums}
+
+  .meas-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 0;font-size:12px;color:#9fb0c2}
+  .meas-row label{display:flex;align-items:center;gap:7px}
+  .meas-row .num-in{width:88px}
+  .meas-fb{min-height:48px;margin-top:10px;font-size:12px;line-height:1.75;color:#8b9dae;background:#0c131b;border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .meas-fb b{color:#cfe0f0}
+  .meas-fb.ok{color:#bbf7d0;border-color:rgba(74,222,128,.35)}
+  .meas-fb.bad{color:#fecaca;border-color:rgba(248,113,113,.35)}
+
+  @media (max-width:900px){
+    .tr{grid-template-columns:1fr}
+    .tr-stage canvas{height:340px}
+    .tr-stage canvas.short{height:310px}
+    .ac-eq{grid-template-columns:1fr 1fr}
+    .ac-cards,.ac-two,.conv{grid-template-columns:1fr}
+    .views{padding:18px 14px 34px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">∿</div>
+      <div>
+        <div class="brand-title">交流电基础</div>
+        <div class="brand-sub">正弦 · 相量 · 三相</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-view="gen"><span class="nav-no">01</span><span class="nav-text">正弦交流电的产生</span></button>
+      <button class="nav-item" data-view="three"><span class="nav-no">02</span><span class="nav-text">描述量与三要素</span></button>
+      <button class="nav-item" data-view="rms"><span class="nav-no">03</span><span class="nav-text">有效值与峰值</span></button>
+      <button class="nav-item" data-view="res"><span class="nav-no">04</span><span class="nav-text">电阻在交流中</span></button>
+      <button class="nav-item" data-view="ind"><span class="nav-no">05</span><span class="nav-text">电感在交流中</span></button>
+      <button class="nav-item" data-view="cap"><span class="nav-no">06</span><span class="nav-text">电容在交流中</span></button>
+      <button class="nav-item" data-view="cmp"><span class="nav-no">07</span><span class="nav-text">三种元件对比</span></button>
+      <button class="nav-item" data-view="auto"><span class="nav-no">08</span><span class="nav-text">汽车上的交流</span></button>
+      <button class="nav-item" data-view="quiz"><span class="nav-no">09</span><span class="nav-text">练习与自测</span></button>
+      <button class="nav-item" data-view="phasor"><span class="nav-no">10</span><span class="nav-text">相量法基础</span></button>
+      <button class="nav-item" data-view="rlc"><span class="nav-no">11</span><span class="nav-text">串联正弦电路</span></button>
+      <button class="nav-item" data-view="p3"><span class="nav-no">12</span><span class="nav-text">三相电动势</span></button>
+      <button class="nav-item" data-view="rotf"><span class="nav-no">13</span><span class="nav-text">旋转磁场</span></button>
+      <button class="nav-item" data-view="conn3"><span class="nav-no">14</span><span class="nav-text">三相的连接</span></button>
+      <button class="nav-item" data-view="pwr3"><span class="nav-no">15</span><span class="nav-text">三相功率</span></button>
+      <button class="nav-item" data-view="quiz2"><span class="nav-no">16</span><span class="nav-text">练习（相量·三相）</span></button>
+    </nav>
+    <div class="side-foot">
+      <div class="prog"><div class="prog-bar" id="progBar"></div></div>
+      <div class="prog-text" id="progText">16 个视图 · 64 个知识块 · 离线单文件</div>
+    </div>
+  </aside>
+  <div class="main" id="main">
+    <div class="topbar">
+      <div>
+        <h2 id="topTitle">正弦交流电的产生</h2>
+        <div class="crumb" id="topCrumb">线圈 · 磁通 · 感应电动势</div>
+      </div>
+      <div class="top-right">
+        <div class="offline"><span class="dot"></span>离线运行 · 零外链</div>
+        <div class="audio-ctl">
+          <button class="au-btn" id="auMute" aria-pressed="false">音效</button>
+          <input type="range" id="auVol" min="0" max="100" value="30" title="音量">
+          <select id="auMode" title="音效模式">
+            <option value="full">完整</option>
+            <option value="lite">精简</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="views">
+<!-- ================= 01 产生 ================= -->
+<section class="view active" data-view="gen">
+  <div class="view-head">
+    <h1>正弦交流电是怎么产生的</h1>
+    <p>线圈在匀强磁场中匀速转动，磁通按余弦变化，感应电动势按正弦变化。这一节把“为什么偏偏是正弦”推到公式上，并看清波形和转角的一一对应。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>从磁通到电动势：正弦的来历</h2><span class="block-hint">e = Em·sin(ωt+φ₀)</span></div>
+    <div class="ac-two">
+      <div>
+        <p class="ac-note" style="margin-top:0">线圈平面与磁感线垂直时，穿过线圈的磁通最大；线圈转过 90° 后，磁通变为 0。匀速转动时，转角 θ=ωt 随时间线性增加，所以磁通随时间是余弦：</p>
+        <div class="formula-row">
+          <div>Φ = Φm·cos ωt <span>磁通</span></div>
+          <div>e = −N·dΦ/dt <span>法拉第定律</span></div>
+        </div>
+        <p class="ac-note">对余弦求导得到正弦，负号只决定方向：</p>
+        <div class="formula-row">
+          <div>e = N·Φm·ω·sin ωt = Em·sin ωt <span>Em = N·Φm·ω</span></div>
+        </div>
+        <p class="ac-note">若 t=0 时线圈平面不与中性面重合，就多一个初相 φ₀，写成 <b>e = Em·sin(ωt+φ₀)</b>。峰值 Em 与转速、匝数、磁通峰值成正比。</p>
+      </div>
+      <div>
+        <div class="ac-card">
+          <h3>为什么不是方波、三角波</h3>
+          <p>因为磁通随转角是余弦，而转角随匀速转动是时间的线性函数。只有“匀强磁场 + 匀速转动”同时成立，磁通才是纯余弦，导数才是纯正弦。磁极形状做成特殊轮廓，可以人为把波形改成其他形状，那是另一类发电机。</p>
+        </div>
+        <div class="ac-card" style="margin-top:12px">
+          <h3>交流 vs 直流</h3>
+          <p>滑环把线圈两端分别接到外电路，电动势每半周反向一次，输出交流；换向器每半周切换一次接线，把反向的部分翻正，输出脉动直流。汽车发电机是三相交流 + 整流器，不是换向器。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>转动实验台：转角、磁通、电动势同步看</h2><span class="block-hint">拖动转速，观察三者关系</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <canvas id="genCanvas"></canvas>
+        <div class="tr-legend"><span class="u"><i style="background:#38bdf8"></i>e</span><span class="i"><i style="background:#2dd4bf"></i>Φ</span></div>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>转速 <span>匀强磁场 · 单匝示意</span></h3>
+          <div class="ctrl">
+            <div class="ctrl-top"><span>转速</span><b id="genSpeedVal">0.50 r/s</b></div>
+            <input type="range" id="genSpeed" min="0.15" max="1.5" step="0.05" value="0.5">
+          </div>
+          <div class="tr-btns">
+            <button class="btn on" id="genPlay">暂停</button>
+            <button class="btn" id="genReset">回到 0°</button>
+          </div>
+          <div class="tr-read">
+            <div class="kv"><span>转角 θ</span><b id="genTh">0°</b></div>
+            <div class="kv"><span>磁通 Φ/Φm</span><b id="genFlux">1.00</b></div>
+            <div class="kv"><span>电动势 e/Em</span><b id="genEmf">0.00</b></div>
+            <div class="kv"><span>转一周用时</span><b id="genPer">2.00 s</b></div>
+          </div>
+          <p class="tr-note">线圈平面与磁感线垂直时 Φ 最大、e 为 0；线圈平面与磁感线平行时 Φ 为 0、e 达到峰值。e 的峰值总出现在 Φ 变化最快的位置。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>三个条件，少一个就不是纯正弦</h2></div>
+    <div class="ac-cards">
+      <div class="ac-card"><h3>① 匀强磁场</h3><p>线圈各处磁感应强度相同，磁通才只随转角变化。磁极边缘的漏磁、气隙不均都会让波形畸变。</p></div>
+      <div class="ac-card"><h3>② 匀速转动</h3><p>θ=ωt 必须成立。转速波动会让瞬时频率变化，波形被“压扁”或“拉长”，示波器上能看到周期忽长忽短。</p></div>
+      <div class="ac-card"><h3>③ 线圈平面绕垂直于磁场的轴转</h3><p>转轴与磁感线平行时磁通不变，电动势恒为 0；只有转轴垂直于磁场，磁通才会周期变化。</p></div>
+      <div class="ac-card"><h3>结论</h3><p>满足这三条，e 就是标准正弦；实际发电机靠优化磁极形状和气隙，让波形尽量接近正弦，再用整流或滤波处理剩余畸变。</p></div>
+    </div>
+    <div class="tip"><b>记住这个对应：</b>磁通最大 → 电动势为 0；磁通为 0 → 电动势最大。这不是巧合，而是“导数”关系：e 看的是 Φ 的变化率，不是 Φ 本身的大小。</div>
+  </div>
+</section>
+
+<!-- ================= 02 描述量与三要素 ================= -->
+<section class="view" data-view="three">
+  <div class="view-head">
+    <h1>描述量与三要素</h1>
+    <p>瞬时值、峰值、周期、频率、角频率是同一条波的不同说法；幅值、角频率、初相决定波形的全部形状。本节用实验台和游标把这三件事变成看得见的量。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>五个描述量，四个换算式</h2><span class="block-hint">我国工频 50 Hz</span></div>
+    <div class="ac-eq">
+      <div>T = 1/f<em>周期（s）</em></div>
+      <div>f = 1/T<em>频率（Hz）</em></div>
+      <div>ω = 2πf = 2π/T<em>角频率（rad/s）</em></div>
+      <div>u = Um·sin(ωt+φ₀)<em>瞬时值表达式</em></div>
+    </div>
+    <div class="cap-tbl-wrap">
+      <table class="cap-tbl">
+        <thead><tr><th>量</th><th>符号</th><th>含义</th><th>50 Hz 时</th></tr></thead>
+        <tbody>
+          <tr><td>瞬时值</td><td>u、i</td><td>某一时刻的实际值，随时间变化，可正可负</td><td>每 10 ms 过零一次</td></tr>
+          <tr><td>峰值</td><td>Um、Im</td><td>一个周期内绝对值最大的瞬时值，也叫幅值</td><td>由电源决定</td></tr>
+          <tr><td>周期</td><td>T</td><td>完成一个完整波形所需时间</td><td>20 ms</td></tr>
+          <tr><td>频率</td><td>f</td><td>每秒完成的周期数</td><td>50 Hz</td></tr>
+          <tr><td>角频率</td><td>ω</td><td>每秒转过的电角度，单位 rad/s</td><td>100π ≈ 314 rad/s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="formula-row">
+      <div>T = 20 ms <span>50 Hz</span></div>
+      <div>ω = 314 rad/s <span>100π</span></div>
+      <div>5 个周期 = 100 ms <span>0.1 s</span></div>
+      <div>1 分钟 = 3000 个周期 <span>50×60</span></div>
+    </div>
+    <p class="ac-note">角频率不是“每秒转多少圈”，而是把一圈折算成 2π 弧度后的角速度。50 Hz 的波形每秒重复 50 次，电角度每秒转过 50×2π=100π 弧度。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>三要素：幅值、角频率、初相</h2></div>
+    <div class="ac-cards">
+      <div class="ac-card"><h3>幅值 Um</h3><p>决定波形“多高”。改变幅值，波峰波谷整体变高或变低，时间轴上的位置不变。有效值、峰值、平均值都由它派生。</p></div>
+      <div class="ac-card"><h3>角频率 ω</h3><p>决定波形“多密”。ω 越大，周期越短，同样时间窗口里周期数越多。它改变的是横向疏密，不改变高度。</p></div>
+      <div class="ac-card"><h3>初相 φ₀</h3><p>决定 t=0 时波形在哪个位置。改变初相，整条波形沿时间轴左右平移，形状、幅值、周期都不变。</p></div>
+      <div class="ac-card"><h3>相位差 Δφ</h3><p>两个同频正弦的初相之差：Δφ=φ₂−φ₁。Δφ&gt;0 说 u₂ 超前 u₁；Δφ&lt;0 说 u₂ 滞后 u₁。不同频率的正弦谈相位差没有意义。</p></div>
+    </div>
+    <div class="tip"><b>示波器上怎么区分：</b>初相不同 → 两条波形形状完全一样，只是一条整体左移或右移；幅值不同 → 高度不同；频率不同 → 疏密不同，且相位差会不断变化。看到“一条波形被拉扁”通常是幅值或非线性失真，不是初相。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>三要素实验台</h2><span class="block-hint">看波形与相量同步变化</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <canvas id="labCanvas" class="short"></canvas>
+        <div class="tr-legend"><span class="u"><i style="background:#38bdf8"></i>u(t)</span><span class="i"><i style="background:#fbbf24"></i>相量</span></div>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>三要素 <span>拖动看整体平移</span></h3>
+          <div class="ctrl">
+            <div class="ctrl-top"><span>幅值 Um</span><b id="labAVal">10.0 V</b></div>
+            <input type="range" id="labA" min="1" max="20" step="0.5" value="10">
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-top"><span>频率 f</span><b id="labFVal">50 Hz</b></div>
+            <input type="range" id="labF" min="10" max="100" step="1" value="50">
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-top"><span>初相 φ₀</span><b id="labPhVal">0°</b></div>
+            <input type="range" id="labPh" min="-180" max="180" step="5" value="0">
+          </div>
+          <div class="tr-read">
+            <div class="kv"><span>周期 T</span><b id="labT">20.0 ms</b></div>
+            <div class="kv"><span>角频率 ω</span><b id="labW">314 rad/s</b></div>
+            <div class="kv"><span>t=0 瞬时值</span><b id="labU0">0.00 V</b></div>
+            <div class="kv"><span>有效值 U</span><b id="labUrms">7.07 V</b></div>
+          </div>
+          <p class="tr-note">只拖初相时，波形的峰谷高度和间距都不变，整条曲线沿时间轴平移；相量则绕原点旋转同样的角度。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">04</span><h2>相位差测量：用游标量时间差</h2><span class="block-hint">f = 50 Hz，1 ms = 18°</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <canvas id="measCanvas" class="short"></canvas>
+        <div class="tr-legend"><span class="u"><i style="background:#38bdf8"></i>u₁</span><span class="i"><i style="background:#fbbf24"></i>u₂</span></div>
+      </div>
+      <div class="tr-side">
+        <div class="phase-box" id="measBox" data-deg="60">
+          两条同频正弦，频率 <b>50 Hz</b>，周期 <b>20 ms</b>。把 A、B 两条游标分别对准两路波形的同一个特征点（例如正向过零点），读出时间差 Δt，再换算成角度：<br>
+          <b>Δφ = 360° × f × Δt = 18°/ms × Δt</b>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span>游标 A</span><b id="curAVal">0.0 ms</b></div>
+          <input type="range" id="curA" min="0" max="20" step="0.1" value="0">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span>游标 B</span><b id="curBVal">3.0 ms</b></div>
+          <input type="range" id="curB" min="0" max="20" step="0.1" value="3">
+        </div>
+        <div class="kv"><span>时间差 Δt</span><b id="measDt">3.0 ms</b></div>
+        <div class="meas-row">
+          <label>相位差 <input class="num-in" id="measAns" type="text" inputmode="decimal" placeholder="°"> °</label>
+          <button class="btn" id="measCheck" style="flex:0 0 auto;padding:8px 16px">判分</button>
+          <button class="btn" id="measNew" style="flex:0 0 auto;padding:8px 16px">换一组</button>
+        </div>
+        <div class="meas-fb" id="measFb">先对齐游标，再填角度。答对后会给出换算过程。</div>
+        <div style="display:flex;gap:16px;font-size:11.5px;color:var(--dim);margin-top:6px">
+          <span>已答 <b id="measAsked" style="color:#eaf3ff">0</b></span>
+          <span>正确率 <b id="measRate" style="color:#eaf3ff">—</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 有效值 ================= -->
+<section class="view" data-view="rms">
+  <div class="view-head">
+    <h1>有效值、峰值与平均值</h1>
+    <p>交流电的大小一直在变，用峰值描述会高估它的“做功能力”。有效值按发热效果折算成等效直流，是仪表和铭牌上最常用的那个数。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>为什么用有效值：热效应等效</h2><span class="block-hint">U = Um/√2</span></div>
+    <div class="ac-two">
+      <div>
+        <p class="ac-note" style="margin-top:0">把交流电压加在电阻上，一个周期内产生的热量，与某个直流电压在同样时间里产生的热量相等，这个直流电压就叫该交流电压的<b>有效值</b>。</p>
+        <p class="ac-note">推导思路：瞬时功率 p=u²/R，一个周期的平均功率是 u² 的平均值除以 R。对 u=Um·sin ωt 求一个周期的平均：</p>
+        <div class="formula-row">
+          <div>u² 的平均 = Um²/2 <span>sin² 的半周平均为 1/2</span></div>
+          <div>U = Um/√2 ≈ 0.707Um <span>有效值</span></div>
+        </div>
+        <p class="ac-note">所以 220 V 市电的峰值是 220×√2 ≈ 311 V。反过来，已知峰值求有效值就除以 √2。</p>
+      </div>
+      <div>
+        <div class="ac-card">
+          <h3>三个值，别混用</h3>
+          <p><b>峰值 Um</b>：波峰高度，决定绝缘和器件耐压。<br><b>有效值 U</b>：发热等效值，仪表读数、铭牌、电费都按它。<br><b>平均值</b>：正弦绝对值在一个周期内的平均，等于 2Um/π ≈ 0.637Um；对纯正弦一个完整周期直接平均为 0，所以“平均值”通常指整流后的平均值。</p>
+        </div>
+        <div class="ac-card" style="margin-top:12px">
+          <h3>数值关系</h3>
+          <p>峰值 : 有效值 : 平均值 = 1 : 0.707 : 0.637。<br>波形因数 = 有效值/平均值 ≈ 1.11；峰值因数 = 峰值/有效值 ≈ 1.414。万用表测非正弦时读数会偏，因为表是按正弦标定的。</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip"><b>汽车上的对比：</b>12 V 直流是恒定值，峰值、有效值、平均值都是 12 V；而 220 V 交流的峰值是 311 V。同样标“220 V”的器件，耐压要按 311 V 甚至更高来留余量，不能只按有效值选。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>换算器：输入任一个，算出另外两个</h2><span class="block-hint">按纯正弦计算</span></div>
+    <div class="conv">
+      <div>
+        <div class="conv-in">
+          <label>数值 <input class="num-in" id="rmsIn" type="text" inputmode="decimal" value="220"></label>
+          <label>它是
+            <select class="num-in" id="rmsMode">
+              <option value="rms">有效值 U</option>
+              <option value="peak">峰值 Um</option>
+              <option value="avg">平均值 Uav</option>
+            </select>
+          </label>
+        </div>
+        <div class="conv-big"><b id="rmsPeak">311.1 V</b><span>峰值 Um</span><span class="tag">耐压看这个</span></div>
+        <div class="conv-big"><b id="rmsRms">220.0 V</b><span>有效值 U</span><span class="tag ok">仪表读数</span></div>
+        <div class="conv-big"><b id="rmsAvg">198.1 V</b><span>平均值 Uav</span><span class="tag">整流后平均</span></div>
+        <div class="chips" style="margin-top:10px">
+          <button class="chip" data-rms="220">220 V 市电</button>
+          <button class="chip" data-rms="311">311 V 峰值</button>
+          <button class="chip" data-rms="110">110 V 市电</button>
+          <button class="chip" data-rms="12">12 V 直流对比</button>
+        </div>
+        <p class="ac-note" id="rmsNote">220 V 是有效值，对应峰值 311 V；平均值 198 V 只在整流后测量时才有意义。</p>
+      </div>
+      <div class="tr-stage" style="height:320px">
+        <canvas id="rmsCanvas" class="short"></canvas>
+        <div class="tr-legend"><span class="u"><i style="background:#38bdf8"></i>u(t)</span><span class="i"><i style="background:#2dd4bf"></i>峰/有效/平均</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>220 V、311 V 与 12 V 直流</h2></div>
+    <div class="ac-cards">
+      <div class="ac-card"><h3>220 V 有效值</h3><p>市电铭牌、家用电器额定值、电表读数都指有效值。它等价于 220 V 直流在电阻上的发热效果。</p><span class="num">U = 220 V</span></div>
+      <div class="ac-card"><h3>311 V 峰值</h3><p>同一路市电的波峰高度，是有效值的 √2 倍。选电容耐压、整流二极管反压、绝缘距离时按它再留余量。</p><span class="num">Um = 311 V</span></div>
+      <div class="ac-card"><h3>12 V 直流</h3><p>汽车低压系统，恒定不变，峰值=有效值=平均值=12 V。它的“12 V”没有 √2 的换算。</p><span class="num ok">Um = U = 12 V</span></div>
+      <div class="ac-card"><h3>198 V 平均值</h3><p>正弦全波整流后的平均值，等于 0.637Um。普通万用表交流档显示的是有效值，不是这个平均值。</p><span class="num">Uav = 198 V</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 电阻 ================= -->
+<section class="view" data-view="res">
+  <div class="view-head">
+    <h1>电阻在交流电路中的表现</h1>
+    <p>电阻不“记得”电流以前是什么样，电压和电流随时成正比。它把电能全部变成热，是交流电路里唯一只消耗有功的元件。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>u 与 i 同相，U=IR</h2><span class="block-hint">相位差 0°</span></div>
+    <div class="ac-two">
+      <div>
+        <p class="ac-note" style="margin-top:0">电阻服从欧姆定律，而且是瞬时成立：u、i 同时达到峰值、同时过零、同时反向。写成瞬时式：</p>
+        <div class="formula-row">
+          <div>u = Um·sin ωt <span>电压</span></div>
+          <div>i = (Um/R)·sin ωt <span>电流</span></div>
+          <div>Im = Um/R <span>峰值也成立</span></div>
+          <div>U = I·R <span>有效值同样成立</span></div>
+        </div>
+        <p class="ac-note">电阻的“阻力”不随频率变化，所以它的伏安关系在交流、直流下形式完全一样，也不产生相移。</p>
+      </div>
+      <div>
+        <div class="ac-card">
+          <h3>瞬时功率恒为正</h3>
+          <p>p=u·i=UmIm·sin²ωt，sin² 永远 ≥0，所以功率方向始终从电源流向电阻，不会倒送。平均值 P=UI=UmIm/2，全部是有功。</p>
+        </div>
+        <div class="ac-card" style="margin-top:12px">
+          <h3>能量去哪了</h3>
+          <p>全部变成热：电阻发热、灯泡发光、加热器升温。没有磁场或电场储能，所以断电瞬间没有“回弹”的电压或电流。</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip"><b>汽车上的对应：</b>车上的加热丝、灯泡、熔断器本质上都是电阻性负载；发电机整流后的纹波加在它们身上，只是让发热轻微波动，不会引起相位问题。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>波形实验台：改参数看同相</h2><span class="block-hint">u 蓝 · i 黄 · p 绿</span></div>
+    <div class="tr">
+      <div class="tr-stage"><canvas id="rCanvas" class="short"></canvas>
+        <div class="tr-legend"><span class="u"><i style="background:#38bdf8"></i>u</span><span class="i"><i style="background:#fbbf24"></i>i</span><span><i style="background:#4ade80"></i>p</span></div>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>电阻性负载</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>峰值电压 Um</span><b id="rUVal">10.0 V</b></div><input type="range" id="rU" min="2" max="20" step="0.5" value="10"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>频率 f</span><b id="rFVal">50 Hz</b></div><input type="range" id="rF" min="10" max="100" step="1" value="50"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电阻 R</span><b id="rRVal">100 Ω</b></div><input type="range" id="rR" min="10" max="300" step="5" value="100"></div>
+          <div class="tr-read">
+            <div class="kv"><span>电流峰值 Im</span><b id="rIpk">0.100 A</b></div>
+            <div class="kv"><span>电流有效值 I</span><b id="rIrms">0.071 A</b></div>
+            <div class="kv"><span>平均功率 P</span><b id="rP">0.50 W</b></div>
+            <div class="kv"><span>相位差</span><b id="rPh">0°</b></div>
+          </div>
+          <p class="tr-note">无论怎么改 R 或 f，i 的峰谷始终和 u 对齐；p 的波形被抬到零线以上，说明功率只进不出。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>三个容易混淆的点</h2></div>
+    <div class="ac-cards">
+      <div class="ac-card"><h3>瞬时功率不是平均功率</h3><p>p 在 0 和最大值之间以 2ω 的频率脉动，平均值才是 UI。仪表测的是平均功率。</p></div>
+      <div class="ac-card"><h3>“同相”不等于“同时最大”</h3><p>u 和 i 同时达到各自的峰值，但峰值大小由 R 决定，不是同一个数值。</p></div>
+      <div class="ac-card"><h3>频率不影响电阻</h3><p>理想电阻的阻值不随 f 变，所以改变频率只改变波形疏密，不改变电流幅值。</p></div>
+      <div class="ac-card"><h3>实际电阻的高频效应</h3><p>高频时引线和绕组的寄生电感、分布电容会显现，但那是器件的高频模型，不是“电阻在交流中应有相移”。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 05 电感 ================= -->
+<section class="view" data-view="ind">
+  <div class="view-head">
+    <h1>电感在交流电路中的表现</h1>
+    <p>电感反对电流的变化：电流想变快，它就用感应电动势顶住。结果是电流滞后电压 90°，感抗随频率升高而增大。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>u 超前 i 90°，XL = ωL</h2><span class="block-hint">电流滞后</span></div>
+    <div class="ac-two">
+      <div>
+        <p class="ac-note" style="margin-top:0">电感的端电压由电流的变化率决定：u = L·di/dt。电流变化越快，感应电压越大；电流过零时变化率最大，所以此时电压达到峰值。</p>
+        <div class="formula-row">
+          <div>u = L·di/dt <span>伏安关系</span></div>
+          <div>XL = ωL = 2πfL <span>感抗</span></div>
+          <div>Im = Um/XL <span>峰值</span></div>
+          <div>i 滞后 u 90° <span>相位</span></div>
+        </div>
+        <p class="ac-note">用三角函数验证：若 i=Im·sin ωt，则 u=ωL·Im·cos ωt = Um·sin(ωt+90°)。所以电压在相位上比电流超前 90°。</p>
+      </div>
+      <div>
+        <div class="ac-card">
+          <h3>频率越高，阻力越大</h3>
+          <p>XL 与 f 成正比：f 翻倍，感抗翻倍，同样电压下电流减半。直流时 f=0，XL=0，电感相当于短路（只有导线电阻）。</p>
+        </div>
+        <div class="ac-card" style="margin-top:12px">
+          <h3>功率正负交替</h3>
+          <p>p=u·i 在正负之间以 2ω 交替：正半周把能量存进磁场，负半周把磁场能量送回电源。一个周期平均功率为 0，只交换不消耗，这部分叫无功功率 Q=UI。</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip"><b>“通直流、阻交流”的来历：</b>直流稳态下电流不变，di/dt=0，电感两端没有电压，相当于一根导线；频率越高，感抗越大，对交流的阻碍越明显。这也是扼流圈、滤波电感的工作基础。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>波形实验台：看电流滞后</h2><span class="block-hint">u 蓝 · i 黄 · p 绿</span></div>
+    <div class="tr">
+      <div class="tr-stage"><canvas id="lCanvas" class="short"></canvas>
+        <div class="tr-legend"><span class="u"><i style="background:#38bdf8"></i>u</span><span class="i"><i style="background:#fbbf24"></i>i</span><span><i style="background:#4ade80"></i>p</span></div>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>感性负载</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>峰值电压 Um</span><b id="lUVal">10.0 V</b></div><input type="range" id="lU" min="2" max="20" step="0.5" value="10"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>频率 f</span><b id="lFVal">50 Hz</b></div><input type="range" id="lF" min="10" max="100" step="1" value="50"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电感 L</span><b id="lLVal">100 mH</b></div><input type="range" id="lL" min="10" max="500" step="10" value="100"></div>
+          <div class="tr-read">
+            <div class="kv"><span>感抗 XL</span><b id="lX">31.4 Ω</b></div>
+            <div class="kv"><span>电流峰值 Im</span><b id="lIpk">0.318 A</b></div>
+            <div class="kv"><span>无功功率 Q</span><b id="lQ">1.59 var</b></div>
+            <div class="kv"><span>相位差</span><b id="lPh">u 超前 90°</b></div>
+          </div>
+          <p class="tr-note">u 达到峰值时 i 刚好过零；i 达到峰值时 u 过零。p 正负交替，平均为零。频率或 L 增大，XL 增大，电流幅值变小。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>磁场储能与直流短路</h2></div>
+    <div class="ac-cards">
+      <div class="ac-card"><h3>磁场储能</h3><p>W=½LI²。电流越大、电感越大，储存的磁场能量越多。能量在电源和磁场之间来回搬，不变成热。</p></div>
+      <div class="ac-card"><h3>直流稳态相当于短路</h3><p>电流不再变化，di/dt=0，感应电压为 0，电感只剩绕组电阻。所以直流电路中电感“通”，但断开瞬间仍有反电动势。</p></div>
+      <div class="ac-card"><h3>电流不能突变</h3><p>电感电流有惯性。强行断开感性负载会在触点间拉弧，这也是继电器线圈要并联续流二极管的原因。</p></div>
+      <div class="ac-card"><h3>汽车上的线圈</h3><p>点火线圈、继电器线圈、喷油器线圈都是感性负载；它们通断时产生的反峰电压，是车载电子要重点防护的对象。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 06 电容 ================= -->
+<section class="view" data-view="cap">
+  <div class="view-head">
+    <h1>电容在交流电路中的表现</h1>
+    <p>电容反对电压的变化：电压想升高，它就先吸电流。结果是电流超前电压 90°，容抗随频率升高而减小。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>i 超前 u 90°，XC = 1/(ωC)</h2><span class="block-hint">电流超前</span></div>
+    <div class="ac-two">
+      <div>
+        <p class="ac-note" style="margin-top:0">电容的电流由电压的变化率决定：i = C·du/dt。电压变化越快，充电电流越大；电压过零时变化率最大，所以此时电流达到峰值。</p>
+        <div class="formula-row">
+          <div>i = C·du/dt <span>伏安关系</span></div>
+          <div>XC = 1/(ωC) = 1/(2πfC) <span>容抗</span></div>
+          <div>Im = Um/XC <span>峰值</span></div>
+          <div>i 超前 u 90° <span>相位</span></div>
+        </div>
+        <p class="ac-note">用三角函数验证：若 u=Um·sin ωt，则 i=ωC·Um·cos ωt = Im·sin(ωt+90°)。所以电流在相位上比电压超前 90°。</p>
+      </div>
+      <div>
+        <div class="ac-card">
+          <h3>频率越高，阻力越小</h3>
+          <p>XC 与 f 成反比：f 翻倍，容抗减半，同样电压下电流翻倍。直流时 f=0，XC 趋于无穷，电容相当于开路。</p>
+        </div>
+        <div class="ac-card" style="margin-top:12px">
+          <h3>功率正负交替</h3>
+          <p>p=u·i 正负交替：正半周电源给电容充电，能量存进电场；负半周电容放电，把能量送回电源。一个周期平均功率为 0，只交换不消耗。</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip"><b>“隔直通交”的来历：</b>直流稳态下电压不变，du/dt=0，充电电流为 0，电容相当于断开；频率越高，容抗越小，交流越容易通过。耦合电容、旁路电容都利用这一点。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>波形实验台：看电流超前</h2><span class="block-hint">u 蓝 · i 黄 · p 绿</span></div>
+    <div class="tr">
+      <div class="tr-stage"><canvas id="cCanvas" class="short"></canvas>
+        <div class="tr-legend"><span class="u"><i style="background:#38bdf8"></i>u</span><span class="i"><i style="background:#fbbf24"></i>i</span><span><i style="background:#4ade80"></i>p</span></div>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>容性负载</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>峰值电压 Um</span><b id="cUVal">10.0 V</b></div><input type="range" id="cU" min="2" max="20" step="0.5" value="10"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>频率 f</span><b id="cFVal">50 Hz</b></div><input type="range" id="cF" min="10" max="100" step="1" value="50"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电容 C</span><b id="cCVal">10 µF</b></div><input type="range" id="cC" min="1" max="100" step="1" value="10"></div>
+          <div class="tr-read">
+            <div class="kv"><span>容抗 XC</span><b id="cX">318.3 Ω</b></div>
+            <div class="kv"><span>电流峰值 Im</span><b id="cIpk">0.031 A</b></div>
+            <div class="kv"><span>无功功率 Q</span><b id="cQ">0.16 var</b></div>
+            <div class="kv"><span>相位差</span><b id="cPh">i 超前 90°</b></div>
+          </div>
+          <p class="tr-note">u 过零时 i 达到峰值，u 到峰值时 i 过零。频率或 C 增大，XC 减小，电流幅值变大。p 正负交替，平均为零。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>电场储能、直流开路与电压不能突变</h2></div>
+    <div class="ac-cards">
+      <div class="ac-card"><h3>电场储能</h3><p>W=½CU²。电压越高、电容越大，储存的电场能量越多。能量在电源和电场之间来回搬，不变成热。</p></div>
+      <div class="ac-card"><h3>直流稳态相当于开路</h3><p>电压不再变化，du/dt=0，充电电流为 0。所以直流电路中电容“隔直”，但上电瞬间仍有充电电流。</p></div>
+      <div class="ac-card"><h3>电压不能突变</h3><p>电容电压有惯性。强行短路一个充好电的电容，会产生很大的放电电流，这也是大电容要加泄放电阻的原因。</p></div>
+      <div class="ac-card"><h3>汽车上的电容</h3><p>ECU 电源入口的滤波电容、点火线圈的谐振电容、逆变器的直流母线电容，都在利用“电压不能突变”来吸收尖峰和平滑纹波。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 07 对比 ================= -->
+<section class="view" data-view="cmp">
+  <div class="view-head">
+    <h1>三种元件放在一起对比</h1>
+    <p>同一电压下，电阻电流同相、电感电流滞后、电容电流超前；频率升高时，感抗增大、容抗减小，两条曲线必然相交。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>双踪对比台：R / L / C 的电流相位</h2><span class="block-hint">电压相同，比较电流</span></div>
+    <div class="tr">
+      <div class="tr-stage"><canvas id="cmpCanvas" class="short"></canvas>
+        <div class="tr-legend"><span class="u"><i style="background:#38bdf8"></i>u</span><span><i style="background:#4ade80"></i>iR</span><span><i style="background:#a78bfa"></i>iL</span><span><i style="background:#f472b6"></i>iC</span></div>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>显示哪几条电流</h3>
+          <div class="chips" style="margin-bottom:12px">
+            <button class="chip on" data-el="R"><i style="background:#4ade80"></i>R</button>
+            <button class="chip on" data-el="L"><i style="background:#a78bfa"></i>L</button>
+            <button class="chip on" data-el="C"><i style="background:#f472b6"></i>C</button>
+          </div>
+          <div class="ctrl"><div class="ctrl-top"><span>频率 f</span><b id="cmpFVal">50 Hz</b></div><input type="range" id="cmpF" min="10" max="200" step="1" value="50"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电阻 R</span><b id="cmpRVal">100 Ω</b></div><input type="range" id="cmpR" min="10" max="200" step="5" value="100"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电感 L</span><b id="cmpLVal">100 mH</b></div><input type="range" id="cmpL" min="10" max="500" step="10" value="100"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电容 C</span><b id="cmpCVal">10 µF</b></div><input type="range" id="cmpC" min="1" max="100" step="1" value="10"></div>
+          <div class="tr-read">
+            <div class="statrow"><span>iR（同相）</span><b id="cmpRtxt">0.100 A · 0°</b></div>
+            <div class="statrow"><span>iL（滞后）</span><b id="cmpLtxt">0.318 A · −90°</b></div>
+            <div class="statrow"><span>iC（超前）</span><b id="cmpCtxt">0.031 A · +90°</b></div>
+          </div>
+          <p class="tr-note">三条电流曲线按各自峰值归一化显示，只比较相位，不比较高度；实际峰值见上面的数值。峰值电压固定 10 V。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>感抗容抗频率扫描</h2><span class="block-hint">XL 上升 · XC 下降 · 交会点</span></div>
+    <div class="tr">
+      <div class="tr-stage"><canvas id="sweepCanvas" class="short"></canvas>
+        <div class="tr-legend"><span><i style="background:#a78bfa"></i>XL</span><span><i style="background:#f472b6"></i>XC</span><span><i style="background:#2dd4bf"></i>f₀</span></div>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>扫描参数</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>电感 L</span><b id="swLVal">100 mH</b></div><input type="range" id="swL" min="20" max="300" step="10" value="100"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电容 C</span><b id="swCVal">10 µF</b></div><input type="range" id="swC" min="2" max="50" step="1" value="10"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>工作频率 f</span><b id="swFVal">159 Hz</b></div><input type="range" id="swF" min="10" max="500" step="1" value="159"></div>
+          <div class="tr-read">
+            <div class="kv"><span>XL = 2πfL</span><b id="swXL">100.0 Ω</b></div>
+            <div class="kv"><span>XC = 1/(2πfC)</span><b id="swXC">100.1 Ω</b></div>
+            <div class="kv"><span>交会频率 f₀</span><b id="swF0">159.2 Hz</b></div>
+            <div class="kv"><span>交会阻抗 X₀</span><b id="swX0">100.0 Ω</b></div>
+            <div class="kv"><span>当前性质</span><b id="swTag">接近谐振</b></div>
+          </div>
+          <p class="tr-note">交会点满足 XL=XC，即 2πfL=1/(2πfC)，解得 f₀=1/(2π√(LC))。串联时两阻抗互相抵消，电流在 f₀ 附近达到最大，这就是串联谐振的直觉来源。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>三者对比表</h2></div>
+    <div class="cap-tbl-wrap">
+      <table class="cap-tbl">
+        <thead><tr><th>项目</th><th>电阻 R</th><th>电感 L</th><th>电容 C</th></tr></thead>
+        <tbody>
+          <tr><td>相位关系</td><td>u 与 i 同相（0°）</td><td>u 超前 i 90°</td><td>i 超前 u 90°</td></tr>
+          <tr><td>阻碍作用</td><td>R，不随 f 变</td><td>XL=2πfL，随 f 增大</td><td>XC=1/(2πfC)，随 f 减小</td></tr>
+          <tr><td>直流稳态</td><td>仍为 R</td><td>相当于短路</td><td>相当于开路</td></tr>
+          <tr><td>能量形式</td><td>不可逆的热</td><td>磁场储能 ½LI²</td><td>电场储能 ½CU²</td></tr>
+          <tr><td>功率性质</td><td>只有有功 P=UI</td><td>只有无功 Q=UI</td><td>只有无功 Q=UI</td></tr>
+          <tr><td>平均功率</td><td>P=UI</td><td>0</td><td>0</td></tr>
+          <tr><td>电流“惯性”</td><td>无</td><td>电流不能突变</td><td>电压不能突变</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tip"><b>一句话记法：</b>电阻“同相耗能”，电感“电压超前、频率越高越堵”，电容“电流超前、频率越高越通”。串联时 XL 与 XC 方向相反，必然存在一个频率让它们相等。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">04</span><h2>三相电：只做引子</h2></div>
+    <p class="ac-note" style="margin-top:0">汽车驱动电机用三相交流：三相绕组在空间上互差 120°，通入互差 120° 的三相电流，合成一个旋转磁场，带着转子转。三相的瞬时功率之和恒定，所以电机运转比单相平稳。这里只建立“三相 = 三个互差 120° 的正弦”这个印象，不展开三相计算。</p>
+    <div class="formula-row">
+      <div>uA = Um·sin ωt <span>A 相</span></div>
+      <div>uB = Um·sin(ωt−120°) <span>B 相</span></div>
+      <div>uC = Um·sin(ωt+120°) <span>C 相</span></div>
+      <div>三相合成 → 旋转磁场 <span>驱动电机</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 08 汽车交流 ================= -->
+<section class="view" data-view="auto">
+  <div class="view-head">
+    <h1>汽车上的交流</h1>
+    <p>车上主电源是直流，但交流无处不在：发电机先发三相交流再整流，逆变器把直流变回交流，驱动电机靠三相交流产生旋转磁场。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>三个典型场景</h2></div>
+    <div class="ac-cards">
+      <div class="ac-card"><h3>交流发电机 + 整流器</h3><p>转子励磁产生磁场，定子三相绕组感应出互差 120° 的三相交流，经 6 只二极管全波整流成脉动直流，再由蓄电池和电容平滑。转速变化时频率和电压都变，调节器靠调励磁电流稳住电压。</p><span class="num">三相交流 → 直流</span></div>
+      <div class="ac-card"><h3>逆变器：直流变交流</h3><p>车载 220 V 电源把 12 V 直流升压后，用开关管按正弦规律通断，再滤波得到近似正弦。便宜的产品输出修正正弦（方波阶梯），对电机类负载不友好。</p><span class="num">12 V DC → 220 V AC</span></div>
+      <div class="ac-card"><h3>驱动电机：三相交流</h3><p>控制器把直流逆变成频率、幅值都可调的三相交流，通入定子三相绕组，合成旋转磁场拖动转子。频率决定转速，幅值决定转矩。</p><span class="num">变频变压 · 三相</span></div>
+      <div class="ac-card"><h3>与市电的区别</h3><p>市电是固定 50 Hz、220 V 的正弦；车上交流的频率随转速或控制策略变化，波形靠 PWM 逼近正弦，还叠加开关噪声。</p><span class="num">频率可变</span></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>三相交流整流后长什么样</h2><span class="block-hint">六脉波 · 纹波更小</span></div>
+    <div class="tr-stage" style="height:330px">
+      <canvas id="autoCanvas" class="short"></canvas>
+      <div class="tr-legend"><span><i style="background:#38bdf8"></i>A</span><span><i style="background:#2dd4bf"></i>B</span><span><i style="background:#a78bfa"></i>C</span><span><i style="background:#fbbf24"></i>整流输出</span></div>
+    </div>
+    <div class="tip"><b>为什么用三相：</b>单相整流每周期只有两个波峰，纹波大；三相全波整流每周期有六个波峰，纹波频率是交流频率的 6 倍，幅值更小，用很小的电容就能把电压稳住。这也是车用发电机选三相的原因。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>把这一节和前面连起来</h2></div>
+    <div class="ac-list">
+      <p style="margin:0 0 6px"><b>发电机</b>：线圈在磁场中转动 → 正弦（本节 01）。三相绕组在空间上互差 120° → 三路正弦互差 120°（本节 04 引子）。</p>
+      <p style="margin:0 0 6px"><b>整流</b>：二极管只让电流单向通过，把负半周翻正，得到脉动直流；电容利用“电压不能突变”把波峰之间的凹陷填平。</p>
+      <p style="margin:0 0 6px"><b>逆变</b>：开关管高速通断，用宽度变化的脉冲逼近正弦；电感、电容滤掉开关频率，留下 50 Hz 基波。</p>
+      <p style="margin:0"><b>电机</b>：三相电流合成旋转磁场，本质仍是三条互差 120° 的正弦；频率决定转速，所以叫“变频驱动”。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 09 练习 ================= -->
+<section class="view" data-view="quiz">
+  <div class="view-head">
+    <h1>练习与自测</h1>
+    <p>八道题覆盖三要素、有效值、三种元件的相位与阻抗、汽车交流。选错会给出解析，做完可以重来。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>计分</h2></div>
+    <div class="scorebar">
+      <b id="quizScore">0 / 8</b>
+      <span>正确率 <b id="quizRate" style="font-size:13px;color:#eaf3ff">—</b></span>
+      <p>每题只能选一次，选完立即显示解析。先自己想，再看答案。</p>
+      <button class="btn" id="quizReset">重做</button>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>基础四题</h2></div>
+
+    <div class="quiz" data-ans="0">
+      <p class="q"><em>01</em>某交流电压 u = 311·sin(314t − 30°) V，它的有效值、频率、初相分别是：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 220 V，50 Hz，−30°</button>
+        <button class="opt" data-opt="1">B. 311 V，50 Hz，+30°</button>
+        <button class="opt" data-opt="2">C. 220 V，100 Hz，−30°</button>
+        <button class="opt" data-opt="3">D. 311 V，314 Hz，−30°</button>
+      </div>
+      <div class="fb"><b>答案 A。</b>峰值 311 V 除以 √2 得有效值 220 V；ω=314 rad/s 对应 f=ω/2π=50 Hz；括号里的 −30° 就是初相。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>02</em>家用 220 V 交流电的峰值约为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 220 V</button>
+        <button class="opt" data-opt="1">B. 311 V</button>
+        <button class="opt" data-opt="2">C. 198 V</button>
+        <button class="opt" data-opt="3">D. 156 V</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>220 V 是有效值，峰值 Um=220×√2≈311 V；198 V 是整流后的平均值，不是峰值。</div>
+    </div>
+
+    <div class="quiz" data-ans="2">
+      <p class="q"><em>03</em>纯电感电路中，电流与电压的相位关系是：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 同相</button>
+        <button class="opt" data-opt="1">B. 电流超前电压 90°</button>
+        <button class="opt" data-opt="2">C. 电流滞后电压 90°</button>
+        <button class="opt" data-opt="3">D. 相差 180°</button>
+      </div>
+      <div class="fb"><b>答案 C。</b>电感电压由电流变化率决定，u 在 i 过零时达到峰值，所以 u 超前 i 90°，也就是 i 滞后 u 90°。</div>
+    </div>
+
+    <div class="quiz" data-ans="0">
+      <p class="q"><em>04</em>频率升高时，感抗 XL 与容抗 XC 分别怎么变？</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. XL 增大，XC 减小</button>
+        <button class="opt" data-opt="1">B. XL 减小，XC 增大</button>
+        <button class="opt" data-opt="2">C. 两者都增大</button>
+        <button class="opt" data-opt="3">D. 两者都减小</button>
+      </div>
+      <div class="fb"><b>答案 A。</b>XL=2πfL 与 f 成正比，XC=1/(2πfC) 与 f 成反比，所以一个升、一个降，必然在某个频率相交。</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>进阶四题</h2></div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>05</em>u₁ = 10·sin ωt，u₂ = 10·sin(ωt + 60°)，两者的关系是：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. u₁ 超前 u₂ 60°</button>
+        <button class="opt" data-opt="1">B. u₂ 超前 u₁ 60°</button>
+        <button class="opt" data-opt="2">C. u₂ 滞后 u₁ 60°</button>
+        <button class="opt" data-opt="3">D. 两者反相</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>相位差 Δφ=φ₂−φ₁=+60°，为正表示 u₂ 超前 u₁ 60°；超前在波形上表现为同频曲线整体左移。</div>
+    </div>
+
+    <div class="quiz" data-ans="3">
+      <p class="q"><em>06</em>直流电路达到稳态后，电感和电容分别相当于：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 都是开路</button>
+        <button class="opt" data-opt="1">B. 都是短路</button>
+        <button class="opt" data-opt="2">C. 电感开路，电容短路</button>
+        <button class="opt" data-opt="3">D. 电感短路，电容开路</button>
+      </div>
+      <div class="fb"><b>答案 D。</b>直流稳态电流不变，电感 di/dt=0、端电压为 0，相当于短路；电压不变，电容 du/dt=0、电流为 0，相当于开路。</div>
+    </div>
+
+    <div class="quiz" data-ans="0">
+      <p class="q"><em>07</em>纯电阻交流电路中，瞬时功率 p=u·i 的特点是：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 恒为正，平均值 P=UI</button>
+        <button class="opt" data-opt="1">B. 正负交替，平均值为 0</button>
+        <button class="opt" data-opt="2">C. 恒为负</button>
+        <button class="opt" data-opt="3">D. 恒定不变</button>
+      </div>
+      <div class="fb"><b>答案 A。</b>u 与 i 同相，p=UmIm·sin²ωt 永远 ≥0，功率只从电源流向电阻；平均值 P=UI，全部是有功。</div>
+    </div>
+
+    <div class="quiz" data-ans="2">
+      <p class="q"><em>08</em>汽车交流发电机发出三相交流后，怎样得到车上使用的直流？</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 用换向器机械换向</button>
+        <button class="opt" data-opt="1">B. 直接输出，本身就是直流</button>
+        <button class="opt" data-opt="2">C. 经三相全波整流器整流</button>
+        <button class="opt" data-opt="3">D. 经逆变器变成直流</button>
+      </div>
+      <div class="fb"><b>答案 C。</b>定子发三相交流，6 只二极管组成三相全波整流桥，输出六脉波直流，再经蓄电池和电容平滑。逆变器的方向相反，是把直流变交流。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 10 相量法 ================= -->
+<section class="view" data-view="phasor">
+  <div class="view-head">
+    <h1>相量法：把正弦量变成复数</h1>
+    <p>同频正弦量可以用一个旋转相量表示，取投影就是瞬时值。这样加减变成相量加减，微积分变成乘除 jω——但前提是所有量同频率。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>为什么能用相量</h2><span class="block-hint">投影 · 同频 · 丢掉了什么</span></div>
+    <div class="ac-eq">
+      <div>u = Um·sin(ωt+φ)<em>瞬时值 = 旋转相量在纵轴上的投影</em></div>
+      <div>U̇ = Um∠φ<em>只保留幅值与初相</em></div>
+      <div>d/dt ↔ ×jω<em>求导：幅值乘 ω、相位超前 90°</em></div>
+      <div>∫dt ↔ ÷jω<em>积分：幅值除 ω、相位滞后 90°</em></div>
+    </div>
+    <p class="ac-note">相量成立的前提是<b>同频</b>：所有电压、电流都以同一个 ω 旋转，旋转速度相同，才能把“随时间转”的部分丢掉，只比较幅值和初相。代价是<b>丢掉了 ω 和瞬时变化</b>，所以相量只能算稳态，不能用来算合闸瞬间的暂态；不同频率的量也不能直接画在同一张相量图上相加。</p>
+    <div class="tip">工程上常用<b>有效值相量</b>：U̇=U∠φ，模是有效值而不是峰值。算功率时用有效值相量最方便；只有比较峰值时才用峰值相量。两者只差 √2 倍，不能混用。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>相量的运算</h2><span class="block-hint">加减看分量 · 乘除看模角</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>加减：平行四边形 / 分量合成</h3><p>同频相量相加，先把每个相量分解成实部和虚部，再分别相加；几何上就是首尾相接或平行四边形的对角线。相量加减对应瞬时值的加减。</p><span class="num">Ȧ+Ḃ = (A₁+B₁) + j(A₂+B₂)</span></div>
+      <div class="ac-card"><h3>乘除：模相乘、角相加</h3><p>乘法时模相乘、幅角相加；除法时模相除、幅角相减。乘以 j 就是逆时针转 90°（超前），除以 j 就是顺时针转 90°（滞后）。</p><span class="num">A∠α · B∠β = AB∠(α+β)</span></div>
+    </div>
+    <div class="formula-row">
+      <div>A∠α ÷ B∠β = (A/B)∠(α−β)<span>除法</span></div>
+      <div>×j = ∠+90°<span>超前 90°</span></div>
+      <div>÷j = ×(−j) = ∠−90°<span>滞后 90°</span></div>
+      <div>j² = −1<span>转两次回到反向</span></div>
+    </div>
+    <p class="ac-note">注意：<b>相量相加不能直接把模相加</b>。两个模都是 5 的相量，如果方向相反，合成是 0；如果同向，合成才是 10。方向（相位）决定了合成结果。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>定律的相量形式</h2><span class="block-hint">欧姆定律 · KVL · KCL · 阻抗符号</span></div>
+    <div class="formula-row">
+      <div>U̇ = İ·Z<span>欧姆定律</span></div>
+      <div>Z = R + jX<span>X = XL − XC</span></div>
+      <div>|Z| = √(R²+X²)<span>阻抗模</span></div>
+      <div>φ = arctan(X/R)<span>阻抗角</span></div>
+    </div>
+    <div class="ac-two" style="margin-top:10px">
+      <div class="ac-card"><h3>KVL：ΣU̇ = 0</h3><p>沿回路各电压相量的矢量和为零。但<b>有效值不能直接相加</b>：各电压相位不同，必须先按相量相加，再取模。</p><span class="num">U = √(U_R² + (U_L−U_C)²)</span></div>
+      <div class="ac-card"><h3>KCL：Σİ = 0</h3><p>节点各电流相量的矢量和为零。同样不能把有效值直接加减，分流的有效值要看相位。</p><span class="num">İ₁+İ₂+İ₃ = 0</span></div>
+    </div>
+    <div class="ac-two" style="margin-top:10px">
+      <div class="ac-card"><h3>感抗取 +jXL</h3><p>电感电压超前电流 90°，阻抗取 +jXL。频率越高，XL=ωL 越大，对电流的阻碍越强。</p><span class="num">Z_L = +jωL</span></div>
+      <div class="ac-card"><h3>容抗取 −jXC</h3><p>电容电流超前电压 90°，阻抗取 −jXC。频率越高，XC=1/(ωC) 越小，越容易通过电流。</p><span class="num">Z_C = −j/(ωC)</span></div>
+    </div>
+    <div class="tip">为什么 <b>√(U_R²+U_L²) ≠ U_R+U_L</b>？因为 U_R 与 U_L 相差 90°，像直角三角形的两条直角边：30 V 与 40 V 的相量和是 50 V，而不是 70 V。只有同相分量才能直接做代数相加。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">04</span><h2>相量合成器</h2><span class="block-hint">拖动模与角，看合成结果</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>Ȧ</span><span><i style="background:#f472b6"></i>Ḃ</span><span><i style="background:#fcd34d"></i>合成</span></div>
+        <canvas id="phCanvas"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>两个相量</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>|Ȧ|</span><b id="phAmVal">5.0</b></div><input type="range" id="phAm" min="1" max="10" step="0.5" value="5"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>∠Ȧ</span><b id="phAaVal">0°</b></div><input type="range" id="phAa" min="-180" max="180" step="5" value="0"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>|Ḃ|</span><b id="phBmVal">5.0</b></div><input type="range" id="phBm" min="1" max="10" step="0.5" value="5"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>∠Ḃ</span><b id="phBaVal">60°</b></div><input type="range" id="phBa" min="-180" max="180" step="5" value="60"></div>
+          <div class="tr-read">
+            <div class="kv"><span>合成模 |Ȧ+Ḃ|</span><b id="phSumM">8.66</b></div>
+            <div class="kv"><span>合成角</span><b id="phSumA">30°</b></div>
+            <div class="kv"><span>模直接相加（错误）</span><b id="phWrong" style="color:#fca5a5">10.0</b></div>
+          </div>
+          <p class="tr-note">合成模一般小于两模之和；只有同相时才相等。把 B 拖到 0° 看同向相加，拖到 180° 看反向抵消。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 11 串联正弦电路 ================= -->
+<section class="view" data-view="rlc">
+  <div class="view-head">
+    <h1>串联正弦电路：R、L、C 一起工作</h1>
+    <p>用相量法把 R、L、C 串起来：先求 XL、XC 和阻抗 Z，再求电流、各元件电压、相位差与功率。改变频率会看到感性、容性与谐振三种状态。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>串联 RLC 实验台</h2><span class="block-hint">U=10 V 有效值 · 四个滑杆</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>u</span><span><i style="background:#4ade80"></i>i</span><span><i style="background:#a78bfa"></i>U_L</span><span><i style="background:#f472b6"></i>U_C</span></div>
+        <canvas id="rlcCanvas"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>元件与频率</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>电阻 R</span><b id="rlcRVal">10 Ω</b></div><input type="range" id="rlcR" min="5" max="100" step="1" value="10"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电感 L</span><b id="rlcLVal">50 mH</b></div><input type="range" id="rlcL" min="10" max="200" step="5" value="50"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电容 C</span><b id="rlcCVal">20 µF</b></div><input type="range" id="rlcC" min="5" max="50" step="1" value="20"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>频率 f</span><b id="rlcFVal">100 Hz</b></div><input type="range" id="rlcF" min="20" max="500" step="0.1" value="100"></div>
+          <div class="tr-btns"><button class="btn" id="rlcRes">跳到谐振 f₀</button></div>
+          <div class="tr-read" style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
+            <div class="kv"><span>XL</span><b id="rlcXL">31.4 Ω</b></div>
+            <div class="kv"><span>UR</span><b id="rlcUR">2.03 V</b></div>
+            <div class="kv"><span>XC</span><b id="rlcXC">79.6 Ω</b></div>
+            <div class="kv"><span>UL</span><b id="rlcUL">6.39 V</b></div>
+            <div class="kv"><span>|Z|</span><b id="rlcZ">49.2 Ω</b></div>
+            <div class="kv"><span>UC</span><b id="rlcUC">16.2 V</b></div>
+            <div class="kv"><span>阻抗角 φ</span><b id="rlcAng">−78.3°</b></div>
+            <div class="kv"><span>电流 I</span><b id="rlcI">0.203 A</b></div>
+            <div class="kv"><span>P</span><b id="rlcP">0.41 W</b></div>
+            <div class="kv"><span>Q</span><b id="rlcQ">−1.98 var</b></div>
+            <div class="kv"><span>S</span><b id="rlcS">2.03 VA</b></div>
+            <div class="kv"><span>cosφ</span><b id="rlcPF">0.20</b></div>
+          </div>
+          <div class="kv" style="margin-top:4px"><span>状态</span><b id="rlcState">容性</b></div>
+          <p class="tr-note">φ 为正是感性、电流滞后；为负是容性、电流超前。谐振附近 UL、UC 会明显高于电源电压。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>电压三角形与阻抗三角形</h2><span class="block-hint">两个三角形相似 · 相差一个 I</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>电压三角形</h3><p>U_R 与电流同相，U_L 超前 90°，U_C 滞后 90°。先合成 U_L−U_C，再与 U_R 合成总电压 U。</p><span class="num">U = √(U_R²+(U_L−U_C)²)</span></div>
+      <div class="ac-card"><h3>阻抗三角形</h3><p>把电压三角形每边除以 I，就得到阻抗三角形：R、X=XL−XC、Z。两个三角形形状相同，只是比例不同。</p><span class="num">Z = √(R²+X²)</span></div>
+    </div>
+    <div class="ac-eq" style="margin-top:12px">
+      <div>XL &gt; XC<em>感性：φ&gt;0，电流滞后电压</em></div>
+      <div>XL &lt; XC<em>容性：φ&lt;0，电流超前电压</em></div>
+      <div>XL = XC<em>谐振：φ=0，电流与电压同相</em></div>
+      <div>φ = arctan((XL−XC)/R)<em>阻抗角同时是电压与电流的相位差</em></div>
+    </div>
+    <p class="ac-note">注意符号：<b>φ 是电压超前电流的角度</b>。φ&gt;0 说“电压超前、电流滞后”，φ&lt;0 说“电流超前、电压滞后”。三种状态不是三种电路，而是同一个串联电路在不同频率下的表现。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>谐振：电压放大与品质因数</h2><span class="block-hint">扫频看峰 · 改 R 看尖锐程度</span></div>
+    <div class="formula-row">
+      <div>f₀ = 1/(2π√(LC))<span>谐振频率</span></div>
+      <div>Q = XL/R = √(L/C)/R<span>品质因数</span></div>
+      <div>U_L = U_C = Q·U<span>谐振时电压放大 Q 倍</span></div>
+      <div>Z = R<span>谐振时阻抗最小</span></div>
+    </div>
+    <div class="tr" style="margin-top:12px">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#fcd34d"></i>电流峰值</span><span><i style="background:#2dd4bf"></i>f₀</span></div>
+        <canvas id="resCanvas" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>扫频参数</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>电阻 R</span><b id="resRVal">10 Ω</b></div><input type="range" id="resR" min="5" max="100" step="1" value="10"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电感 L</span><b id="resLVal">50 mH</b></div><input type="range" id="resL" min="10" max="200" step="5" value="50"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>电容 C</span><b id="resCVal">20 µF</b></div><input type="range" id="resC" min="5" max="50" step="1" value="20"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>观察频率 f</span><b id="resFVal">100 Hz</b></div><input type="range" id="resF" min="10" max="1000" step="1" value="100"></div>
+          <div class="tr-read">
+            <div class="kv"><span>谐振频率 f₀</span><b id="resF0">159.2 Hz</b></div>
+            <div class="kv"><span>品质因数 Q</span><b id="resQ">5.0</b></div>
+            <div class="kv"><span>谐振电流峰值</span><b id="resIpk">1.000 A</b></div>
+            <div class="kv"><span>当前 I(f)</span><b id="resI">0.203 A</b></div>
+          </div>
+          <p class="tr-note">Q 越大，峰越尖，谐振时 UL、UC 放大越厉害。R 增大 → 峰变矮变钝；R 减小 → 峰变高变尖。</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip">谐振时 U_L 与 U_C 大小相等、方向相反，相量和为零，所以总电压只等于 U_R；但<b>单个元件上的电压可能远高于电源电压</b>。电力系统要避开谐振，防止过电压击穿绝缘；无线电则利用谐振选频和放大。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">04</span><h2>功率与汽车上的 RL</h2><span class="block-hint">有功 · 无功 · 视在 · 功率因数</span></div>
+    <div class="formula-row">
+      <div>P = UI·cosφ = I²R<span>有功，真正消耗</span></div>
+      <div>Q = UI·sinφ = I²X<span>无功，来回交换</span></div>
+      <div>S = UI = √(P²+Q²)<span>视在功率</span></div>
+      <div>cosφ = P/S<span>功率因数</span></div>
+    </div>
+    <div class="ac-two" style="margin-top:10px">
+      <div class="ac-card"><h3>P、Q、S 的物理含义</h3><p>P 是电阻上不可逆消耗的功率；Q 是电感、电容与电源之间来回交换的功率，本身不做功，但占用线路容量；S 是电压与电流有效值的乘积，是设备容量。三者构成功率三角形。</p><span class="num">S² = P² + Q²</span></div>
+      <div class="ac-card"><h3>汽车逆变器驱动电机绕组</h3><p>电机绕组可以近似看成 RL 串联。低频时 XL=2πfL 小，电流主要由绕组电阻限制；频率升高后 XL 迅速增大，即使电压不变，电流也会被感抗压下去。变频器要同时调频调压，才能维持磁通和转矩。</p><span class="num">I = U/√(R²+(ωL)²)</span></div>
+    </div>
+    <p class="ac-note">功率因数低意味着同样的有功需要更大的电流和更大的线路容量。工业上常用并联电容补偿感性无功；汽车电机控制器则通过控制电流相位，让定子电流中有足够的有功分量产生转矩。</p>
+  </div>
+</section>
+
+<!-- ================= 12 三相电动势 ================= -->
+<section class="view" data-view="p3">
+  <div class="view-head">
+    <h1>三相交流电动势：三路正弦一起发</h1>
+    <p>三个完全相同的线圈在空间上互差 120°，同轴同速旋转，切割同一磁通，就得到幅值相等、频率相同、相位互差 120° 的三相电动势。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>三相绕组怎么产生三路电动势</h2><span class="block-hint">空间 120° + 时间 120°</span></div>
+    <div class="ac-eq">
+      <div>e_A = Em·sin ωt<em>A 相从 0° 开始</em></div>
+      <div>e_B = Em·sin(ωt−120°)<em>B 相滞后 120°</em></div>
+      <div>e_C = Em·sin(ωt+120°)<em>C 相超前 120°</em></div>
+      <div>e_A+e_B+e_C = 0<em>三相对称的核心结论</em></div>
+    </div>
+    <p class="ac-note">三个线圈<b>完全相同</b>（匝数、形状、电阻一样），在空间上相隔 120°，固定在同一个转子上，以同一转速切割同一磁场。因此三路电动势的<b>幅值相等、频率相同</b>；空间位置相差 120°，让它们在时间上也相差 120°。这就是“三相对称”。</p>
+    <div class="tip">如果三个线圈不对称（匝数不同、空间角度不是 120°），或者转速不等，就不叫三相对称，后面的 √3 关系、瞬时和为零都不再成立。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>三相对称：瞬时值之和恒为零</h2><span class="block-hint">相量与波形两种验证</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>相量验证</h3><p>三个相量模相等、依次相差 120°，首尾相接正好组成一个闭合的等边三角形，所以矢量和为零。</p><span class="num">1 + 1∠−120° + 1∠120° = 0</span></div>
+      <div class="ac-card"><h3>波形验证</h3><p>任意时刻，一路为正时另外两路一正一负，三者相加始终抵消。拖动下面的时间滑杆，观察三个瞬时值之和。</p><span class="num">sinθ + sin(θ−120°) + sin(θ+120°) = 0</span></div>
+    </div>
+    <div class="tr" style="margin-top:12px">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>A</span><span><i style="background:#2dd4bf"></i>B</span><span><i style="background:#a78bfa"></i>C</span></div>
+        <canvas id="tpCanvas" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>三相波形台</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>幅值 Em</span><b id="tpAVal">10.0 V</b></div><input type="range" id="tpA" min="2" max="20" step="0.5" value="10"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>频率 f</span><b id="tpFVal">50 Hz</b></div><input type="range" id="tpF" min="10" max="100" step="1" value="50"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>观察时刻 t</span><b id="tpTVal">0.0 ms</b></div><input type="range" id="tpT" min="0" max="40" step="0.5" value="0"></div>
+          <div class="tr-read">
+            <div class="kv"><span>e_A</span><b id="tpA1">0.00 V</b></div>
+            <div class="kv"><span>e_B</span><b id="tpB1">−8.66 V</b></div>
+            <div class="kv"><span>e_C</span><b id="tpC1">8.66 V</b></div>
+            <div class="kv"><span>三者之和</span><b id="tpSum" style="color:#bbf7d0">0.00 V</b></div>
+          </div>
+          <p class="tr-note">无论把 t 拖到哪里，三个瞬时值都在变，但和始终为 0。这正是三相四线制中中性线在平衡负载时没有电流的原因。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>相序：三路谁先到峰值</h2><span class="block-hint">正序 · 逆序 · 电机转向</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>正序 A→B→C</h3><p>A 相先到正峰值，B 相滞后 120°，C 相再滞后 120°。相量按逆时针依次排列，记为 A-B-C 正序。</p><span class="num">A → B → C，相隔 120°</span></div>
+      <div class="ac-card"><h3>逆序 A→C→B</h3><p>把任意两根电源线对调，相序就反转。三相异步电机的旋转磁场方向随之反转，电机立即反转。</p><span class="num">对调任意两相 → 转向反转</span></div>
+    </div>
+    <p class="ac-note">相序是三相系统特有的信息。接电机前要确认相序，否则设备可能反转；有些设备（如水泵、压缩机）不允许反转，需要相序保护器。改变相序不需要改频率或电压，只要交换两相接线。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">04</span><h2>星形与三角形接法</h2><span class="block-hint">线电压 · 相电压 · 线电流 · 相电流</span></div>
+    <div class="chips">
+      <button class="chip on" data-conn="Y"><i style="background:#2dd4bf"></i>星形 Y</button>
+      <button class="chip" data-conn="D"><i style="background:#f472b6"></i>三角形 △</button>
+    </div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#2dd4bf"></i>相电压</span><span><i style="background:#fcd34d"></i>线电压</span></div>
+        <canvas id="connCanvas" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>接法参数</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>每相电压 Up</span><b id="connUpVal">220 V</b></div><input type="range" id="connUp" min="100" max="400" step="1" value="220"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>每相电流 Ip</span><b id="connIpVal">10.0 A</b></div><input type="range" id="connIp" min="1" max="50" step="0.5" value="10"></div>
+          <div class="tr-read">
+            <div class="kv"><span>线电压 UL</span><b id="connUL">381 V</b></div>
+            <div class="kv"><span>线电流 IL</span><b id="connIL">10.0 A</b></div>
+            <div class="kv"><span>中性线电流 IN</span><b id="connIN">0.0 A</b></div>
+          </div>
+          <p class="tr-note" id="connModeNote">星形：UL=√3·Up，且线电压超前对应相电压 30°；IL=Ip；三相平衡时中性线电流为零。</p>
+        </div>
+      </div>
+    </div>
+    <div class="ac-two" style="margin-top:12px">
+      <div class="ac-card"><h3>星形 Y</h3><p>三个绕组的一端接在一起形成中性点 N。线电压是两相之间的电压，等于相电压的 √3 倍，相位超前 30°。线电流等于相电流。中性线为不平衡电流提供回路。</p><span class="num">UL=√3Up，IL=Ip</span></div>
+      <div class="ac-card"><h3>三角形 △</h3><p>三个绕组首尾相接成闭合三角形。线电压就是相电压；线电流是两相电流的相量和，平衡时等于相电流的 √3 倍。三角形没有中性点。</p><span class="num">UL=Up，IL=√3Ip</span></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">05</span><h2>为什么用三相</h2><span class="block-hint">省线 · 平稳 · 自然旋转磁场</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>省导线</h3><p>输送同样的功率，三相系统比单相更省导线。三根线共同承担功率，平衡时中性线电流为零，还可以省掉中性线。</p><span class="num">P = √3·UL·IL·cosφ</span></div>
+      <div class="ac-card"><h3>转矩平稳</h3><p>单相瞬时功率按 2ω 脉动，三相瞬时功率之和恒定，转矩平稳、振动小，这是三相电机和输电的优势。</p><span class="num">p = p_A+p_B+p_C = 常数</span></div>
+      <div class="ac-card"><h3>自然产生旋转磁场</h3><p>三相电流通入空间互差 120° 的绕组，合成磁场自然旋转，不需要机械换向器，结构简单可靠。</p><span class="num">三相对称电流 → 圆形旋转磁场</span></div>
+      <div class="ac-card"><h3>发电与用电匹配</h3><p>三相发电机、变压器、电动机可以成套设计，同一套三相线既能输电又能直接驱动三相电机。</p><span class="num">发 · 输 · 配 · 用 一套制式</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 13 旋转磁场 ================= -->
+<section class="view" data-view="rotf">
+  <div class="view-head">
+    <h1>旋转磁场：三相电流怎么让磁场转起来</h1>
+    <p>三个空间上互差 120° 的线圈，通入时间上互差 120° 的三相电流，合成磁场不再脉动，而是一个幅值恒定、匀速旋转的矢量。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>旋转磁场演示</h2><span class="block-hint">看合成矢量 · 换相序看反转</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>A 相</span><span><i style="background:#2dd4bf"></i>B 相</span><span><i style="background:#a78bfa"></i>C 相</span><span><i style="background:#fcd34d"></i>合成磁场</span></div>
+        <canvas id="rotCanvas"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>相序与转速</h3>
+          <div class="chips">
+            <button class="chip on" data-rotseq="1">正序 A-B-C</button>
+            <button class="chip" data-rotseq="-1">逆序 A-C-B</button>
+          </div>
+          <div class="ctrl"><div class="ctrl-top"><span>转速</span><b id="rotSpeedVal">1.0×</b></div><input type="range" id="rotSpeed" min="0.2" max="2" step="0.1" value="1"></div>
+          <div class="tr-btns"><button class="btn on" id="rotPlay">暂停</button></div>
+          <div class="tr-read">
+            <div class="kv"><span>磁场角度</span><b id="rotTh">0°</b></div>
+            <div class="kv"><span>旋转方向</span><b id="rotDir">逆时针</b></div>
+            <div class="kv"><span>i_A</span><b id="rotIa">0.00</b></div>
+            <div class="kv"><span>i_B</span><b id="rotIb">−0.87</b></div>
+            <div class="kv"><span>i_C</span><b id="rotIc">0.87</b></div>
+          </div>
+          <p class="tr-note">三个线圈在空间上相隔 120°，电流在时间上相隔 120°。合成矢量幅值不变、角度匀速增加，就是旋转磁场。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>从旋转磁场到异步电机</h2><span class="block-hint">切割 · 感应 · 转矩 · 转差</span></div>
+    <div class="ac-list">
+      <p style="margin:0 0 6px"><b>磁场转起来</b>：三相定子电流合成旋转磁场，转速 n₁=60f/p，p 是磁极对数。50 Hz、一对极时同步转速 3000 r/min。</p>
+      <p style="margin:0 0 6px"><b>转子被切割</b>：旋转磁场扫过转子导条，导条切割磁感线产生感应电动势和感应电流。</p>
+      <p style="margin:0 0 6px"><b>产生转矩</b>：感应电流在磁场中受安培力，形成与旋转方向相同的转矩，拖着转子转。</p>
+      <p style="margin:0"><b>为什么叫异步</b>：转子转速必须略低于同步转速，才有相对切割、才有感应电流；这个差值用转差率 s=(n₁−n)/n₁ 表示。如果转子追上同步转速，相对切割为零，转矩也消失。</p>
+    </div>
+    <div class="tip">相序决定旋转磁场方向，也就决定电机转向。对调任意两根电源线，旋转磁场反转，转子随之反转——这就是三相异步电机“换相即换向”的原因。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>把这一章串起来</h2><span class="block-hint">从单相到三相</span></div>
+    <div class="ac-list">
+      <p style="margin:0 0 6px"><b>单相</b>：一个正弦量 → 一个旋转相量 → 相量法算 R、L、C 串联电路。</p>
+      <p style="margin:0 0 6px"><b>三相</b>：三个幅值相同、频率相同、相位互差 120° 的正弦量 → 瞬时和为零 → 星形/三角形接法 → √3 关系。</p>
+      <p style="margin:0 0 6px"><b>旋转磁场</b>：三个空间 120° 的绕组 + 三个时间 120° 的电流 → 合成矢量匀速旋转 → 驱动三相异步电机。</p>
+      <p style="margin:0"><b>回到汽车</b>：动力电池直流 → 逆变器生成三相正弦（近似）→ 驱动电机定子绕组 → 旋转磁场 → 转矩。频率决定转速，电压/电流相位决定转矩大小。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 14 三相的连接 ================= -->
+<section class="view" data-view="conn3">
+  <div class="view-head">
+    <h1>三相的连接：负载侧怎么接、线为什么不能乱断</h1>
+    <p>电源和负载都有星形、三角形两种接法。这一节不讲基本换算（第 12 节已经算过），只看负载侧怎么选、中性线为什么不能断、缺相和接错线会出什么事。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>电源侧：两种接法给出什么电压</h2><span class="block-hint">中性点 · 线电压 · 铭牌读法</span></div>
+    <div class="ac-eq">
+      <div>星形电源<em>三个绕组尾端接成中性点 N</em></div>
+      <div>UL = √3·Up<em>同时存在相电压与线电压</em></div>
+      <div>三角形电源<em>首尾相接成闭合三角形</em></div>
+      <div>UL = Up<em>只有一种线电压，无中性点</em></div>
+    </div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>星形：能引出中性线</h3><p>中性点 N 可以引出中性线，于是同一套电源同时提供两种电压：相电压（火线对零线，220 V）和线电压（火线之间，380 V）。照明、插座这类单相负载就接在相电压上。</p><span class="num">220 V / 380 V 同时可用</span></div>
+      <div class="ac-card"><h3>三角形：只有线电压</h3><p>三个绕组首尾相接，没有中性点，也引不出中性线。它只提供一种电压，线电压等于每相绕组电压。三相三线制的大功率负载常用。</p><span class="num">只有 UL = Up</span></div>
+    </div>
+    <table class="cap-tbl" style="margin-top:14px">
+      <thead><tr><th>电机铭牌</th><th>含义</th><th>每相绕组额定电压</th><th>该接哪种电网</th></tr></thead>
+      <tbody>
+        <tr><td>220 V / 380 V（Δ/Y）</td><td>斜杠前对应三角形，斜杠后对应星形</td><td>220 V</td><td>Δ 接 220 V 电网，Y 接 380 V 电网</td></tr>
+        <tr><td>380 V / 660 V（Δ/Y）</td><td>大值对应星形，小值对应三角形，比值 √3</td><td>380 V</td><td>Δ 接 380 V 电网，Y 接 660 V 电网</td></tr>
+      </tbody>
+    </table>
+    <div class="tip">铭牌上的两个电压不是“随便选一个”，而是<b>同一台电机在两种接法下对应的两种电网电压</b>。每相绕组能承受的电压是固定的，接法只是改变绕组承受相电压还是线电压。接错时绕组电压会差 √3 倍。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>负载接法切换台</h2><span class="block-hint">同一负载 · 换接法 · 判断是否匹配</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#2dd4bf"></i>星形</span><span><i style="background:#f472b6"></i>三角形</span><span><i style="background:#fcd34d"></i>线电压</span></div>
+        <canvas id="c3Load" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>电网与负载</h3>
+          <div class="chips">
+            <button class="chip on" data-c3grid="380">电网 380 V</button>
+            <button class="chip" data-c3grid="220">电网 220 V</button>
+          </div>
+          <div class="chips">
+            <button class="chip on" data-c3mode="Y"><i style="background:#2dd4bf"></i>星形 Y</button>
+            <button class="chip" data-c3mode="D"><i style="background:#f472b6"></i>三角形 △</button>
+          </div>
+          <div class="ctrl"><div class="ctrl-top"><span>每相负载 R</span><b id="c3RVal">44 Ω</b></div><input type="range" id="c3R" min="10" max="100" step="1" value="44"></div>
+          <div class="tr-read">
+            <div class="kv"><span>每相电压 Up</span><b id="c3Up">220 V</b></div>
+            <div class="kv"><span>相电流 Ip</span><b id="c3Ip">5.00 A</b></div>
+            <div class="kv"><span>线电流 IL</span><b id="c3Il">5.00 A</b></div>
+            <div class="kv"><span>三相总功率 P</span><b id="c3P">3.29 kW</b></div>
+            <div class="kv"><span>对 220 V 绕组</span><b id="c3Judge">匹配</b></div>
+          </div>
+          <p class="tr-note">同一台电机、每相绕组额定 220 V：380 V 电网用星形，220 V 电网用三角形，两种接法每相电压都接近 220 V、出力相同。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>不对称负载与中性线</h2><span class="block-hint">中性点位移 · 过压 · 欠压</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>对称负载：中性线可以省</h3><p>三组负载完全一样时，三个相电流大小相等、相位互差 120°，相量和为零，中性线里没有电流。所以三相电机这类对称负载可以只接三根线。</p><span class="num">İ_A + İ_B + İ_C = 0 → I_N = 0</span></div>
+      <div class="ac-card"><h3>不对称负载：必须有中性线</h3><p>三组照明、不同功率的加热器，阻抗不同，电流不再对称。中性线为不平衡电流提供回路，把中性点强行钳在零电位，各相电压才能都保持 220 V。</p><span class="num">有中线 → 各相电压独立钳位</span></div>
+    </div>
+    <div class="tr" style="margin-top:12px">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>A 相</span><span><i style="background:#2dd4bf"></i>B 相</span><span><i style="background:#a78bfa"></i>C 相</span><span><i style="background:#fcd34d"></i>中性点</span></div>
+        <canvas id="c3Neu" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>三组不对称负载</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>A 相负载 R_A</span><b id="neuRaVal">40 Ω</b></div><input type="range" id="neuRa" min="20" max="200" step="1" value="40"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>B 相负载 R_B</span><b id="neuRbVal">60 Ω</b></div><input type="range" id="neuRb" min="20" max="200" step="1" value="60"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>C 相负载 R_C</span><b id="neuRcVal">100 Ω</b></div><input type="range" id="neuRc" min="20" max="200" step="1" value="100"></div>
+          <div class="tr-btns"><button class="btn on" id="neuSw">中性线：接通</button></div>
+          <div class="tr-read">
+            <div class="kv"><span>中性点位移 U_N′N</span><b id="neuVn">0.0 V</b></div>
+            <div class="kv"><span>U_A</span><b id="neuUa">220 V</b></div>
+            <div class="kv"><span>U_B</span><b id="neuUb">220 V</b></div>
+            <div class="kv"><span>U_C</span><b id="neuUc">220 V</b></div>
+            <div class="kv"><span>中性线电流 I_N</span><b id="neuIn">2.86 A</b></div>
+          </div>
+          <p class="tr-note" id="neuNote">中性线接通时，三组负载各得 220 V，只是亮度不同；中性线承担不平衡电流。</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip">断开中性线后，中性点 N′ 会向负载轻的一侧“飘移”：<b>阻抗大的那相分到的电压升高</b>，灯变亮甚至烧毁；阻抗小的那相电压降低，灯变暗。这就是“零线不能装熔断器、不能装开关”的现实原因——零线一旦断开，整片单相负载都在冒险。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">04</span><h2>三角形负载与电压匹配</h2><span class="block-hint">什么时候选 △ · 220 V 接到 380 V</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>选三角形</h3><p>负载每相的额定电压等于电网线电压时选三角形，比如 380 V 绕组接 380 V 电网。三角形没有中性点，不适合需要 220 V 相电压的单相负载。</p><span class="num">Up = UL，IL = √3·Ip</span></div>
+      <div class="ac-card"><h3>选星形</h3><p>负载每相额定电压等于线电压的 1/√3，或需要中性线给单相负载供电时选星形。星形还常用于电机降压启动，把每相电压降到 1/√3，启动电流降到 1/3。</p><span class="num">Up = UL/√3，IL = Ip</span></div>
+    </div>
+    <table class="cap-tbl" style="margin-top:14px">
+      <thead><tr><th>同一台电机（每相绕组 220 V）</th><th>星形接 380 V 电网</th><th>三角形接 220 V 电网</th></tr></thead>
+      <tbody>
+        <tr><td>每相绕组电压</td><td>380/√3 ≈ 220 V</td><td>220 V</td></tr>
+        <tr><td>相电流</td><td>Iph</td><td>Iph</td></tr>
+        <tr><td>线电流</td><td>Iph</td><td>√3·Iph</td></tr>
+        <tr><td>三相总功率</td><td>3×220×Iph</td><td>3×220×Iph（相同）</td></tr>
+      </tbody>
+    </table>
+    <div class="tip">把 220 V 的负载接到 380 V 线电压上，电压是额定值的 √3 倍，功率变成 3 倍，很快就会烧毁。反过来，380 V 绕组错接成星形接到 380 V 电网，每相只有 220 V，转矩严重不足、电机带不动负载。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">05</span><h2>接线实操：六个端子怎么接</h2><span class="block-hint">U1/V1/W1 · U2/V2/W2 · 点端子看去向</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>星形实物接法</h3><p>U2、V2、W2 用短接片连在一起，形成中性点；U1、V1、W1 分别接电源 L1、L2、L3。电机铭牌要求星形时就这样接。</p><span class="num">U2-V2-W2 短接</span></div>
+      <div class="ac-card"><h3>三角形实物接法</h3><p>U1 接 W2、V1 接 U2、W1 接 V2，三个短接片竖着装，形成闭合三角形；三个连接点再接 L1、L2、L3。</p><span class="num">U1-W2 · V1-U2 · W1-V2</span></div>
+    </div>
+    <div class="tr" style="margin-top:12px">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>A 相</span><span><i style="background:#2dd4bf"></i>B 相</span><span><i style="background:#a78bfa"></i>C 相</span><span><i style="background:#fcd34d"></i>短接片</span></div>
+        <canvas id="c3Term" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>端子盒</h3>
+          <div class="chips">
+            <button class="chip on" data-c3term="Y"><i style="background:#2dd4bf"></i>星形接法</button>
+            <button class="chip" data-c3term="D"><i style="background:#f472b6"></i>三角形接法</button>
+          </div>
+          <div class="tr-read">
+            <div class="kv"><span>已选中端子</span><b id="termSel">—</b></div>
+          </div>
+          <p class="ac-note" id="termInfo">点画布上的任意端子，查看它在当前接法下接到哪里。上排是 W2、U2、V2，下排是 U1、V1、W1。</p>
+          <p class="tr-note">端子编号规则：U、V、W 代表三相绕组，1 是首端、2 是末端。相序接反时，对调任意两根电源线即可。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">06</span><h2>相序：接反了会怎样</h2><span class="block-hint">拖动换线序 · 看电机转向</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>A</span><span><i style="background:#2dd4bf"></i>B</span><span><i style="background:#a78bfa"></i>C</span><span><i style="background:#fcd34d"></i>转向</span></div>
+        <canvas id="c3Seq" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>三根电源线</h3>
+          <div class="wires" id="wireBox"></div>
+          <div class="tr-read">
+            <div class="kv"><span>当前相序</span><b id="seqOrder">A-B-C</b></div>
+            <div class="kv"><span>判断</span><b id="seqState">正序</b></div>
+            <div class="kv"><span>电机转向</span><b id="seqDir">正转</b></div>
+          </div>
+          <p class="tr-note">拖动任意两根线交换位置，或依次点击两根线交换。任意两根对调，相序就反转，电机随之反转。相序表可以测出正序还是逆序；水泵、压缩机等不允许反转的设备还要装相序保护器。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">07</span><h2>故障演示：缺相、断零线、相序反</h2><span class="block-hint">会发生什么 · 仪表怎么变</span></div>
+    <div class="chips">
+      <button class="chip on" data-flt="open">断一根相线（缺相）</button>
+      <button class="chip" data-flt="neu">断中性线</button>
+      <button class="chip" data-flt="seq">相序接反</button>
+    </div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#f87171"></i>故障点</span><span><i style="background:#fcd34d"></i>仪表读数</span></div>
+        <canvas id="c3Fault" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>仪表读数</h3>
+          <div class="tr-read">
+            <div class="kv"><span id="fltK1">L1 电流</span><b id="fltV1">0.0 A</b></div>
+            <div class="kv"><span id="fltK2">L2 电流</span><b id="fltV2">10.2 A</b></div>
+            <div class="kv"><span id="fltK3">L3 电流</span><b id="fltV3">10.2 A</b></div>
+            <div class="kv"><span>运行状态</span><b id="fltState">单相运行</b></div>
+          </div>
+          <p class="ac-note" id="fltNote"></p>
+        </div>
+      </div>
+    </div>
+    <div class="tip"><b>汽车上的对应</b>：车载充电机（OBC）把单相交流整流成直流给电池充电，受单相电流和插座容量限制，功率一般 3.3–11 kW；三相交流充电桩把功率分到三路上，同样线径下每相电流更小、总功率更大（11–22 kW），所以充电更快。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">08</span><h2>随堂练习</h2><span class="block-hint">8 题 · 中性线 · 缺相 · 电压匹配</span></div>
+    <div class="scorebar">
+      <b id="c3Score">0 / 8</b>
+      <span>正确率 <b id="c3Rate" style="font-size:20px">—</b></span>
+      <button class="btn" id="c3Reset">重做</button>
+      <p>先自己判断，再点选项。每题只判一次，解析会说明为什么。</p>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>01</em>三相四线制中，中性线的主要作用是：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 提高线电压</button>
+        <button class="opt" data-opt="1">B. 为不对称负载提供电流通路，保持各相电压基本对称</button>
+        <button class="opt" data-opt="2">C. 增大三相总功率</button>
+        <button class="opt" data-opt="3">D. 防止相间短路</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>中性线把负载中性点钳在电源中性点电位上。有它时，各相负载电压都等于相电压 220 V，互不影响；没有它，不对称负载的中性点会位移。</div>
+    </div>
+
+    <div class="quiz" data-ans="2">
+      <p class="q"><em>02</em>三相对称负载星形连接，中性线中的电流为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 等于相电流</button>
+        <button class="opt" data-opt="1">B. 等于 √3 倍相电流</button>
+        <button class="opt" data-opt="2">C. 0</button>
+        <button class="opt" data-opt="3">D. 等于 3 倍相电流</button>
+      </div>
+      <div class="fb"><b>答案 C。</b>三相对称电流大小相等、相位互差 120°，相量和为零，所以中性线电流为零。这也是对称负载可以省掉中性线的原因。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>03</em>三相对称负载星形接在 380 V 线电压上，每相负载的电压约为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 380 V</button>
+        <button class="opt" data-opt="1">B. 220 V</button>
+        <button class="opt" data-opt="2">C. 110 V</button>
+        <button class="opt" data-opt="3">D. 660 V</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>星形时相电压是线电压的 1/√3：380/1.732≈220 V。三角形接法时每相才承受 380 V。</div>
+    </div>
+
+    <div class="quiz" data-ans="2">
+      <p class="q"><em>04</em>三角形连接的负载，相电流为 10 A，线电流约为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 10 A</button>
+        <button class="opt" data-opt="1">B. 14.1 A</button>
+        <button class="opt" data-opt="2">C. 17.3 A</button>
+        <button class="opt" data-opt="3">D. 30 A</button>
+      </div>
+      <div class="fb"><b>答案 C。</b>三角形平衡时线电流是相电流的 √3 倍：10×1.732≈17.3 A。星形时线电流才等于相电流。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>05</em>不对称负载星形连接，中性线断开后：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 各相电压仍然都是 220 V</button>
+        <button class="opt" data-opt="1">B. 中性点位移，阻抗大的相电压升高</button>
+        <button class="opt" data-opt="2">C. 各相电流都变小</button>
+        <button class="opt" data-opt="3">D. 负载完全停止工作</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>没有中性线，中性点会漂向负载轻的一侧。阻抗大的相分到更高电压，可能过压烧毁；阻抗小的相电压降低、灯变暗。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>06</em>三相电机运行中断了一根相线（缺相），通常会：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 立即停转，电流变为零</button>
+        <button class="opt" data-opt="1">B. 仍能转，但其余两相电流增大、发热严重</button>
+        <button class="opt" data-opt="2">C. 转速升高，电流减小</button>
+        <button class="opt" data-opt="3">D. 没有任何影响</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>缺相后电机变成单相运行：没有启动转矩，运行中的电机靠惯性还能转，但其余两相电流大幅上升、温升剧增，很容易烧绕组，所以必须装缺相保护。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>07</em>铭牌标“380 V / 660 V”的三相电机，接到 380 V 电网应采用：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 星形接法</button>
+        <button class="opt" data-opt="1">B. 三角形接法</button>
+        <button class="opt" data-opt="2">C. 两种都可以</button>
+        <button class="opt" data-opt="3">D. 不能接 380 V 电网</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>铭牌小值 380 V 对应三角形、大值 660 V 对应星形。该电机每相绕组额定 380 V，三角形时相电压等于线电压 380 V；若接成星形，每相只有 220 V，出力不足。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>08</em>三相异步电机的任意两根电源线对调后，电机会：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 转速升高</button>
+        <button class="opt" data-opt="1">B. 反转</button>
+        <button class="opt" data-opt="2">C. 立即烧毁</button>
+        <button class="opt" data-opt="3">D. 无法启动</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>对调两根线使相序反转，旋转磁场反向，转子随之反转。这也是现场调整电机转向最常用的办法。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 15 三相功率 ================= -->
+<section class="view" data-view="pwr3">
+  <div class="view-head">
+    <h1>三相功率：√3 从哪来、为什么三相转矩平稳</h1>
+    <p>第 11 节讲过单相的 P、Q、S 与功率因数。这一节只讲三相特有的事：总功率为什么带 √3、瞬时功率为什么恒定、功率因数怎么补偿、两只瓦特表怎么测。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>三相总功率：√3 的来历</h2><span class="block-hint">线值公式 · 相值验证 · 与接法无关</span></div>
+    <div class="ac-eq">
+      <div>P = √3·UL·IL·cosφ<em>三相有功，单位 W</em></div>
+      <div>Q = √3·UL·IL·sinφ<em>三相无功，单位 var</em></div>
+      <div>S = √3·UL·IL<em>三相视在，单位 VA</em></div>
+      <div>S² = P² + Q²<em>功率三角形仍然成立</em></div>
+    </div>
+    <p class="ac-note">三相总功率就是三个单相功率相加：P = 3·Up·Ip·cosφ。把星形或三角形的线相关系代进去，两式都会变成 √3·UL·IL·cosφ，所以<b>用线值计算时，公式与接法无关</b>。</p>
+    <div class="ac-two">
+      <div class="ac-card"><h3>星形代入</h3><p>UL = √3·Up，IL = Ip。三个单相功率相加时，√3 与 3 约掉一个。</p><span class="num">3·(UL/√3)·IL·cosφ = √3·UL·IL·cosφ</span></div>
+      <div class="ac-card"><h3>三角形代入</h3><p>UL = Up，IL = √3·Ip。相电流换成线电流后，同样剩下一个 √3。</p><span class="num">3·UL·(IL/√3)·cosφ = √3·UL·IL·cosφ</span></div>
+    </div>
+    <div class="tip">“与接法无关”的前提是<b>固定线电压和线电流</b>。如果固定的是负载阻抗，把同一台电机从星形改接成三角形、接在同一电网上，相电压升到 √3 倍，总功率会变成 3 倍——这正是星三角降压启动能把启动电流降到 1/3 的原因。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>三相功率计算台</h2><span class="block-hint">线值法 vs 相值法 · 换接法看 P</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>P</span><span><i style="background:#a78bfa"></i>Q</span><span><i style="background:#2dd4bf"></i>S</span></div>
+        <canvas id="pwCalc" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>线值与功率因数</h3>
+          <div class="chips">
+            <button class="chip on" data-pwmode="Y"><i style="background:#2dd4bf"></i>星形 Y</button>
+            <button class="chip" data-pwmode="D"><i style="background:#f472b6"></i>三角形 △</button>
+          </div>
+          <div class="ctrl"><div class="ctrl-top"><span>线电压 UL</span><b id="pwULVal">380 V</b></div><input type="range" id="pwUL" min="220" max="660" step="10" value="380"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>线电流 IL</span><b id="pwILVal">10.0 A</b></div><input type="range" id="pwIL" min="1" max="60" step="0.5" value="10"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>功率因数 cosφ</span><b id="pwCosVal">0.80</b></div><input type="range" id="pwCos" min="0.2" max="1" step="0.01" value="0.8"></div>
+          <div class="tr-read">
+            <div class="kv"><span>有功 P = √3·UL·IL·cosφ</span><b id="pwP">5.27 kW</b></div>
+            <div class="kv"><span>无功 Q</span><b id="pwQ">3.95 kvar</b></div>
+            <div class="kv"><span>视在 S</span><b id="pwS">6.58 kVA</b></div>
+            <div class="kv"><span>相电压 Up</span><b id="pwUp">219.4 V</b></div>
+            <div class="kv"><span>相电流 Ip</span><b id="pwIp">10.00 A</b></div>
+            <div class="kv"><span>相值法 P = 3·Up·Ip·cosφ</span><b id="pwPp">5.27 kW</b></div>
+          </div>
+          <p class="tr-note" id="pwNote">星形：Up=UL/√3、Ip=IL；切成三角形后 Up、Ip 都会变，但用线值算出的 P 不变。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>瞬时功率：单相在抖，三相是平的</h2><span class="block-hint">2ω 脉动 · 转矩平稳 · 为什么用三相</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>单相：两倍频率起伏</h3><p>p = U·I·cosφ − U·I·cos(2ωt−φ)。平均值是有功功率，但瞬时值以 2ω 脉动；功率因数低时还会短时变负。单相电机的转矩跟着脉动，振动和噪声大。</p><span class="num">每半个工频周期起伏一次</span></div>
+      <div class="ac-card"><h3>三相：叠加后恒定</h3><p>三相对称时，三个脉动的瞬时功率互差 120°，相加后交流分量完全抵消，只剩平均功率，是一条平直线。</p><span class="num">p_A+p_B+p_C = 3·Up·Ip·cosφ</span></div>
+    </div>
+    <div class="tr" style="margin-top:12px">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#fcd34d"></i>单相 p₁</span><span><i style="background:#2dd4bf"></i>三相 p₃</span></div>
+        <canvas id="pwInst" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>瞬时功率对比</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>功率因数 cosφ</span><b id="pwInstCosVal">0.80</b></div><input type="range" id="pwInstCos" min="0.2" max="1" step="0.01" value="0.8"></div>
+          <div class="tr-read">
+            <div class="kv"><span>单相平均功率</span><b id="pwInstP1">1.76 kW</b></div>
+            <div class="kv"><span>单相瞬时范围</span><b id="pwInstRange">−0.44 ~ 3.96 kW</b></div>
+            <div class="kv"><span>三相总功率</span><b id="pwInstP3">5.27 kW</b></div>
+            <div class="kv"><span>三相脉动幅度</span><b id="pwInstRip" style="color:#bbf7d0">0</b></div>
+          </div>
+          <p class="tr-note">单相曲线以两倍频率上下起伏，三相曲线是一条水平线。瞬时功率恒定，转矩就平稳，这是“为什么用三相”最本质的一条。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">04</span><h2>功率因数：低 cosφ 的代价</h2><span class="block-hint">电流变大 · 线损 I²R · 容量被占</span></div>
+    <div class="ac-eq">
+      <div>I = P / (√3·UL·cosφ)<em>同样的 P，cosφ 越低电流越大</em></div>
+      <div>ΔP线 = 3·I²·R线<em>线路损耗与电流平方成正比</em></div>
+      <div>S = P / cosφ<em>设备容量按视在功率设计</em></div>
+      <div>损耗 ∝ 1/cos²φ<em>代价被平方放大</em></div>
+    </div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>电流更大</h3><p>有功功率由真正做功的电流分量决定，无功电流只在线路和电源之间往返。cosφ 越低，为送出同样的 P 需要的总电流越大。</p><span class="num">I 与 1/cosφ 成正比</span></div>
+      <div class="ac-card"><h3>容量被占</h3><p>发电机、变压器、电缆按视在功率 S 和额定电流设计。无功占掉的容量不能用来做有功，设备“带不满”，还得加大规格。</p><span class="num">S = √(P²+Q²)</span></div>
+    </div>
+    <table class="cap-tbl" style="margin-top:14px">
+      <thead><tr><th>P=100 kW，UL=380 V</th><th>线电流 I</th><th>视在功率 S</th><th>线损（每相 0.05 Ω）</th></tr></thead>
+      <tbody>
+        <tr><td>cosφ = 0.70</td><td>217 A</td><td>143 kVA</td><td>7.1 kW</td></tr>
+        <tr class="rec"><td>cosφ = 0.95</td><td>160 A</td><td>105 kVA</td><td>3.8 kW</td></tr>
+      </tbody>
+    </table>
+    <div class="tip">功率因数低不是“电表走得多”那么简单：<b>同样的有功，电流更大，线路和变压器绕组里的 I²R 损耗按平方增加</b>；设备容量被无功占掉，导线也要加粗。所以供电部门会对低功率因数用户加收费用。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">05</span><h2>功率因数补偿：就地补无功</h2><span class="block-hint">并联电容 · Qc 估算 · 线损下降</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>为什么并电容</h3><p>感性负载需要无功来建立磁场。并联电容后，电容的容性无功与感性无功就地交换，电源只需提供有功和少量无功，线电流随之下降。</p><span class="num">Q₂ = Q₁ − Qc</span></div>
+      <div class="ac-card"><h3>补偿容量估算</h3><p>已知补偿前后的功率因数角 φ₁、φ₂，需要的电容容量为：</p><span class="num">Qc = P·(tanφ₁ − tanφ₂)</span></div>
+    </div>
+    <div class="tr" style="margin-top:12px">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#f472b6"></i>补偿前</span><span><i style="background:#2dd4bf"></i>补偿后</span><span><i style="background:#a78bfa"></i>电容</span></div>
+        <canvas id="pwComp" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>同一段线路的补偿</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>补偿前 cosφ₁</span><b id="pwCompCosVal">0.70</b></div><input type="range" id="pwCompCos" min="0.5" max="0.95" step="0.01" value="0.7"></div>
+          <div class="ctrl"><div class="ctrl-top"><span>并联电容 Qc</span><b id="pwCompQcVal">30 kvar</b></div><input type="range" id="pwCompQc" min="0" max="160" step="1" value="30"></div>
+          <div class="tr-btns"><button class="btn" id="pwCompAuto">补到 cosφ = 0.95</button></div>
+          <div class="tr-read">
+            <div class="kv"><span>补偿后 cosφ₂</span><b id="pwCompCos2">0.81</b></div>
+            <div class="kv"><span>线电流（前 → 后）</span><b id="pwCompI">217 → 187 A</b></div>
+            <div class="kv"><span>线损（前 → 后）</span><b id="pwCompLoss">7.07 → 5.26 kW</b></div>
+            <div class="kv"><span>省下的线损</span><b id="pwCompSave" style="color:#bbf7d0">1.81 kW</b></div>
+            <div class="kv"><span>补到 0.95 需 Qc</span><b id="pwCompNeed">69 kvar</b></div>
+          </div>
+          <p class="tr-note" id="pwCompNote">电容提供容性无功，抵消一部分感性无功，线电流和线损都下降。补偿要适度，过补偿会让功率因数反向下降。</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip">补偿电容应<b>就地并联在感性负载附近</b>，不要集中补到“cosφ=1”。过补偿时无功反向，功率因数重新变差，还可能引起电压升高和諧振。工程上常把目标定在 0.9–0.95。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">06</span><h2>三相功率测量：两表法</h2><span class="block-hint">两只瓦特表 · 代数和 · 反偏怎么读</span></div>
+    <div class="tr">
+      <div class="tr-stage">
+        <div class="tr-legend"><span><i style="background:#38bdf8"></i>L1</span><span><i style="background:#2dd4bf"></i>L2</span><span><i style="background:#a78bfa"></i>L3</span><span><i style="background:#fcd34d"></i>瓦特表</span></div>
+        <canvas id="pwTwo" class="short"></canvas>
+      </div>
+      <div class="tr-side">
+        <div class="panel">
+          <h3>两表法读数</h3>
+          <div class="ctrl"><div class="ctrl-top"><span>负载阻抗角 φ</span><b id="pwTwoPhiVal">30°</b></div><input type="range" id="pwTwoPhi" min="0" max="89" step="1" value="30"></div>
+          <div class="tr-read">
+            <div class="kv"><span>W1 读数 P₁</span><b id="pwTwoP1">3800 W</b></div>
+            <div class="kv"><span>W2 读数 P₂</span><b id="pwTwoP2">1900 W</b></div>
+            <div class="kv"><span>代数和 P₁+P₂</span><b id="pwTwoSum">5700 W</b></div>
+            <div class="kv"><span>当前 cosφ</span><b id="pwTwoCos">0.87</b></div>
+            <div class="kv"><span>表针状态</span><b id="pwTwoState">两表都正</b></div>
+          </div>
+          <p class="tr-note" id="pwTwoNote">三相对称时 P₁=UL·IL·cos(φ−30°)，P₂=UL·IL·cos(φ+30°)，两表读数相加恒等于 √3·UL·IL·cosφ。</p>
+        </div>
+      </div>
+    </div>
+    <div class="ac-list" style="margin-top:12px">
+      <p style="margin:0 0 6px"><b>为什么两只就够</b>：三相三线制中 i_A+i_B+i_C=0，第三相的功率不是独立信息，测两相再加起来就得到总功率，省一只表。</p>
+      <p style="margin:0 0 6px"><b>为什么不用三只</b>：三只单相表当然也能测，但多一只表、多一组接线，读数还要相加，工程上没必要。</p>
+      <p style="margin:0"><b>三相四线制</b>：中性线有电流，各相不再满足和为 0，必须用三只表（或一只三相四线电能表）分别测三相。</p>
+    </div>
+    <div class="tip">cosφ = 0.5（φ=60°）时，W2 的读数为零；cosφ &lt; 0.5 时 W2 反偏，要把它的电压或电流线圈反接，读数记为负值，<b>两表代数和仍等于总有功</b>。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">07</span><h2>汽车上的对应</h2><span class="block-hint">驱动功率 · 充电功率 · 三相比单相省线</span></div>
+    <div class="ac-two">
+      <div class="ac-card"><h3>驱动电机：功率与效率</h3><p>电机输出机械功率 P=T·ω；输入电功率 P电=P/η。150 kW、95% 效率的电机满功率时，要从电池取约 158 kW。</p><span class="num">P电 = P机械 / η</span></div>
+      <div class="ac-card"><h3>充电：11 kW / 22 kW 怎么来</h3><p>三相 400 V、每相 16 A：P=√3×400×16≈11 kW；每相 32 A 时约 22 kW。单相 230 V×32 A≈7.4 kW，受单根线和插座容量限制。</p><span class="num">P = √3·UL·IL</span></div>
+    </div>
+    <p class="ac-note">同样送 11 kW，单相约需 48 A，三相每相只要 16 A。导线按电流选，每相电流小到三分之一，线束更细、发热更少，这就是大功率充电和驱动普遍采用三相的原因。</p>
+    <div class="tip">这一章的主线：三相不仅“能送更多功率”，更关键的是<b>瞬时功率恒定、转矩平稳</b>，以及<b>同样的功率下线电流更小</b>。</div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">08</span><h2>随堂练习</h2><span class="block-hint">8 题 · √3 · 补偿 · 两表法</span></div>
+    <div class="scorebar">
+      <b id="pwrScore">0 / 8</b>
+      <span>正确率 <b id="pwrRate" style="font-size:20px">—</b></span>
+      <button class="btn" id="pwrReset">重做</button>
+      <p>先自己算，再点选项。每题只判一次，解析会说明为什么。</p>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>01</em>三相总功率公式 P = √3·UL·IL·cosφ 中的 √3 来自：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 三相电压直接相加</button>
+        <button class="opt" data-opt="1">B. 三个单相功率相加后，代入星形或三角形的线相关系</button>
+        <button class="opt" data-opt="2">C. 功率因数本身带来的系数</button>
+        <button class="opt" data-opt="3">D. 中性线电流的折算</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>P=3·Up·Ip·cosφ。星形代入 Up=UL/√3、Ip=IL，或三角形代入 Up=UL、Ip=IL/√3，结果都化成 √3·UL·IL·cosφ。√3 来自相值与线值的换算，不是凭空规定。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>02</em>三相对称负载，线电压 380 V、线电流 10 A、cosφ=0.8，三相有功约为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 3.04 kW</button>
+        <button class="opt" data-opt="1">B. 5.27 kW</button>
+        <button class="opt" data-opt="2">C. 6.58 kW</button>
+        <button class="opt" data-opt="3">D. 9.12 kW</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>P=√3×380×10×0.8≈5265 W≈5.27 kW。6.58 kVA 是视在功率 S，3.95 kvar 是无功 Q。</div>
+    </div>
+
+    <div class="quiz" data-ans="3">
+      <p class="q"><em>03</em>同一台电机（每相阻抗不变）由星形改接成三角形，接在同一 380 V 电网上，总功率变为原来的：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 1/3</button>
+        <button class="opt" data-opt="1">B. 不变</button>
+        <button class="opt" data-opt="2">C. √3 倍</button>
+        <button class="opt" data-opt="3">D. 3 倍</button>
+      </div>
+      <div class="fb"><b>答案 D。</b>星形时每相电压是 220 V，三角形时是 380 V，升 √3 倍；相电流也升 √3 倍；三相合计功率变成 √3×√3=3 倍。注意这与“用线值算 P 的公式与接法无关”不矛盾：那里固定的是线值。</div>
+    </div>
+
+    <div class="quiz" data-ans="0">
+      <p class="q"><em>04</em>某负载有功不变，cosφ 从 0.7 提高到 0.95，线电流约变为原来的：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 74%</button>
+        <button class="opt" data-opt="1">B. 85%</button>
+        <button class="opt" data-opt="2">C. 100%</button>
+        <button class="opt" data-opt="3">D. 136%</button>
+      </div>
+      <div class="fb"><b>答案 A。</b>I=P/(√3·UL·cosφ)，电流与 cosφ 成反比：0.7/0.95≈0.74，即降到约 74%。线损与电流平方成正比，只剩约 55%。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>05</em>P=100 kW，把 cosφ 从 0.7 提高到 0.95，需补偿的无功约为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 33 kvar</button>
+        <button class="opt" data-opt="1">B. 69 kvar</button>
+        <button class="opt" data-opt="2">C. 100 kvar</button>
+        <button class="opt" data-opt="3">D. 130 kvar</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>Qc=P(tanφ₁−tanφ₂)=100×(1.020−0.329)≈69 kvar。tanφ 可由 cosφ 反算，补偿容量只与前后功率因数有关。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>06</em>两表法测三相对称负载功率，当 cosφ=0.5 时：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 两表读数相等</button>
+        <button class="opt" data-opt="1">B. 其中一只表的读数为 0</button>
+        <button class="opt" data-opt="2">C. 两表都反偏</button>
+        <button class="opt" data-opt="3">D. 两表读数之和为 0</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>cosφ=0.5 即 φ=60°，P₂=UL·IL·cos(φ+30°)=cos90°=0。P₁=UL·IL·cos30°≈0.866·UL·IL，正好等于总有功。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>07</em>两表法中 cosφ &lt; 0.5 时，会出现：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 两表读数都为负</button>
+        <button class="opt" data-opt="1">B. 一只表反偏，需反接后按负值读数</button>
+        <button class="opt" data-opt="2">C. 完全无法测量</button>
+        <button class="opt" data-opt="3">D. 总功率等于两表读数之差</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>φ&gt;60° 时 P₂ 为负，指针反偏。把该表的电压或电流线圈反接，读数记为负值，两表代数和仍等于总有功，不是相减。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>08</em>三相对称负载的瞬时总功率：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 以 2ω 频率脉动</button>
+        <button class="opt" data-opt="1">B. 恒定不变</button>
+        <button class="opt" data-opt="2">C. 始终为零</button>
+        <button class="opt" data-opt="3">D. 只在过零点脉动</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>三个单相瞬时功率的脉动分量互差 120°，相加后抵消，只剩平均功率 √3·UL·IL·cosφ。所以三相电机转矩平稳，不像单相电机那样抖。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 16 练习（相量·三相） ================= -->
+<section class="view" data-view="quiz2">
+  <div class="view-head">
+    <h1>练习：相量与三相</h1>
+    <p>八道题覆盖相量运算、KVL 有效值、串联阻抗、谐振、三相对称与星三角换算。选错会给出解析，做完可以重来。</p>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">01</span><h2>本轮得分</h2></div>
+    <div class="scorebar">
+      <b id="q2Score">0 / 8</b>
+      <span>正确率 <b id="q2Rate" style="font-size:20px">—</b></span>
+      <button class="btn" id="q2Reset">重做</button>
+      <p>先自己算，再点选项。每题只判一次，解析会说明为什么。</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">02</span><h2>基础四题</h2></div>
+
+    <div class="quiz" data-ans="0">
+      <p class="q"><em>01</em>5∠30° 乘以 2∠−20°，结果是：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 10∠10°</button>
+        <button class="opt" data-opt="1">B. 7∠10°</button>
+        <button class="opt" data-opt="2">C. 10∠−50°</button>
+        <button class="opt" data-opt="3">D. 10∠50°</button>
+      </div>
+      <div class="fb"><b>答案 A。</b>相量乘法：模相乘 5×2=10，幅角相加 30°+(−20°)=10°，所以是 10∠10°。不是模相加，也不是角相减。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>02</em>R=30 Ω、XL=40 Ω 串联，测得 U_R=30 V、U_L=40 V。总电压有效值是：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 70 V，直接相加</button>
+        <button class="opt" data-opt="1">B. 50 V，按相量合成</button>
+        <button class="opt" data-opt="2">C. 10 V，相减</button>
+        <button class="opt" data-opt="3">D. 无法确定</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>U_R 与 U_L 相差 90°，有效值不能直接相加。U=√(30²+40²)=50 V。30+40=70 V 是常见的错误。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>03</em>串联电路 U=10 V，R=10 Ω，XL=20 Ω，XC=10 Ω。阻抗 |Z| 与电流 I 约为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 10 Ω，1 A</button>
+        <button class="opt" data-opt="1">B. 14.1 Ω，0.707 A</button>
+        <button class="opt" data-opt="2">C. 20 Ω，0.5 A</button>
+        <button class="opt" data-opt="3">D. 30 Ω，0.333 A</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>X=XL−XC=10 Ω，|Z|=√(10²+10²)=14.1 Ω，I=U/|Z|=10/14.1≈0.707 A。电抗先相减，再与 R 按勾股定理合成。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>04</em>RLC 串联电路发生谐振时，下列哪组正确？</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. Z 最大，I 最小</button>
+        <button class="opt" data-opt="1">B. XL=XC，Z=R，I 最大</button>
+        <button class="opt" data-opt="2">C. XL=XC，Z=0，I 无穷大</button>
+        <button class="opt" data-opt="3">D. 电流滞后电压 90°</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>谐振时 XL=XC，电抗相互抵消，Z=R 达到最小，电流达到最大，电压与电流同相。Z 不会等于 0，因为电阻仍在。</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-head"><span class="block-no">03</span><h2>进阶四题</h2></div>
+
+    <div class="quiz" data-ans="2">
+      <p class="q"><em>05</em>三相对称电动势的瞬时值之和：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 等于 3Em，始终最大</button>
+        <button class="opt" data-opt="1">B. 等于 Em</button>
+        <button class="opt" data-opt="2">C. 恒等于 0</button>
+        <button class="opt" data-opt="3">D. 按正弦规律变化</button>
+      </div>
+      <div class="fb"><b>答案 C。</b>三个幅值相同、互差 120° 的正弦量，任意时刻相加都为零；相量图上三个相量首尾相接成闭合三角形，矢量和也为零。</div>
+    </div>
+
+    <div class="quiz" data-ans="3">
+      <p class="q"><em>06</em>星形接法，相电压 220 V，线电压约为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 127 V</button>
+        <button class="opt" data-opt="1">B. 220 V</button>
+        <button class="opt" data-opt="2">C. 311 V</button>
+        <button class="opt" data-opt="3">D. 381 V</button>
+      </div>
+      <div class="fb"><b>答案 D。</b>星形线电压 UL=√3·Up=1.732×220≈381 V，并且线电压超前对应相电压 30°。220 V 是相电压，311 V 是 220 V 正弦的峰值，不是线电压。</div>
+    </div>
+
+    <div class="quiz" data-ans="2">
+      <p class="q"><em>07</em>三角形接法，每相电流 10 A，线电流约为：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 10 A</button>
+        <button class="opt" data-opt="1">B. 14.1 A</button>
+        <button class="opt" data-opt="2">C. 17.3 A</button>
+        <button class="opt" data-opt="3">D. 30 A</button>
+      </div>
+      <div class="fb"><b>答案 C。</b>三角形平衡时 IL=√3·Ip=1.732×10≈17.3 A。线电压等于相电压，但线电流是两相电流的相量和，所以是 √3 倍。</div>
+    </div>
+
+    <div class="quiz" data-ans="1">
+      <p class="q"><em>08</em>三相电源任意对调两相后，三相异步电机：</p>
+      <div class="opts">
+        <button class="opt" data-opt="0">A. 转速升高</button>
+        <button class="opt" data-opt="1">B. 转向反转</button>
+        <button class="opt" data-opt="2">C. 立即停转</button>
+        <button class="opt" data-opt="3">D. 不受影响</button>
+      </div>
+      <div class="fb"><b>答案 B。</b>对调两相改变相序，旋转磁场方向反转，转子受到的转矩方向也反转。频率和电压没变，所以转速大小基本不变，只是方向相反。</div>
+    </div>
+  </div>
+</section>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var TAU=Math.PI*2;
+var FONT='"Microsoft YaHei UI","Microsoft YaHei","PingFang SC",sans-serif';
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+/* ============ 音效（与直流课件同一套方案） ============ */
+var SFX=(function(){
+  var ctx=null,master=null,mode='full',enabled=true,vol=.3;
+  var KEY='acCircuitSfx.v1';
+  function load(){try{var s=JSON.parse(localStorage.getItem(KEY)||'{}');if(typeof s.enabled==='boolean')enabled=s.enabled;if(typeof s.vol==='number')vol=s.vol;if(s.mode)mode=s.mode;}catch(e){}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify({enabled:enabled,vol:vol,mode:mode}));}catch(e){}}
+  function ensure(){
+    if(!enabled)return null;
+    if(!ctx){
+      var AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return null;
+      ctx=new AC();master=ctx.createGain();master.gain.value=vol;master.connect(ctx.destination);
+    }
+    if(ctx.state==='suspended')ctx.resume();
+    return ctx;
+  }
+  function tone(f1,f2,dur,type,gain){
+    var c=ensure();if(!c)return;
+    var o=c.createOscillator(),g=c.createGain(),t=c.currentTime;
+    o.type=type||'sine';
+    o.frequency.setValueAtTime(f1,t);
+    if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(30,f2),t+dur);
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(gain||.06,t+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.03);
+  }
+  function tick(){tone(1250,900,.05,'triangle',.025);}
+  function page(){tone(420,620,.12,'sine',.04);}
+  function snap(){tone(880,1320,.08,'triangle',.045);}
+  function correct(){tone(660,990,.12,'sine',.06);setTimeout(function(){tone(990,1320,.14,'sine',.05);},100);}
+  function wrong(){tone(220,140,.22,'sawtooth',.045);}
+  function stepOk(){tone(520,780,.1,'sine',.045);}
+  function ui(){if(mode==='lite')tick();else page();}
+  return {
+    tick:tick,page:page,snap:snap,correct:correct,wrong:wrong,stepOk:stepOk,ui:ui,
+    unlock:ensure,
+    initUI:function(){
+      load();
+      var b=$('auMute'),v=$('auVol'),m=$('auMode');
+      if(!b||!v||!m)return;
+      function syncBtn(){b.textContent=enabled?'音效':'静音';b.classList.toggle('off',!enabled);b.setAttribute('aria-pressed',enabled?'false':'true');}
+      syncBtn();v.value=Math.round(vol*100);m.value=mode;
+      b.onclick=function(){enabled=!enabled;save();syncBtn();if(enabled){ensure();snap();}};
+      v.oninput=function(){vol=+v.value/100;save();if(master)master.gain.value=vol;};
+      v.onchange=function(){if(enabled)tick();};
+      m.onchange=function(){mode=m.value;save();if(enabled)snap();};
+    }
+  };
+})();
+
+/* ============ Canvas 注册与基础绘制 ============ */
+var DRAW={};
+function registerCanvas(id,fn){var c=$(id);if(c)DRAW[id]={c:c,fn:fn};}
+function fitCanvas(c){
+  var w=c.clientWidth||640,h=c.clientHeight||320,dpr=Math.min(2,window.devicePixelRatio||1);
+  if(c.width!==Math.round(w*dpr)||c.height!==Math.round(h*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);}
+  var g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  return {g:g,w:w,h:h};
+}
+function paint(id){var d=DRAW[id];if(!d)return;var o=fitCanvas(d.c);o.g.clearRect(0,0,o.w,o.h);d.fn(o.g,o.w,o.h);}
+function paintAll(){for(var k in DRAW)paint(k);}
+function cvText(c,t,x,y,color,size,align,bold){
+  c.save();c.fillStyle=color||'#9fb0c2';c.font=(bold?'600 ':'')+(size||12)+'px '+FONT;
+  c.textAlign=align||'left';c.textBaseline='middle';c.fillText(t,x,y);c.restore();
+}
+function cvTag(c,t,x,y,color,size){
+  c.save();c.font='600 '+(size||11)+'px '+FONT;
+  var w=c.measureText(t).width+14,h=(size||11)+10;
+  c.fillStyle='rgba(11,16,23,.9)';c.strokeStyle='rgba(43,57,71,.9)';c.lineWidth=1;
+  c.beginPath();
+  if(c.roundRect)c.roundRect(x-w/2,y-h/2,w,h,6);else c.rect(x-w/2,y-h/2,w,h);
+  c.fill();c.stroke();
+  c.fillStyle=color||'#cfe0f0';c.textAlign='center';c.textBaseline='middle';c.fillText(t,x,y+.5);c.restore();
+}
+function grid(c,x0,y0,w,h,cols,rows){
+  c.save();c.strokeStyle='#17212c';c.lineWidth=1;
+  for(var i=0;i<=cols;i++){var x=x0+w*i/cols;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+h);c.stroke();}
+  for(var j=0;j<=rows;j++){var y=y0+h*j/rows;c.beginPath();c.moveTo(x0,y);c.lineTo(x0+w,y);c.stroke();}
+  c.strokeStyle='#2b3947';c.beginPath();c.moveTo(x0,y0+h/2);c.lineTo(x0+w,y0+h/2);c.stroke();
+  c.restore();
+}
+function sine(c,x0,yc,w,amp,phase,color,lw,dash,cycles){
+  cycles=cycles||2;c.save();c.strokeStyle=color;c.lineWidth=lw||2;if(dash)c.setLineDash(dash);
+  c.beginPath();
+  for(var i=0;i<=480;i++){
+    var t=i/480*TAU*cycles,x=x0+w*i/480,y=yc-amp*Math.sin(t+phase);
+    if(i)c.lineTo(x,y);else c.moveTo(x,y);
+  }
+  c.stroke();c.restore();
+}
+function hline(c,x0,x1,y,color,lw,dash){
+  c.save();c.strokeStyle=color;c.lineWidth=lw||1;if(dash)c.setLineDash(dash);
+  c.beginPath();c.moveTo(x0,y);c.lineTo(x1,y);c.stroke();c.restore();
+}
+function vline(c,x,y0,y1,color,lw,dash){
+  c.save();c.strokeStyle=color;c.lineWidth=lw||1;if(dash)c.setLineDash(dash);
+  c.beginPath();c.moveTo(x,y0);c.lineTo(x,y1);c.stroke();c.restore();
+}
+function arrow(c,x1,y1,x2,y2,color,lw){
+  c.save();c.strokeStyle=color;c.fillStyle=color;c.lineWidth=lw||2;
+  c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+  var a=Math.atan2(y2-y1,x2-x1),s=7;
+  c.beginPath();c.moveTo(x2,y2);
+  c.lineTo(x2-s*Math.cos(a-.42),y2-s*Math.sin(a-.42));
+  c.lineTo(x2-s*Math.cos(a+.42),y2-s*Math.sin(a+.42));
+  c.closePath();c.fill();c.restore();
+}
+
+/* ============ 导航 ============ */
+var META={
+  gen:['正弦交流电的产生','线圈 · 磁通 · 感应电动势'],
+  three:['描述量与三要素','瞬时值 · 周期 · 频率 · 初相'],
+  rms:['有效值与峰值','热效应等效 · 220 V 与 311 V'],
+  res:['电阻在交流中','同相 · 耗能 · 有功'],
+  ind:['电感在交流中','滞后 90° · 感抗 · 磁场储能'],
+  cap:['电容在交流中','超前 90° · 容抗 · 电场储能'],
+  cmp:['三种元件对比','相位 · 频率 · 功率 · 谐振'],
+  auto:['汽车上的交流','发电机 · 整流 · 逆变 · 驱动'],
+  quiz:['练习与自测','8 题 · 即时解析'],
+  phasor:['相量法基础','旋转相量 · 运算 · 定律相量形式'],
+  rlc:['串联正弦电路','阻抗 · 三角形 · 谐振 · 功率'],
+  p3:['三相电动势','对称 · 相序 · 星三角 · 为什么三相'],
+  rotf:['旋转磁场','三相合成 · 转向 · 异步电机'],
+  conn3:['三相的连接','负载接法 · 中性线 · 缺相 · 相序'],
+  pwr3:['三相功率','√3 · 功率三角形 · 补偿 · 两表法'],
+  quiz2:['练习：相量与三相','8 题 · 即时解析']
+};
+var ORDER=['gen','three','rms','res','ind','cap','cmp','auto','quiz','phasor','rlc','p3','rotf','conn3','pwr3','quiz2'];
+var curView='gen';
+function switchView(name){
+  if(!META[name])name='gen';
+  curView=name;
+  var items=document.querySelectorAll('.nav-item');
+  for(var i=0;i<items.length;i++)items[i].classList.toggle('active',items[i].getAttribute('data-view')===name);
+  var vs=document.querySelectorAll('.view');
+  for(var j=0;j<vs.length;j++)vs[j].classList.toggle('active',vs[j].getAttribute('data-view')===name);
+  $('topTitle').textContent=META[name][0];
+  $('topCrumb').textContent=META[name][1];
+  var idx=ORDER.indexOf(name);
+  $('progBar').style.width=Math.round((idx+1)/ORDER.length*100)+'%';
+  $('main').scrollTop=0;
+  paintAll();
+  if(name==='gen'&&GEN.on&&!RUN.lastT)RUN.lastT=performance.now();
+}
+var RUN={lastT:0};
+function loop(now){
+  if(!RUN.lastT)RUN.lastT=now;
+  var dt=Math.min(.06,(now-RUN.lastT)/1000);RUN.lastT=now;
+  if(curView==='gen'&&GEN.on){
+    GEN.th=(GEN.th+TAU*GEN.speed*dt)%TAU;
+    genSyncDom();paint('genCanvas');
+  }
+  if(curView==='rotf'&&ROT.on){
+    ROT.th+=ROT.seq*ROT.speed*dt;
+    paint('rotCanvas');rotSyncDom();
+  }
+  requestAnimationFrame(loop);
+}
+
+/* ============ 01 产生 ============ */
+var GEN={on:true,th:0,speed:.5};
+function genSyncDom(){
+  var d=GEN.th*180/Math.PI;
+  $('genTh').textContent=d.toFixed(0)+'°';
+  $('genFlux').textContent=Math.cos(GEN.th).toFixed(2);
+  $('genEmf').textContent=Math.sin(GEN.th).toFixed(2);
+}
+function genDraw(c,w,h){
+  var topH=Math.min(238,h-126),cx=w/2,cy=topH/2+10;
+  c.save();
+  /* 磁极 */
+  c.fillStyle='#151f2a';c.strokeStyle='#2b3947';c.lineWidth=1;
+  c.beginPath();c.rect(22,cy-72,44,144);c.fill();c.stroke();
+  c.beginPath();c.rect(w-66,cy-72,44,144);c.fill();c.stroke();
+  cvText(c,'N',44,cy-86,'#93c5fd',15,'center',true);
+  cvText(c,'S',w-44,cy-86,'#fca5a5',15,'center',true);
+  /* 磁感线 */
+  c.strokeStyle='#243240';c.lineWidth=1;c.setLineDash([4,5]);
+  for(var i=0;i<5;i++){
+    var yy=cy-56+i*28;
+    c.beginPath();c.moveTo(70,yy);c.lineTo(w-70,yy);c.stroke();
+    c.beginPath();c.moveTo(w-78,yy-4);c.lineTo(w-70,yy);c.lineTo(w-78,yy+4);c.stroke();
+  }
+  c.setLineDash([]);
+  /* 线圈（矩形回路，绕垂直纸面的轴转动，用投影宽度表示） */
+  var proj=Math.abs(Math.cos(GEN.th)),hh=112,wd=20+96*proj;
+  c.save();c.translate(cx,cy);
+  c.fillStyle='rgba(45,212,191,.10)';c.strokeStyle='#2dd4bf';c.lineWidth=2.5;
+  c.beginPath();c.rect(-wd/2,-hh/2,wd,hh);c.fill();c.stroke();
+  c.strokeStyle='rgba(251,191,36,.85)';c.lineWidth=2;
+  c.beginPath();c.moveTo(-wd/2,-hh/2);c.lineTo(-wd/2,hh/2);c.moveTo(wd/2,-hh/2);c.lineTo(wd/2,hh/2);c.stroke();
+  c.restore();
+  /* 转轴与滑环 */
+  c.fillStyle='#0b1017';c.strokeStyle='#5d6d80';c.lineWidth=2;
+  c.beginPath();c.arc(cx,cy,5,0,TAU);c.fill();c.stroke();
+  cvText(c,'转轴',cx,cy-16,'#5d6d80',10,'center');
+  cvText(c,'θ='+(GEN.th*180/Math.PI).toFixed(0)+'°',cx,cy+hh/2+22,'#9fb0c2',11,'center');
+  c.restore();
+
+  /* 波形区 */
+  var x0=58,y0=topH+18,ww=w-104,hhh=h-topH-44,yc=y0+hhh/2,amp=hhh/2-10;
+  grid(c,x0,y0,ww,hhh,8,2);
+  sine(c,x0,yc,ww,amp*.86,0,'rgba(45,212,191,.55)',1.5,[5,4],2);
+  sine(c,x0,yc,ww,amp*.86,0,'#38bdf8',2.2,null,2);
+  var ph=GEN.th%TAU,xDot=x0+ww*ph/TAU;
+  var yDot=yc-amp*.86*Math.sin(ph);
+  vline(c,xDot,y0,y0+hhh,'rgba(251,191,36,.45)',1,[3,3]);
+  c.fillStyle='#fbbf24';c.beginPath();c.arc(xDot,yDot,4.5,0,TAU);c.fill();
+  cvText(c,'e',x0+10,y0+12,'#38bdf8',11,'left',true);
+  cvText(c,'Φ（虚线，按峰值归一）',x0+ww-6,y0+12,'rgba(45,212,191,.85)',10,'right');
+  cvText(c,'0',x0,y0+hhh+14,'#5d6d80',10,'center');
+  cvText(c,'T',x0+ww/2,y0+hhh+14,'#5d6d80',10,'center');
+  cvText(c,'2T',x0+ww,y0+hhh+14,'#5d6d80',10,'center');
+}
+
+/* ============ 02 三要素实验台 ============ */
+var LAB={A:10,f:50,ph:0};
+function labDraw(c,w,h){
+  var x0=46,y0=26,ww=w-(w>560?178:66),hh=h-62,yc=y0+hh/2,amp=Math.min(72,hh*.42);
+  grid(c,x0,y0,ww,hh,8,4);
+  var ph=LAB.ph*Math.PI/180;
+  hline(c,x0,x0+ww,yc-amp,'rgba(56,189,248,.28)',1,[4,4]);
+  hline(c,x0,x0+ww,yc+amp,'rgba(56,189,248,.28)',1,[4,4]);
+  sine(c,x0,yc,ww,amp,ph,'#38bdf8',2.4,null,2);
+  var T=1000/LAB.f;
+  cvText(c,'u/V',x0+4,y0+10,'#38bdf8',10,'left',true);
+  cvText(c,'0',x0-4,yc,'#5d6d80',10,'right');
+  cvText(c,'0',x0,y0+hh+14,'#5d6d80',10,'center');
+  cvText(c,(T).toFixed(1),x0+ww/2,y0+hh+14,'#5d6d80',10,'center');
+  cvText(c,(2*T).toFixed(1)+' ms',x0+ww,y0+hh+14,'#5d6d80',10,'center');
+  if(w>560){
+    var px=w-86,py=yc+4,r=52;
+    c.strokeStyle='#22303f';c.lineWidth=1;
+    c.beginPath();c.arc(px,py,r,0,TAU);c.stroke();
+    c.beginPath();c.moveTo(px-r-12,py);c.lineTo(px+r+12,py);c.moveTo(px,py-r-12);c.lineTo(px,py+r+12);c.stroke();
+    var ex=px+r*Math.cos(ph),ey=py-r*Math.sin(ph);
+    arrow(c,px,py,ex,ey,'#fbbf24',2);
+    c.fillStyle='#fbbf24';c.beginPath();c.arc(ex,ey,3.5,0,TAU);c.fill();
+    cvText(c,'Um∠'+LAB.ph.toFixed(0)+'°',px,py+r+24,'#9fb0c2',10.5,'center');
+    cvText(c,'相量',px,py-r-20,'#5d6d80',10,'center');
+  }
+}
+function labSync(){
+  LAB.A=+$('labA').value;LAB.f=+$('labF').value;LAB.ph=+$('labPh').value;
+  $('labAVal').textContent=LAB.A.toFixed(1)+' V';
+  $('labFVal').textContent=LAB.f+' Hz';
+  $('labPhVal').textContent=(LAB.ph>0?'+':'')+LAB.ph+'°';
+  $('labT').textContent=(1000/LAB.f).toFixed(1)+' ms';
+  $('labW').textContent=(TAU*LAB.f).toFixed(0)+' rad/s';
+  $('labU0').textContent=(LAB.A*Math.sin(LAB.ph*Math.PI/180)).toFixed(2)+' V';
+  $('labUrms').textContent=(LAB.A/Math.SQRT2).toFixed(2)+' V';
+  paint('labCanvas');
+}
+
+/* ============ 02 相位差测量 ============ */
+var MEAS={deg:60,a:0,b:3,asked:0,right:0,locked:true};
+var MEAS_SET=[30,45,60,75,90,120,135];
+function measDraw(c,w,h){
+  var x0=46,y0=24,ww=w-64,hh=h-64,yc=y0+hh/2,amp=Math.min(64,hh*.4);
+  grid(c,x0,y0,ww,hh,8,4);
+  sine(c,x0,yc,ww,amp,0,'#38bdf8',2.2,null,2);
+  sine(c,x0,yc,ww,amp,MEAS.deg*Math.PI/180,'#fbbf24',2.2,[7,4],2);
+  var ax=x0+ww*MEAS.a/40,bx=x0+ww*MEAS.b/40;
+  vline(c,ax,y0-4,y0+hh+4,'#2dd4bf',2);
+  vline(c,bx,y0-4,y0+hh+4,'#f472b6',2,[5,4]);
+  cvTag(c,'A',ax,y0-12,'#2dd4bf',11);
+  cvTag(c,'B',bx,y0-12,'#f472b6',11);
+  if(Math.abs(bx-ax)>26){
+    var my=y0-12;
+    c.strokeStyle='rgba(251,191,36,.8)';c.lineWidth=1;
+    c.beginPath();c.moveTo(ax,my+10);c.lineTo(bx,my+10);c.stroke();
+    arrow(c,ax,my+10,ax+8,my+10,'rgba(251,191,36,.8)',1);
+    arrow(c,bx,my+10,bx-8,my+10,'rgba(251,191,36,.8)',1);
+  }
+  cvText(c,'5 ms/格 · 共 40 ms（2 个周期）',x0+ww/2,y0+hh+18,'#5d6d80',10,'center');
+  cvText(c,'u₁',x0+6,y0+10,'#38bdf8',10,'left',true);
+  cvText(c,'u₂',x0+30,y0+10,'#fbbf24',10,'left',true);
+}
+function measSync(){
+  MEAS.a=+$('curA').value;MEAS.b=+$('curB').value;
+  $('curAVal').textContent=MEAS.a.toFixed(1)+' ms';
+  $('curBVal').textContent=MEAS.b.toFixed(1)+' ms';
+  $('measDt').textContent=Math.abs(MEAS.b-MEAS.a).toFixed(1)+' ms';
+  paint('measCanvas');
+}
+function measNew(){
+  var old=MEAS.deg;
+  for(var i=0;i<10;i++){MEAS.deg=MEAS_SET[Math.floor(Math.random()*MEAS_SET.length)];if(MEAS.deg!==old)break;}
+  MEAS.a=0;MEAS.b=Math.round(MEAS.deg/18*10)/10;MEAS.locked=false;
+  $('measAns').value='';$('measAns').classList.remove('ok','bad');
+  $('measFb').className='meas-fb';
+  $('measFb').innerHTML='先把 A 对准 u₁ 的正向过零点，再把 B 对准 u₂ 的同一特征点，读出 Δt，然后用 Δφ=18°/ms×Δt 换算。';
+  $('measBox').setAttribute('data-deg',MEAS.deg);
+  $('curA').value=MEAS.a;$('curB').value=MEAS.b;
+  measSync();
+}
+function measCheck(){
+  if(MEAS.locked){SFX.tick();return;}
+  var v=parseFloat(($('measAns').value||'').replace(/[^\d.\-]/g,''));
+  if(!isFinite(v)){SFX.wrong();$('measFb').className='meas-fb bad';$('measFb').textContent='先填一个角度再判分。';return;}
+  var dt=Math.abs(MEAS.b-MEAS.a);
+  var calc=18*dt;
+  var ok=Math.abs(v-MEAS.deg)<=2.5;
+  MEAS.locked=true;MEAS.asked++;
+  if(ok)MEAS.right++;
+  $('measAsked').textContent=MEAS.asked;
+  $('measRate').textContent=Math.round(MEAS.right/MEAS.asked*100)+'%';
+  $('measAns').classList.add(ok?'ok':'bad');
+  var fb=$('measFb');
+  fb.className='meas-fb '+(ok?'ok':'bad');
+  fb.innerHTML=(ok?'<b>正确。</b>':'<b>再想想。</b>')+
+    ' 本题相位差为 <b>'+MEAS.deg+'°</b>，对应 Δt='+(MEAS.deg/18).toFixed(1)+' ms。'+
+    '换算：360°×50 Hz×Δt = 18°/ms×'+(MEAS.deg/18).toFixed(1)+' ms = '+MEAS.deg+'°。'+
+    (ok?'':' 你当前游标差 Δt='+dt.toFixed(1)+' ms，按此算得 '+calc.toFixed(0)+'°，注意两条游标要卡在同一特征点。');
+  if(ok)SFX.correct();else SFX.wrong();
+}
+
+/* ============ 03 有效值 ============ */
+var RMS={peak:311.1,rms:220,avg:198.1,dc:false};
+function rmsDraw(c,w,h){
+  var x0=38,y0=22,ww=w-104,hh=h-58,yc=y0+hh/2,amp=Math.min(82,hh*.4);
+  grid(c,x0,y0,ww,hh,8,4);
+  sine(c,x0,yc,ww,amp,0,'#38bdf8',2.2,null,2);
+  var pk=Math.max(RMS.peak,1e-6);
+  var yP=yc-amp,yR=yc-amp*RMS.rms/pk,yA=yc-amp*RMS.avg/pk;
+  hline(c,x0,x0+ww,yP,'rgba(56,189,248,.35)',1,[4,4]);
+  hline(c,x0,x0+ww,yR,'#2dd4bf',1.4,[2,3]);
+  hline(c,x0,x0+ww,yA,'rgba(251,191,36,.85)',1.2,[6,4]);
+  cvText(c,'Um',x0+ww-2,yP-9,'#38bdf8',10,'right',true);
+  cvText(c,'U',x0+ww-2,yR-9,'#2dd4bf',10,'right',true);
+  cvText(c,'Uav',x0+ww-2,yA+10,'#fbbf24',10,'right',true);
+  cvText(c,'0',x0-4,yc,'#5d6d80',10,'right');
+  cvText(c,'u/V',x0+2,y0+10,'#38bdf8',10,'left',true);
+  cvText(c,'t',x0+ww,y0+hh+14,'#5d6d80',10,'right');
+}
+function rmsSync(){
+  var v=parseFloat(($('rmsIn').value||'').replace(/[^\d.\-]/g,''));
+  if(!isFinite(v)||v<=0)v=1;
+  var mode=$('rmsMode').value,peak,rms,avg;
+  if(RMS.dc){
+    peak=rms=avg=v;
+  }else if(mode==='peak'){
+    peak=v;rms=v/Math.SQRT2;avg=2*v/Math.PI;
+  }else if(mode==='avg'){
+    avg=v;peak=v*Math.PI/2;rms=peak/Math.SQRT2;
+  }else{
+    rms=v;peak=v*Math.SQRT2;avg=2*peak/Math.PI;
+  }
+  RMS.peak=peak;RMS.rms=rms;RMS.avg=avg;
+  $('rmsPeak').textContent=peak.toFixed(1)+' V';
+  $('rmsRms').textContent=rms.toFixed(1)+' V';
+  $('rmsAvg').textContent=avg.toFixed(1)+' V';
+  var note=$('rmsNote');
+  if(RMS.dc){
+    note.innerHTML='<b>12 V 直流：</b>电压恒定，峰值、有效值、平均值都是 12 V，没有 √2 换算。把它和 220 V 交流放在一起，是为了说明“交流的 220 V”已经折算成等效直流的发热能力。';
+  }else if(Math.abs(rms-220)<0.6){
+    note.innerHTML='220 V 是<b>有效值</b>，对应峰值 311 V（220×√2），整流平均值 198 V。选耐压按 311 V 起步，仪表读数按 220 V。';
+  }else if(Math.abs(rms-110)<0.6){
+    note.innerHTML='110 V 市电的有效值对应峰值 156 V。换成峰值或平均值时，其余两栏按同一比例变化。';
+  }else{
+    note.innerHTML='按纯正弦换算：峰值 = √2×有效值，平均值 = 0.637×峰值。三个值描述的是同一条正弦波，只是用途不同。';
+  }
+  paint('rmsCanvas');
+}
+
+/* ============ 04/05/06 单一元件实验台 ============ */
+var EL={
+  R:{U:10,f:50,R:100},
+  L:{U:10,f:50,L:.1},
+  C:{U:10,f:50,C:1e-5}
+};
+function elCalc(mode){
+  var s=EL[mode],I,X;
+  if(mode==='R'){
+    X=s.R;I=s.U/X;
+    return {X:X,Ipk:I,Irms:I/Math.SQRT2,P:s.U*I/2,Q:0,ph:0};
+  }
+  if(mode==='L'){
+    X=TAU*s.f*s.L;I=s.U/X;
+    return {X:X,Ipk:I,Irms:I/Math.SQRT2,P:0,Q:s.U*I/2,ph:-90};
+  }
+  X=1/(TAU*s.f*s.C);I=s.U/X;
+  return {X:X,Ipk:I,Irms:I/Math.SQRT2,P:0,Q:s.U*I/2,ph:90};
+}
+function elDraw(c,w,h,mode){
+  var s=EL[mode],r=elCalc(mode);
+  var x0=44,y0=24,ww=w-70,hh=h-64,yc=y0+hh/2,amp=Math.min(56,hh*.28);
+  grid(c,x0,y0,ww,hh,8,4);
+  var iph=mode==='L'?-Math.PI/2:mode==='C'?Math.PI/2:0;
+  sine(c,x0,yc,ww,amp,0,'#38bdf8',2.2,null,2);
+  sine(c,x0,yc,ww,amp*.74,iph,'#fbbf24',2.2,null,2);
+  /* 功率曲线 */
+  var base=y0+hh-10,pamp=26;
+  c.save();c.strokeStyle='#4ade80';c.lineWidth=1.6;
+  c.beginPath();
+  for(var i=0;i<=360;i++){
+    var t=i/360*TAU*2;
+    var prod=Math.sin(t)*Math.sin(t+iph);
+    var x=x0+ww*i/360,y=base-pamp*prod;
+    if(i)c.lineTo(x,y);else c.moveTo(x,y);
+  }
+  c.stroke();c.restore();
+  hline(c,x0,x0+ww,base,'rgba(74,222,128,.32)',1,[3,4]);
+  cvText(c,'p',x0+3,base-8,'#4ade80',10,'left',true);
+  /* u 峰值处的竖线 */
+  var xq=x0+ww/8;
+  vline(c,xq,y0,y0+hh,'rgba(148,163,184,.35)',1,[3,3]);
+  c.fillStyle='#38bdf8';c.beginPath();c.arc(xq,yc-amp,3.5,0,TAU);c.fill();
+  var yi=yc-amp*.74*Math.sin(Math.PI/2+iph);
+  c.fillStyle='#fbbf24';c.beginPath();c.arc(xq,yi,3.5,0,TAU);c.fill();
+  cvText(c,'u/V · i/A',x0+2,y0+10,'#9fb0c2',10,'left');
+  var phTxt=mode==='R'?'u 与 i 同相':mode==='L'?'u 超前 i 90°':'i 超前 u 90°';
+  cvText(c,phTxt,x0+ww-4,y0+10,'#fcd34d',11,'right',true);
+  cvText(c,'t',x0+ww,y0+hh+14,'#5d6d80',10,'right');
+}
+function elSync(mode){
+  var s=EL[mode];
+  if(mode==='R'){
+    s.U=+$('rU').value;s.f=+$('rF').value;s.R=+$('rR').value;
+  }else if(mode==='L'){
+    s.U=+$('lU').value;s.f=+$('lF').value;s.L=+$('lL').value/1000;
+  }else{
+    s.U=+$('cU').value;s.f=+$('cF').value;s.C=+$('cC').value/1e6;
+  }
+  var r=elCalc(mode);
+  if(mode==='R'){
+    $('rUVal').textContent=s.U.toFixed(1)+' V';
+    $('rFVal').textContent=s.f+' Hz';
+    $('rRVal').textContent=s.R+' Ω';
+    $('rIpk').textContent=r.Ipk.toFixed(3)+' A';
+    $('rIrms').textContent=r.Irms.toFixed(3)+' A';
+    $('rP').textContent=r.P.toFixed(2)+' W';
+    $('rPh').textContent='0°';
+  }else if(mode==='L'){
+    $('lUVal').textContent=s.U.toFixed(1)+' V';
+    $('lFVal').textContent=s.f+' Hz';
+    $('lLVal').textContent=(s.L*1000).toFixed(0)+' mH';
+    $('lX').textContent=r.X.toFixed(1)+' Ω';
+    $('lIpk').textContent=r.Ipk.toFixed(3)+' A';
+    $('lQ').textContent=r.Q.toFixed(2)+' var';
+    $('lPh').textContent='u 超前 90°';
+  }else{
+    $('cUVal').textContent=s.U.toFixed(1)+' V';
+    $('cFVal').textContent=s.f+' Hz';
+    $('cCVal').textContent=(s.C*1e6).toFixed(0)+' µF';
+    $('cX').textContent=r.X.toFixed(1)+' Ω';
+    $('cIpk').textContent=r.Ipk.toFixed(3)+' A';
+    $('cQ').textContent=r.Q.toFixed(2)+' var';
+    $('cPh').textContent='i 超前 90°';
+  }
+  paint(mode==='R'?'rCanvas':mode==='L'?'lCanvas':'cCanvas');
+}
+
+/* ============ 07 双踪对比台 ============ */
+var CMP={f:50,R:100,L:.1,C:1e-5,sel:{R:true,L:true,C:true}};
+var CMP_COL={R:'#4ade80',L:'#a78bfa',C:'#f472b6'};
+function cmpCalc(){
+  var om=TAU*CMP.f;
+  return {
+    R:{I:10/CMP.R,ph:0},
+    L:{I:10/(om*CMP.L),ph:-Math.PI/2},
+    C:{I:10*om*CMP.C,ph:Math.PI/2}
+  };
+}
+function cmpDraw(c,w,h){
+  var x0=52,y0=28,ww=w-76,hh=h-58,yc=y0+hh/2,amp=Math.min(66,hh*.34);
+  grid(c,x0,y0,ww,hh,8,4);
+  sine(c,x0,yc,ww,amp,0,'#38bdf8',2.4,null,2);
+  var r=cmpCalc();
+  ['R','L','C'].forEach(function(k){
+    if(!CMP.sel[k])return;
+    sine(c,x0,yc,ww,amp*.68,r[k].ph,CMP_COL[k],2,null,2);
+  });
+  vline(c,x0+ww/2,y0,y0+hh,'rgba(148,163,184,.22)',1,[3,4]);
+  cvText(c,'u',x0+4,y0+10,'#38bdf8',10,'left',true);
+  var txt='iR 同相 0°';
+  if(CMP.sel.L)txt+=' · iL 滞后 90°';
+  if(CMP.sel.C)txt+=' · iC 超前 90°';
+  cvText(c,txt,x0+ww-6,y0+24,'#fcd34d',10.5,'right');
+  cvText(c,'0',x0,y0+hh+14,'#5d6d80',10,'center');
+  cvText(c,'T',x0+ww/2,y0+hh+14,'#5d6d80',10,'center');
+  cvText(c,'2T',x0+ww,y0+hh+14,'#5d6d80',10,'center');
+}
+function cmpSync(){
+  CMP.f=+$('cmpF').value;CMP.R=+$('cmpR').value;
+  CMP.L=+$('cmpL').value/1000;CMP.C=+$('cmpC').value/1e6;
+  $('cmpFVal').textContent=CMP.f+' Hz';
+  $('cmpRVal').textContent=CMP.R+' Ω';
+  $('cmpLVal').textContent=$('cmpL').value+' mH';
+  $('cmpCVal').textContent=$('cmpC').value+' µF';
+  var r=cmpCalc();
+  $('cmpRtxt').textContent=r.R.I.toFixed(3)+' A · 0°';
+  $('cmpLtxt').textContent=r.L.I.toFixed(3)+' A · −90°';
+  $('cmpCtxt').textContent=r.C.I.toFixed(3)+' A · +90°';
+  paint('cmpCanvas');
+}
+
+/* ============ 07 感抗容抗频率扫描 ============ */
+var SW={L:.1,C:1e-5,f:159};
+function swCalc(){
+  var f0=1/(TAU*Math.sqrt(SW.L*SW.C)),X0=TAU*f0*SW.L;
+  return {f0:f0,X0:X0,XL:TAU*SW.f*SW.L,XC:1/(TAU*SW.f*SW.C)};
+}
+function swDraw(c,w,h){
+  var x0=64,y0=26,ww=w-88,hh=h-64;
+  var lf0=Math.log(10)/Math.LN10,lf1=Math.log(1000)/Math.LN10;
+  var lx1=Math.log(3000)/Math.LN10;
+  function fx(f){return x0+ww*(Math.log(clamp(f,10,1000))/Math.LN10-lf0)/(lf1-lf0);}
+  function fy(X){X=clamp(X,1,3000);return y0+hh*(lx1-Math.log(X)/Math.LN10)/lx1;}
+  c.save();c.strokeStyle='#17212c';c.lineWidth=1;
+  [1,10,100,1000].forEach(function(v){
+    var y=fy(v);c.beginPath();c.moveTo(x0,y);c.lineTo(x0+ww,y);c.stroke();
+    cvText(c,v+'',x0-7,y,'#5d6d80',10,'right');
+  });
+  [10,30,100,300,1000].forEach(function(v){
+    var x=fx(v);c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+hh);c.stroke();
+    cvText(c,v+'',x,y0+hh+14,'#5d6d80',10,'center');
+  });
+  c.strokeStyle='#2b3947';c.strokeRect(x0,y0,ww,hh);c.restore();
+  cvText(c,'X/Ω',x0-7,y0-10,'#9fb0c2',10,'right',true);
+  cvText(c,'f/Hz',x0+ww,y0-10,'#9fb0c2',10,'right',true);
+
+  function curve(color,fn){
+    c.save();c.strokeStyle=color;c.lineWidth=2.3;c.beginPath();
+    for(var i=0;i<=180;i++){
+      var f=10*Math.pow(100,i/180),x=fx(f),y=fy(fn(f));
+      if(i)c.lineTo(x,y);else c.moveTo(x,y);
+    }
+    c.stroke();c.restore();
+  }
+  curve('#a78bfa',function(f){return TAU*f*SW.L;});
+  curve('#f472b6',function(f){return 1/(TAU*f*SW.C);});
+
+  var r=swCalc();
+  var xf0=fx(r.f0),yX0=fy(r.X0);
+  vline(c,xf0,y0,y0+hh,'rgba(45,212,191,.55)',1.4,[5,4]);
+  c.fillStyle='#2dd4bf';c.beginPath();c.arc(xf0,yX0,5,0,TAU);c.fill();
+  cvTag(c,'f₀ '+r.f0.toFixed(0)+' Hz',clamp(xf0,x0+52,x0+ww-52),y0+13,'#2dd4bf',10);
+  /* 当前工作频率 */
+  var xf=fx(SW.f);
+  vline(c,xf,y0,y0+hh,'rgba(234,243,255,.28)',1,[3,4]);
+  c.fillStyle='#a78bfa';c.beginPath();c.arc(xf,fy(r.XL),3.5,0,TAU);c.fill();
+  c.fillStyle='#f472b6';c.beginPath();c.arc(xf,fy(r.XC),3.5,0,TAU);c.fill();
+  cvText(c,'XL',fx(760),fy(TAU*760*SW.L)-12,'#a78bfa',10.5,'left',true);
+  cvText(c,'XC',fx(12)+2,fy(1/(TAU*12*SW.C))+13,'#f472b6',10.5,'left',true);
+}
+function swSync(){
+  SW.L=+$('swL').value/1000;SW.C=+$('swC').value/1e6;SW.f=+$('swF').value;
+  $('swLVal').textContent=$('swL').value+' mH';
+  $('swCVal').textContent=$('swC').value+' µF';
+  $('swFVal').textContent=SW.f+' Hz';
+  var r=swCalc();
+  $('swXL').textContent=r.XL.toFixed(1)+' Ω';
+  $('swXC').textContent=r.XC.toFixed(1)+' Ω';
+  $('swF0').textContent=r.f0.toFixed(1)+' Hz';
+  $('swX0').textContent=r.X0.toFixed(1)+' Ω';
+  var rel=Math.abs(r.XL-r.XC)/r.X0;
+  $('swTag').textContent=rel<.06?'接近谐振（XL≈XC）':r.XL>r.XC?'感性（XL > XC）':'容性（XC > XL）';
+  paint('sweepCanvas');
+}
+
+/* ============ 08 汽车三相整流波形 ============ */
+function autoDraw(c,w,h){
+  var x0=52,y0=22,ww=w-72,gap=20;
+  var topH=Math.max(96,(h-62-gap)*.52);
+  var botH=Math.max(84,h-62-gap-topH);
+  var yc1=y0+topH/2,amp1=Math.min(50,topH*.38);
+  grid(c,x0,y0,ww,topH,8,2);
+  var cols=['#38bdf8','#2dd4bf','#a78bfa'];
+  for(var k=0;k<3;k++)sine(c,x0,yc1,ww,amp1,-k*TAU/3,cols[k],1.9,null,2);
+  cvText(c,'A / B / C 三相电压（互差 120°）',x0+4,y0+9,'#9fb0c2',10,'left');
+  cvText(c,'0',x0,y0+topH+13,'#5d6d80',10,'center');
+  cvText(c,'T',x0+ww/2,y0+topH+13,'#5d6d80',10,'center');
+
+  var yb=y0+topH+gap,base=yb+botH*.8,amp2=botH*.56;
+  grid(c,x0,yb,ww,botH,8,2);
+  hline(c,x0,x0+ww,base,'rgba(251,191,36,.18)',1,[3,4]);
+  c.save();c.strokeStyle='#fbbf24';c.lineWidth=2.4;c.beginPath();
+  for(var i=0;i<=480;i++){
+    var t=i/480*TAU*2;
+    var a=Math.sin(t),b=Math.sin(t-TAU/3),cc=Math.sin(t+TAU/3);
+    var ud=(Math.max(a,b,cc)-Math.min(a,b,cc))/Math.sqrt(3);
+    var x=x0+ww*i/480,y=base-amp2*ud;
+    if(i)c.lineTo(x,y);else c.moveTo(x,y);
+  }
+  c.stroke();c.restore();
+  cvText(c,'整流输出：六脉波，每周期 6 个波峰',x0+4,yb+9,'#fcd34d',10,'left');
+  cvText(c,'0',x0,yb+botH+13,'#5d6d80',10,'center');
+  cvText(c,'T',x0+ww/2,yb+botH+13,'#5d6d80',10,'center');
+}
+
+/* ============ 09 练习判分 ============ */
+var QUIZ={n:0,ok:0,total:8};
+var quizzes=document.querySelectorAll('.view[data-view="quiz"] .quiz');
+function quizUpdate(){
+  $('quizScore').textContent=QUIZ.ok+' / '+QUIZ.total;
+  $('quizRate').textContent=QUIZ.n?Math.round(QUIZ.ok/QUIZ.n*100)+'%':'—';
+}
+function quizBind(){
+  for(var qi=0;qi<quizzes.length;qi++){
+    (function(q){
+      var opts=q.querySelectorAll('.opt');
+      function pick(btn){
+        if(q.getAttribute('data-done'))return;
+        q.setAttribute('data-done','1');
+        var ans=+q.getAttribute('data-ans'),ch=+btn.getAttribute('data-opt'),ok=ch===ans;
+        for(var k=0;k<opts.length;k++){
+          var v=+opts[k].getAttribute('data-opt');
+          if(v===ans)opts[k].classList.add('ok');
+          else if(opts[k]===btn)opts[k].classList.add('bad');
+          else opts[k].classList.add('dim');
+        }
+        q.querySelector('.fb').classList.add('show');
+        QUIZ.n++;if(ok)QUIZ.ok++;
+        quizUpdate();
+        if(ok)SFX.correct();else SFX.wrong();
+      }
+      for(var oi=0;oi<opts.length;oi++)opts[oi].addEventListener('click',function(){pick(this);});
+    })(quizzes[qi]);
+  }
+  $('quizReset').onclick=function(){
+    for(var i=0;i<quizzes.length;i++){
+      var q=quizzes[i];
+      q.removeAttribute('data-done');
+      var os=q.querySelectorAll('.opt');
+      for(var j=0;j<os.length;j++)os[j].classList.remove('ok','bad','dim');
+      q.querySelector('.fb').classList.remove('show');
+    }
+    QUIZ.n=0;QUIZ.ok=0;quizUpdate();SFX.ui();
+  };
+  quizUpdate();
+}
+
+/* ============ 10 相量合成 ============ */
+var PH={a:5,aa:0,b:5,ba:60};
+function phCalc(){
+  var ar=PH.aa*Math.PI/180,br=PH.ba*Math.PI/180;
+  var x=PH.a*Math.cos(ar)+PH.b*Math.cos(br);
+  var y=PH.a*Math.sin(ar)+PH.b*Math.sin(br);
+  return {x:x,y:y,m:Math.hypot(x,y),ang:Math.atan2(y,x)*180/Math.PI};
+}
+function phDraw(c,w,h){
+  var cx=w*0.46,cy=h*0.52,R=Math.min(w,h)*0.34;
+  hline(c,24,w-24,cy,'rgba(148,163,184,.18)',1,[4,4]);
+  vline(c,cx,18,h-18,'rgba(148,163,184,.18)',1,[4,4]);
+  c.save();c.strokeStyle='rgba(45,212,191,.16)';c.setLineDash([3,5]);
+  c.beginPath();c.arc(cx,cy,R,0,TAU);c.stroke();c.restore();
+  var r=phCalc(),maxM=Math.max(PH.a,PH.b,r.m,1)*1.06,s=R/maxM;
+  function P(m,ang){var a=ang*Math.PI/180;return [cx+m*Math.cos(a)*s,cy-m*Math.sin(a)*s];}
+  var A=P(PH.a,PH.aa),B=P(PH.b,PH.ba),S=P(r.m,r.ang);
+  c.save();c.strokeStyle='rgba(252,211,77,.32)';c.setLineDash([4,4]);
+  c.beginPath();c.moveTo(A[0],A[1]);c.lineTo(S[0],S[1]);c.moveTo(B[0],B[1]);c.lineTo(S[0],S[1]);c.stroke();c.restore();
+  arrow(c,cx,cy,A[0],A[1],'#38bdf8',2.4);
+  arrow(c,cx,cy,B[0],B[1],'#f472b6',2.4);
+  if(r.m>0.02){
+    arrow(c,cx,cy,S[0],S[1],'#fcd34d',3);
+    cvText(c,'Ȧ+Ḃ',S[0],S[1]-15,'#fcd34d',12,'center',true);
+  }else cvText(c,'Ȧ+Ḃ = 0',cx+8,cy-14,'#fcd34d',12,'left',true);
+  cvText(c,'Ȧ',A[0],A[1]-13,'#38bdf8',12,'center',true);
+  cvText(c,'Ḃ',B[0],B[1]-13,'#f472b6',12,'center',true);
+  cvText(c,'Re',w-20,cy+15,'#5d6d80',10,'right');
+  cvText(c,'Im',cx+9,18,'#5d6d80',10,'left');
+  cvText(c,'模直接相加 = '+(PH.a+PH.b).toFixed(1)+'（错）',24,20,'#fca5a5',10.5,'left');
+}
+function phSync(){
+  PH.a=+$('phAm').value;PH.aa=+$('phAa').value;
+  PH.b=+$('phBm').value;PH.ba=+$('phBa').value;
+  $('phAmVal').textContent=PH.a.toFixed(1);
+  $('phAaVal').textContent=PH.aa+'°';
+  $('phBmVal').textContent=PH.b.toFixed(1);
+  $('phBaVal').textContent=PH.ba+'°';
+  var r=phCalc();
+  $('phSumM').textContent=r.m.toFixed(2);
+  $('phSumA').textContent=r.ang.toFixed(0)+'°';
+  $('phWrong').textContent=(PH.a+PH.b).toFixed(2);
+  paint('phCanvas');
+}
+
+/* ============ 11 串联 RLC ============ */
+var RLC={U:10,R:10,L:.05,C:20e-6,f:100};
+function rlcCalc(){
+  var w=TAU*RLC.f,XL=w*RLC.L,XC=1/(w*RLC.C),X=XL-XC;
+  var Z=Math.hypot(RLC.R,X),phi=Math.atan2(X,RLC.R);
+  var I=RLC.U/Z,UR=I*RLC.R,UL=I*XL,UC=I*XC;
+  var P=RLC.U*I*Math.cos(phi),Qq=RLC.U*I*Math.sin(phi),S=RLC.U*I;
+  var f0=1/(TAU*Math.sqrt(RLC.L*RLC.C));
+  var st=Math.abs(phi)<0.01?'谐振':X>0?'感性':'容性';
+  return {XL:XL,XC:XC,X:X,Z:Z,phi:phi,I:I,UR:UR,UL:UL,UC:UC,P:P,Q:Qq,S:S,f0:f0,state:st};
+}
+function rlcDraw(c,w,h){
+  var r=rlcCalc();
+  var split=Math.round(w*0.55);
+  var x0=46,y0=48,ww=split-70,hh=h-96,yc=y0+hh/2,amp=hh*0.32;
+  grid(c,x0,y0,ww,hh,8,4);
+  sine(c,x0,yc,ww,amp,0,'#38bdf8',2.4,null,2);
+  sine(c,x0,yc,ww,amp*.72,-r.phi,'#4ade80',2.2,null,2);
+  cvText(c,'u',x0+2,y0+9,'#38bdf8',10,'left',true);
+  cvText(c,'i',x0+22,y0+9,'#4ade80',10,'left',true);
+  cvText(c,'0',x0,y0+hh+14,'#5d6d80',10,'center');
+  cvText(c,'T',x0+ww/2,y0+hh+14,'#5d6d80',10,'center');
+  cvText(c,'2T',x0+ww,y0+hh+14,'#5d6d80',10,'center');
+  cvTag(c,r.state,x0+ww-28,y0+12,r.state==='谐振'?'#fcd34d':r.state==='感性'?'#a78bfa':'#f472b6',10);
+
+  /* 相量图 */
+  var cx=split+Math.round((w-split)*0.50),cy=132,R=Math.min((w-split)*0.30,88);
+  var maxU=Math.max(r.UR,r.UL,r.UC,RLC.U,1),s=R/maxU;
+  hline(c,split+12,w-16,cy,'rgba(148,163,184,.16)',1,[4,4]);
+  vline(c,cx,26,cy+R+18,'rgba(148,163,184,.16)',1,[4,4]);
+  arrow(c,cx,cy,cx+r.UR*s,cy,'#4ade80',2);
+  arrow(c,cx,cy,cx,cy-r.UL*s,'#a78bfa',2);
+  arrow(c,cx,cy,cx,cy+r.UC*s,'#f472b6',2);
+  var ux=cx+r.UR*s,uy=cy-(r.UL-r.UC)*s;
+  arrow(c,cx,cy,ux,uy,'#fcd34d',2.8);
+  c.save();c.strokeStyle='rgba(252,211,77,.28)';c.setLineDash([3,4]);
+  c.beginPath();c.moveTo(ux,cy);c.lineTo(ux,uy);c.stroke();c.restore();
+  cvText(c,'U_R',cx+Math.max(18,r.UR*s*0.55),cy-10,'#4ade80',10,'left');
+  cvText(c,'U_L',cx+5,cy-r.UL*s-8,'#a78bfa',10,'left');
+  cvText(c,'U_C',cx+5,cy+r.UC*s+10,'#f472b6',10,'left');
+  cvText(c,'U',ux+6,uy-8,'#fcd34d',11,'left',true);
+  cvText(c,'相量图',split+14,30,'#9fb0c2',10.5,'left',true);
+
+  /* 功率三角形 */
+  var px=split+58,py=h-40,pw=Math.min((w-split)*0.52,140),qh=72;
+  var mx=Math.max(r.P,Math.abs(r.Q),1e-6),s2=Math.min(pw,qh)/mx;
+  var Pw=r.P*s2,Qh=Math.abs(r.Q)*s2;
+  arrow(c,px,py,px+Pw,py,'#4ade80',2);
+  arrow(c,px+Pw,py,px+Pw,py-Qh,'#a78bfa',2);
+  c.save();c.strokeStyle='#fcd34d';c.lineWidth=2;c.beginPath();c.moveTo(px,py);c.lineTo(px+Pw,py-Qh);c.stroke();c.restore();
+  cvText(c,'P',px+Pw/2,py+13,'#4ade80',10,'center');
+  cvText(c,'Q',px+Pw+9,py-Qh/2,'#a78bfa',10,'left');
+  cvText(c,'S',px+Pw*0.5-12,py-Qh*0.5-7,'#fcd34d',10,'center');
+  cvText(c,'功率三角形',split+14,h-8,'#9fb0c2',10,'left',true);
+}
+function rlcSync(){
+  RLC.R=+$('rlcR').value;RLC.L=+$('rlcL').value/1000;
+  RLC.C=+$('rlcC').value/1e6;RLC.f=+$('rlcF').value;
+  $('rlcRVal').textContent=RLC.R+' Ω';
+  $('rlcLVal').textContent=$('rlcL').value+' mH';
+  $('rlcCVal').textContent=$('rlcC').value+' µF';
+  $('rlcFVal').textContent=RLC.f+' Hz';
+  var r=rlcCalc(),deg=r.phi*180/Math.PI;
+  $('rlcXL').textContent=r.XL.toFixed(1)+' Ω';
+  $('rlcXC').textContent=r.XC.toFixed(1)+' Ω';
+  $('rlcZ').textContent=r.Z.toFixed(1)+' Ω';
+  $('rlcAng').textContent=deg.toFixed(1)+'°';
+  $('rlcI').textContent=r.I.toFixed(3)+' A';
+  $('rlcUR').textContent=r.UR.toFixed(2)+' V';
+  $('rlcUL').textContent=r.UL.toFixed(2)+' V';
+  $('rlcUC').textContent=r.UC.toFixed(2)+' V';
+  $('rlcP').textContent=r.P.toFixed(2)+' W';
+  $('rlcQ').textContent=r.Q.toFixed(2)+' var';
+  $('rlcS').textContent=r.S.toFixed(2)+' VA';
+  $('rlcPF').textContent=(r.P/r.S).toFixed(2);
+  $('rlcState').textContent=r.state;
+  $('rlcState').style.color=r.state==='谐振'?'#fcd34d':r.state==='感性'?'#a78bfa':'#f472b6';
+  paint('rlcCanvas');
+}
+
+/* ============ 11 谐振扫描 ============ */
+var RES={U:10,R:10,L:.05,C:20e-6,f:100};
+function resCalc(f){
+  f=f||RES.f;
+  var w=TAU*f,XL=w*RES.L,XC=1/(w*RES.C);
+  var Z=Math.hypot(RES.R,XL-XC);
+  return {I:RES.U/Z,XL:XL,XC:XC,Z:Z,f0:1/(TAU*Math.sqrt(RES.L*RES.C)),qf:Math.sqrt(RES.L/RES.C)/RES.R,Ipk:RES.U/RES.R};
+}
+function resDraw(c,w,h){
+  var x0=56,y0=30,ww=w-86,hh=h-74,yB=y0+hh;
+  var lf0=Math.log(10)/Math.LN10,lf1=Math.log(1000)/Math.LN10;
+  var Imax=RES.U/5;
+  function fx(f){return x0+ww*(Math.log(clamp(f,10,1000))/Math.LN10-lf0)/(lf1-lf0);}
+  function fy(I){return yB-hh*clamp(I,0,Imax)/Imax;}
+  c.save();c.strokeStyle='#17212c';c.lineWidth=1;
+  [0,.5,1,1.5,2].forEach(function(v){
+    if(v>Imax+.01)return;
+    var y=fy(v);c.beginPath();c.moveTo(x0,y);c.lineTo(x0+ww,y);c.stroke();
+    cvText(c,v.toFixed(1),x0-7,y,'#5d6d80',10,'right');
+  });
+  [10,30,100,300,1000].forEach(function(v){
+    var x=fx(v);c.beginPath();c.moveTo(x,y0);c.lineTo(x,yB);c.stroke();
+    cvText(c,v+'',x,yB+14,'#5d6d80',10,'center');
+  });
+  c.strokeStyle='#2b3947';c.strokeRect(x0,y0,ww,hh);c.restore();
+  cvText(c,'I/A',x0-7,y0-10,'#9fb0c2',10,'right',true);
+  cvText(c,'f/Hz',x0+ww,yB+29,'#9fb0c2',10,'right',true);
+
+  var r=resCalc();
+  c.save();c.strokeStyle='#fcd34d';c.lineWidth=2.6;c.beginPath();
+  for(var i=0;i<=320;i++){
+    var f=10*Math.pow(100,i/320),I=resCalc(f).I;
+    var x=fx(f),y=fy(I);
+    if(i)c.lineTo(x,y);else c.moveTo(x,y);
+  }
+  c.stroke();c.restore();
+
+  var xf0=fx(r.f0);
+  vline(c,xf0,y0,yB,'rgba(45,212,191,.55)',1.4,[5,4]);
+  c.fillStyle='#2dd4bf';c.beginPath();c.arc(xf0,fy(r.Ipk),4.5,0,TAU);c.fill();
+  cvTag(c,'f₀ '+r.f0.toFixed(0)+' Hz',clamp(xf0,x0+52,x0+ww-52),y0+13,'#2dd4bf',10);
+  var xf=fx(RES.f);
+  vline(c,xf,y0,yB,'rgba(234,243,255,.3)',1,[3,4]);
+  c.fillStyle='#fcd34d';c.beginPath();c.arc(xf,fy(r.I),3.5,0,TAU);c.fill();
+}
+function resSync(){
+  RES.R=+$('resR').value;RES.L=+$('resL').value/1000;
+  RES.C=+$('resC').value/1e6;RES.f=+$('resF').value;
+  $('resRVal').textContent=RES.R+' Ω';
+  $('resLVal').textContent=$('resL').value+' mH';
+  $('resCVal').textContent=$('resC').value+' µF';
+  $('resFVal').textContent=RES.f+' Hz';
+  var r=resCalc();
+  $('resF0').textContent=r.f0.toFixed(1)+' Hz';
+  $('resQ').textContent=r.qf.toFixed(1);
+  $('resIpk').textContent=r.Ipk.toFixed(3)+' A';
+  $('resI').textContent=r.I.toFixed(3)+' A';
+  paint('resCanvas');
+}
+
+/* ============ 12 三相波形台 ============ */
+var TP={A:10,f:50,t:0};
+function tpCalc(){
+  var th=TAU*TP.f*TP.t/1000;
+  var a=TP.A*Math.sin(th),b=TP.A*Math.sin(th-TAU/3),c=TP.A*Math.sin(th+TAU/3);
+  return {th:th,a:a,b:b,c:c,sum:a+b+c};
+}
+function tpDraw(c,w,h){
+  var x0=48,y0=28,ww=w-70,hh=h-72,yc=y0+hh/2,amp=hh*0.34;
+  grid(c,x0,y0,ww,hh,8,4);
+  var cyc=TP.f*0.04;
+  sine(c,x0,yc,ww,amp,0,'#38bdf8',2,null,cyc);
+  sine(c,x0,yc,ww,amp,-TAU/3,'#2dd4bf',2,null,cyc);
+  sine(c,x0,yc,ww,amp,TAU/3,'#a78bfa',2,null,cyc);
+  hline(c,x0,x0+ww,yc,'rgba(252,211,77,.45)',1.4,[4,4]);
+  cvText(c,'Σ=0',x0+ww-4,yc-8,'#fcd34d',10,'right',true);
+  var x=x0+ww*(TP.t/40);
+  vline(c,x,y0,y0+hh,'rgba(234,243,255,.35)',1,[3,4]);
+  var r=tpCalc(),vals=[r.a,r.b,r.c],cols=['#38bdf8','#2dd4bf','#a78bfa'];
+  for(var i=0;i<3;i++){
+    var yy=yc-amp*(vals[i]/TP.A);
+    c.fillStyle=cols[i];c.beginPath();c.arc(x,yy,3.5,0,TAU);c.fill();
+  }
+  cvText(c,'0',x0,y0+hh+14,'#5d6d80',10,'center');
+  cvText(c,'20 ms',x0+ww/2,y0+hh+14,'#5d6d80',10,'center');
+  cvText(c,'40 ms',x0+ww,y0+hh+14,'#5d6d80',10,'center');
+}
+function tpSync(){
+  TP.A=+$('tpA').value;TP.f=+$('tpF').value;TP.t=+$('tpT').value;
+  $('tpAVal').textContent=TP.A.toFixed(1)+' V';
+  $('tpFVal').textContent=TP.f+' Hz';
+  $('tpTVal').textContent=TP.t.toFixed(1)+' ms';
+  var r=tpCalc();
+  $('tpA1').textContent=r.a.toFixed(2)+' V';
+  $('tpB1').textContent=r.b.toFixed(2)+' V';
+  $('tpC1').textContent=r.c.toFixed(2)+' V';
+  $('tpSum').textContent=(Math.abs(r.sum)<0.005?0:r.sum).toFixed(2)+' V';
+  paint('tpCanvas');
+}
+
+/* ============ 12 星形 / 三角形 ============ */
+var CONN={mode:'Y',Up:220,Ip:10};
+function connCalc(){
+  var y=CONN.mode==='Y';
+  return {UL:y?Math.sqrt(3)*CONN.Up:CONN.Up,
+          IL:y?CONN.Ip:Math.sqrt(3)*CONN.Ip,
+          IN:y?0:null};
+}
+function connDraw(c,w,h){
+  var cx=w/2,cy=h*0.56,R=Math.min(w*0.24,h*0.28);
+  var y=CONN.mode==='Y';
+  if(y){
+    var pts=[],labels=['A','B','C'];
+    for(var k=0;k<3;k++){
+      var a=-Math.PI/2+k*TAU/3;
+      pts.push([cx+R*Math.cos(a),cy+R*Math.sin(a)]);
+    }
+    c.save();c.lineWidth=7;c.lineCap='round';
+    for(var i=0;i<3;i++){
+      c.strokeStyle='#2dd4bf';c.beginPath();c.moveTo(cx,cy);c.lineTo(pts[i][0],pts[i][1]);c.stroke();
+    }
+    c.restore();
+    for(var j=0;j<3;j++){
+      var lx=cx+(R+18)*Math.cos(-Math.PI/2+j*TAU/3);
+      var ly=cy+(R+18)*Math.sin(-Math.PI/2+j*TAU/3);
+      cvText(c,labels[j],lx,ly,'#eaf3ff',13,'center',true);
+      var mx=(cx+pts[j][0])/2,my=(cy+pts[j][1])/2;
+      cvText(c,'Up',mx+8,my,'#2dd4bf',10,'left');
+    }
+    c.fillStyle='#fcd34d';c.beginPath();c.arc(cx,cy,5,0,TAU);c.fill();
+    cvText(c,'N',cx-12,cy-10,'#fcd34d',11,'right',true);
+    arrow(c,pts[0][0],pts[0][1],pts[1][0],pts[1][1],'rgba(252,211,77,.75)',2);
+    cvText(c,'UL',(pts[0][0]+pts[1][0])/2+10,(pts[0][1]+pts[1][1])/2,'#fcd34d',11,'left',true);
+    cvText(c,'星形 Y：UL=√3·Up，IL=Ip',w/2,20,'#9fb0c2',11,'center',true);
+  }else{
+    var v=[[cx,cy-R],[cx+R*0.87,cy+R*0.5],[cx-R*0.87,cy+R*0.5]];
+    c.save();c.lineWidth=7;c.lineCap='round';c.strokeStyle='#f472b6';
+    c.beginPath();c.moveTo(v[0][0],v[0][1]);c.lineTo(v[1][0],v[1][1]);c.lineTo(v[2][0],v[2][1]);c.closePath();c.stroke();c.restore();
+    var labs=['A','B','C'];
+    for(var n=0;n<3;n++)cvText(c,labs[n],v[n][0]+(n===1?12:n===2?-12:0),v[n][1]+(n===0?-12:10),'#eaf3ff',13,'center',true);
+    cvText(c,'UL=Up',(v[0][0]+v[1][0])/2+12,(v[0][1]+v[1][1])/2,'#fcd34d',10.5,'left');
+    cvText(c,'IL=√3·Ip',(v[1][0]+v[2][0])/2,cy+R*0.5+18,'#fcd34d',10.5,'center');
+    cvText(c,'Ip',cx+14,cy+6,'#f472b6',10.5,'left');
+    cvText(c,'三角形 △：UL=Up，IL=√3·Ip',w/2,20,'#9fb0c2',11,'center',true);
+  }
+}
+function connSync(){
+  CONN.Up=+$('connUp').value;CONN.Ip=+$('connIp').value;
+  $('connUpVal').textContent=CONN.Up+' V';
+  $('connIpVal').textContent=CONN.Ip.toFixed(1)+' A';
+  var r=connCalc();
+  $('connUL').textContent=r.UL.toFixed(0)+' V';
+  $('connIL').textContent=r.IL.toFixed(1)+' A';
+  $('connIN').textContent=r.IN===null?'—':'0.0 A';
+  $('connModeNote').textContent=CONN.mode==='Y'
+    ?'星形：UL=√3·Up，且线电压超前对应相电压 30°；IL=Ip；三相平衡时中性线电流为零。'
+    :'三角形：UL=Up；IL=√3·Ip；没有中性点。线电流是两相电流的相量和。';
+  var cs=document.querySelectorAll('[data-conn]');
+  for(var i=0;i<cs.length;i++)cs[i].classList.toggle('on',cs[i].getAttribute('data-conn')===CONN.mode);
+  paint('connCanvas');
+}
+
+/* ============ 13 旋转磁场 ============ */
+var ROT={on:true,th:0,speed:1,seq:1};
+function rotCalc(){
+  var th=ROT.th;
+  return {a:Math.sin(th),b:Math.sin(th-ROT.seq*TAU/3),c:Math.sin(th+ROT.seq*TAU/3)};
+}
+function rotDraw(c,w,h){
+  var cx=w/2,cy=h/2,R=Math.min(w,h)*0.36;
+  c.save();c.strokeStyle='#1c2836';c.lineWidth=12;c.beginPath();c.arc(cx,cy,R,0,TAU);c.stroke();c.restore();
+  c.save();c.strokeStyle='rgba(45,212,191,.16)';c.lineWidth=1;c.setLineDash([4,6]);
+  c.beginPath();c.arc(cx,cy,R*0.82,0,TAU);c.stroke();c.restore();
+  var r=rotCalc(),cols=['#38bdf8','#2dd4bf','#a78bfa'],vals=[r.a,r.b,r.c];
+  for(var k=0;k<3;k++){
+    var a=-Math.PI/2+k*TAU/3;
+    var x1=cx+R*0.66*Math.cos(a),y1=cy+R*0.66*Math.sin(a);
+    var x2=cx+R*1.0*Math.cos(a),y2=cy+R*1.0*Math.sin(a);
+    c.save();c.strokeStyle=cols[k];c.lineWidth=8;c.lineCap='round';
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();c.restore();
+    cvText(c,'ABC'[k],cx+R*1.16*Math.cos(a),cy+R*1.16*Math.sin(a),cols[k],12,'center',true);
+    var mx=cx+R*0.52*Math.cos(a),my=cy+R*0.52*Math.sin(a);
+    if(vals[k]>=0){
+      c.fillStyle=cols[k];c.beginPath();c.arc(mx,my,4,0,TAU);c.fill();
+    }else{
+      c.save();c.strokeStyle=cols[k];c.lineWidth=2;
+      c.beginPath();c.moveTo(mx-4,my-4);c.lineTo(mx+4,my+4);c.moveTo(mx+4,my-4);c.lineTo(mx-4,my+4);c.stroke();c.restore();
+    }
+  }
+  var ang=-ROT.seq*ROT.th;
+  arrow(c,cx,cy,cx+R*0.78*Math.cos(ang),cy+R*0.78*Math.sin(ang),'#fcd34d',3.2);
+  cvText(c,'B合',cx+R*0.82*Math.cos(ang)+6,cy+R*0.82*Math.sin(ang)-10,'#fcd34d',12,'left',true);
+  cvText(c,'● 流出纸面   ✕ 流入纸面',w/2,h-14,'#5d6d80',10,'center');
+}
+function rotSyncDom(){
+  var deg=((ROT.th*180/Math.PI)%360+360)%360;
+  $('rotTh').textContent=deg.toFixed(0)+'°';
+  $('rotDir').textContent=ROT.seq>0?'逆时针':'顺时针';
+  var r=rotCalc();
+  $('rotIa').textContent=r.a.toFixed(2);
+  $('rotIb').textContent=r.b.toFixed(2);
+  $('rotIc').textContent=r.c.toFixed(2);
+}
+function rotSync(){
+  ROT.speed=+$('rotSpeed').value;
+  $('rotSpeedVal').textContent=ROT.speed.toFixed(1)+'×';
+  rotSyncDom();paint('rotCanvas');
+}
+
+/* ============ 14 三相的连接 ============ */
+var PHC3=['#38bdf8','#2dd4bf','#a78bfa'],PHN3=['A','B','C'];
+
+var C3={grid:380,mode:'Y',R:44,rated:220};
+function c3Calc(){
+  var up=C3.mode==='Y'?C3.grid/Math.sqrt(3):C3.grid;
+  var ip=up/C3.R,il=C3.mode==='Y'?ip:ip*Math.sqrt(3);
+  var P=3*ip*ip*C3.R;
+  var st=up>C3.rated*1.08?'过压':(up<C3.rated*0.92?'欠压':'匹配');
+  return {up:up,ip:ip,il:il,P:P,st:st};
+}
+function c3Draw(c,w,h){
+  var r=c3Calc(),mid=h*0.40;
+  cvText(c,'三相电源',74,22,'#9fb0c2',10.5,'center',true);
+  var ys=[mid-70,mid,mid+70];
+  for(var i=0;i<3;i++){
+    hline(c,34,116,ys[i],PHC3[i],2.2);
+    cvText(c,'L'+(i+1),28,ys[i],PHC3[i],10.5,'right',true);
+    c.save();c.strokeStyle=PHC3[i];c.lineWidth=2;c.beginPath();c.arc(124,ys[i],4,0,TAU);c.stroke();c.restore();
+  }
+  cvTag(c,'UL='+C3.grid+' V',88,mid+96,'#fcd34d',10);
+  cvText(c,'→',172,mid,'#3a4b5d',20,'center',true);
+
+  var cx=w*0.70,cy=mid+14,RR=Math.max(44,Math.min(80,(w-340)*0.27));
+  function box(x1,y1,x2,y2,col){
+    var mx=(x1+x2)/2,my=(y1+y2)/2;
+    c.save();c.strokeStyle=col;c.lineWidth=1.8;
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+    c.fillStyle='#0b1017';c.beginPath();c.rect(mx-16,my-9,32,18);c.fill();c.stroke();
+    cvText(c,'Z',mx,my,col,11,'center',true);c.restore();
+  }
+  if(C3.mode==='Y'){
+    var angs=[-90,30,150];
+    for(i=0;i<3;i++){
+      var a=angs[i]*Math.PI/180;
+      var x2=cx+RR*Math.cos(a),y2=cy+RR*Math.sin(a);
+      box(cx,cy,x2,y2,PHC3[i]);
+      cvText(c,PHN3[i],x2+(i===1?12:i===2?-12:0),y2+(i===0?-12:10),PHC3[i],12,'center',true);
+    }
+    c.save();c.fillStyle='#fcd34d';c.beginPath();c.arc(cx,cy,4,0,TAU);c.fill();c.restore();
+    cvText(c,"N′",cx+8,cy+13,'#fcd34d',10,'left');
+    cvText(c,'星形 Y',cx-RR-18,cy-RR+8,'#2dd4bf',11,'right',true);
+    cvTag(c,'Up='+r.up.toFixed(0)+' V · IL=Ip='+r.il.toFixed(1)+' A',cx,cy+RR+22,'#9fb0c2',9.5);
+  }else{
+    var v=[];
+    var angs2=[-90,30,150];
+    for(i=0;i<3;i++){
+      var aa=angs2[i]*Math.PI/180;
+      v.push([cx+RR*Math.cos(aa),cy+RR*Math.sin(aa)]);
+    }
+    for(i=0;i<3;i++){
+      var j=(i+1)%3;
+      box(c[v[i][0]],v[i][1],v[j][0],v[j][1],PHC3[i]);
+    }
+    var vl=['A','B','C'];
+    for(i=0;i<3;i++)cvText(c,vl[i],v[i][0]+(i===1?12:i===2?-12:0),v[i][1]+(i===0?-12:10),PHC3[i],12,'center',true);
+    cvText(c,'三角形 △',cx-RR-18,cy-RR+8,'#f472b6',11,'right',true);
+    cvTag(c,'UL=Up='+r.up.toFixed(0)+' V · IL=√3Ip='+r.il.toFixed(1)+' A',cx,cy+RR+22,'#9fb0c2',9.5);
+  }
+  /* 匹配刻度 */
+  var gx=44,gw=w-88,gy=h-24,maxV=450;
+  c.save();c.strokeStyle='#22303f';c.lineWidth=6;c.lineCap='round';c.beginPath();c.moveTo(gx,gy);c.lineTo(gx+gw,gy);c.stroke();c.restore();
+  var xr=gx+gw*(C3.rated/maxV);
+  vline(c,xr,gy-7,gy+7,'#4ade80',2);
+  cvText(c,'额定 '+C3.rated+' V',xr,gy-15,'#4ade80',9.5,'center');
+  var xa=gx+gw*Math.min(r.up,maxV)/maxV;
+  var gc=r.st==='匹配'?'#4ade80':(r.st==='过压'?'#f87171':'#fcd34d');
+  c.save();c.fillStyle=gc;c.beginPath();c.arc(xa,gy,5,0,TAU);c.fill();c.restore();
+  cvText(c,'实际 '+r.up.toFixed(0)+' V',clamp(xa,gx+50,gx+gw-50),gy+17,gc,10,'center');
+}
+function c3Sync(){
+  C3.R=+$('c3R').value;
+  $('c3RVal').textContent=C3.R+' Ω';
+  var r=c3Calc();
+  $('c3Up').textContent=r.up.toFixed(0)+' V';
+  $('c3Ip').textContent=r.ip.toFixed(2)+' A';
+  $('c3Il').textContent=r.il.toFixed(2)+' A';
+  $('c3P').textContent=(r.P/1000).toFixed(2)+' kW';
+  var j=$('c3Judge');
+  j.textContent=r.st;
+  j.style.color=r.st==='匹配'?'#bbf7d0':(r.st==='过压'?'#fecaca':'#fde68a');
+  var gs=document.querySelectorAll('[data-c3grid]');
+  for(var i=0;i<gs.length;i++)gs[i].classList.toggle('on',+gs[i].getAttribute('data-c3grid')===C3.grid);
+  var ms=document.querySelectorAll('[data-c3mode]');
+  for(i=0;i<ms.length;i++)ms[i].classList.toggle('on',ms[i].getAttribute('data-c3mode')===C3.mode);
+  paint('c3Load');
+}
+
+var NEU={ra:40,rb:60,rc:100,on:true};
+function neuCalc(){
+  var R=[NEU.ra,NEU.rb,NEU.rc];
+  var V=[[220,0],[-110,-190.5256],[-110,190.5256]];
+  var U=[220,220,220],vn=[0,0],In=0;
+  var i;
+  if(NEU.on){
+    var ir=0,ii=0;
+    for(i=0;i<3;i++){ir+=V[i][0]/R[i];ii+=V[i][1]/R[i];}
+    In=Math.sqrt(ir*ir+ii*ii);
+  }else{
+    var gr=0,gi=0,gs=0;
+    for(i=0;i<3;i++){gr+=V[i][0]/R[i];gi+=V[i][1]/R[i];gs+=1/R[i];}
+    vn=[gr/gs,gi/gs];
+    for(i=0;i<3;i++){
+      var dx=V[i][0]-vn[0],dy=V[i][1]-vn[1];
+      U[i]=Math.sqrt(dx*dx+dy*dy);
+    }
+  }
+  return {U:U,vn:vn,vnM:Math.sqrt(vn[0]*vn[0]+vn[1]*vn[1]),In:In};
+}
+function neuLamps(c,w,h,U){
+  var xs=[w*0.22,w*0.50,w*0.78],ly=h-64;
+  for(var i=0;i<3;i++){
+    var u=U[i],k=clamp(u/220,0,1.4),over=u>242,under=u<198;
+    var x=xs[i];
+    var g=c.createRadialGradient(x,ly,2,x,ly,36);
+    g.addColorStop(0,'rgba(252,211,77,'+(0.18+0.55*Math.min(1,k))+')');
+    g.addColorStop(1,'rgba(252,211,77,0)');
+    c.save();c.fillStyle=g;c.beginPath();c.arc(x,ly,36,0,TAU);c.fill();c.restore();
+    c.save();c.beginPath();c.arc(x,ly,20,0,TAU);
+    c.fillStyle='rgba(252,211,77,'+(0.16+0.7*Math.min(1,k))+')';
+    c.strokeStyle=over?'#f87171':(under?'#5d6d80':'#fcd34d');
+    c.lineWidth=over?2.6:1.8;c.fill();c.stroke();c.restore();
+    cvText(c,PHN3[i],x,ly-34,PHC3[i],11,'center',true);
+    cvText(c,u.toFixed(0)+' V',x,ly+32,over?'#fecaca':(under?'#94a3b8':'#e7eef7'),11,'center',true);
+    if(over)cvTag(c,'过压',x,ly-56,'#f87171',9.5);
+    else if(under)cvTag(c,'欠压',x,ly-56,'#94a3b8',9.5);
+  }
+}
+function neuDraw(c,w,h){
+  var r=neuCalc();
+  var cx=w*0.30,cy=100,R=66;
+  c.save();c.strokeStyle='rgba(255,255,255,.05)';c.lineWidth=1;
+  c.beginPath();c.arc(cx,cy,R,0,TAU);c.stroke();c.restore();
+  var angs=[-90,30,150];
+  for(var i=0;i<3;i++){
+    var a=angs[i]*Math.PI/180,x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+    arrow(c,cx,cy,x,y,PHC3[i],2.2);
+    cvText(c,PHN3[i],cx+R*1.12*Math.cos(a),cy+R*1.12*Math.sin(a),PHC3[i],11,'center',true);
+  }
+  c.save();c.fillStyle='#fcd34d';c.beginPath();c.arc(cx,cy,4,0,TAU);c.fill();c.restore();
+  cvText(c,'N',cx-12,cy+12,'#fcd34d',10,'left');
+  if(!NEU.on&&r.vnM>1){
+    var nx=cx+r.vn[0]*0.45,ny=cy-r.vn[1]*0.45;
+    c.save();c.strokeStyle='#fcd34d';c.setLineDash([4,4]);c.lineWidth=1.4;
+    c.beginPath();c.moveTo(cx,cy);c.lineTo(nx,ny);c.stroke();c.restore();
+    c.save();c.fillStyle='#fcd34d';c.beginPath();c.arc(nx,ny,5,0,TAU);c.fill();c.restore();
+    cvText(c,"N′",nx+8,ny-8,'#fcd34d',10,'left',true);
+  }
+  cvTag(c,NEU.on?'中性线接通':'中性线断开',w-72,26,NEU.on?'#4ade80':'#f87171',10);
+  cvText(c,'U_N′N = '+r.vnM.toFixed(1)+' V',cx,cy+R+22,'#fcd34d',10.5,'center');
+  neuLamps(c,w,h,r.U);
+}
+function neuSync(){
+  NEU.ra=+$('neuRa').value;NEU.rb=+$('neuRb').value;NEU.rc=+$('neuRc').value;
+  $('neuRaVal').textContent=NEU.ra+' Ω';
+  $('neuRbVal').textContent=NEU.rb+' Ω';
+  $('neuRcVal').textContent=NEU.rc+' Ω';
+  $('neuSw').textContent='中性线：'+(NEU.on?'接通':'断开');
+  $('neuSw').classList.toggle('on',NEU.on);
+  var r=neuCalc();
+  $('neuVn').textContent=r.vnM.toFixed(1)+' V';
+  var ids=['neuUa','neuUb','neuUc'];
+  for(var i=0;i<3;i++){
+    var el=$(ids[i]);el.textContent=r.U[i].toFixed(0)+' V';
+    el.style.color=r.U[i]>242?'#fecaca':(r.U[i]<198?'#94a3b8':'#e7eef7');
+  }
+  $('neuIn').textContent=NEU.on?r.In.toFixed(2)+' A':'0（已断开）';
+  $('neuNote').textContent=NEU.on
+    ?'中性线接通时，三组负载各得 220 V，只是亮度不同；中性线承担不平衡电流。'
+    :'中性线断开：中性点 N′ 位移 '+r.vnM.toFixed(0)+' V，各相电压不再相等，阻抗最大的那相电压最高。';
+  paint('c3Neu');
+}
+
+var TERM={mode:'Y',sel:-1};
+function termPads(w,h){
+  var cx=w/2,cy=h*0.40;
+  return [
+    {n:'W2',x:cx-74,y:cy-36},{n:'U2',x:cx,y:cy-36},{n:'V2',x:cx+74,y:cy-36},
+    {n:'U1',x:cx-74,y:cy+36},{n:'V1',x:cx,y:cy+36},{n:'W1',x:cx+74,y:cy+36}
+  ];
+}
+function termMates(name){
+  if(TERM.mode==='Y'){
+    if(name==='U2'||name==='V2'||name==='W2')return ['U2','V2','W2'];
+    return [name];
+  }
+  var m={U1:'W2',W2:'U1',V1:'U2',U2:'V1',W1:'V2',V2:'W1'};
+  return [name,m[name]];
+}
+function termDraw(c,w,h){
+  var pads=termPads(w,h),cx=w/2,cy=h*0.40;
+  c.save();c.fillStyle='#0b1017';c.strokeStyle='#2b3947';c.lineWidth=1.4;
+  c.beginPath();
+  if(c.roundRect)c.roundRect(cx-122,cy-72,244,144,10);else c.rect(cx-122,cy-72,244,144);
+  c.fill();c.stroke();c.restore();
+  cvText(c,'电机端子盒',cx,cy-88,'#9fb0c2',10.5,'center',true);
+  /* 短接片（先画，端子盖在上面） */
+  c.save();c.strokeStyle='#fcd34d';c.lineWidth=5;c.lineCap='round';
+  if(TERM.mode==='Y'){
+    c.beginPath();c.moveTo(cx-74,cy-36);c.lineTo(cx+74,cy-36);c.stroke();
+  }else{
+    for(i=0;i<3;i++){var xj=cx-74+i*74;c.beginPath();c.moveTo(xj,cy-36);c.lineTo(xj,cy+36);c.stroke();}
+  }
+  c.restore();
+  var mate=TERM.sel>=0?termMates(pads[TERM.sel].n):null;
+  for(var i=0;i<pads.length;i++){
+    var p=pads[i],ph=p.n[0]==='U'?0:(p.n[0]==='V'?1:2);
+    c.save();c.beginPath();c.arc(p.x,p.y,18,0,TAU);
+    c.fillStyle='#111922';c.strokeStyle=PHC3[ph];c.lineWidth=2;c.fill();c.stroke();c.restore();
+    cvText(c,p.n,p.x,p.y,PHC3[ph],11,'center',true);
+    if(mate&&mate.indexOf(p.n)>=0){
+      c.save();c.strokeStyle='#fcd34d';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,25,0,TAU);c.stroke();c.restore();
+    }
+  }
+  cvText(c,TERM.mode==='Y'?'U2-V2-W2 短接成中性点':'U1-W2 · V1-U2 · W1-V2 短接',cx,cy+132,'#fcd34d',10,'center');
+  /* 电源进线 */
+  var src=['L1','L2','L3'];
+  for(i=0;i<3;i++){
+    var x2=cx-74+i*74;
+    vline(c,x2,cy+54,cy+104,PHC3[i],2);
+    cvText(c,src[i],x2,cy+118,PHC3[i],10.5,'center',true);
+  }
+}
+function termInfoText(name){
+  if(TERM.mode==='Y'){
+    var y={
+      U1:'U1：A 相电源进线，经过 U 相绕组到 U2；U2 已与 V2、W2 短接，形成中性点。',
+      V1:'V1：B 相电源进线，经过 V 相绕组到 V2；V2 已与 U2、W2 短接，形成中性点。',
+      W1:'W1：C 相电源进线，经过 W 相绕组到 W2；W2 已与 U2、V2 短接，形成中性点。',
+      U2:'U2：U 相绕组末端，与 V2、W2 一起被短接片连成中性点，不接电源。',
+      V2:'V2：V 相绕组末端，与 U2、W2 一起被短接片连成中性点，不接电源。',
+      W2:'W2：W 相绕组末端，与 U2、V2 一起被短接片连成中性点，不接电源。'
+    };
+    return y[name]||'';
+  }
+  var d={
+    U1:'U1：A 相进线，同时与 W2 短接（W 相绕组末端），构成三角形的一个顶点。',
+    W2:'W2：W 相绕组末端，与 U1 短接后接 A 相电源。',
+    V1:'V1：B 相进线，同时与 U2 短接（U 相绕组末端），构成三角形的一个顶点。',
+    U2:'U2：U 相绕组末端，与 V1 短接后接 B 相电源。',
+    W1:'W1：C 相进线，同时与 V2 短接（V 相绕组末端），构成三角形的一个顶点。',
+    V2:'V2：V 相绕组末端，与 W1 短接后接 C 相电源。'
+  };
+  return d[name]||'';
+}
+function termSync(){
+  $('termSel').textContent=TERM.sel>=0?termPads(640,320)[TERM.sel].n:'—';
+  $('termInfo').textContent=TERM.sel>=0?termInfoText(termPads(640,320)[TERM.sel].n):'点画布上的任意端子，查看它在当前接法下接到哪里。上排是 W2、U2、V2，下排是 U1、V1、W1。';
+  var cs=document.querySelectorAll('[data-c3term]');
+  for(var i=0;i<cs.length;i++)cs[i].classList.toggle('on',cs[i].getAttribute('data-c3term')===TERM.mode);
+  paint('c3Term');
+}
+
+var SEQ={order:[0,1,2],sel:-1,drag:-1};
+function seqCalc(){
+  var o=SEQ.order,pos=((o[1]-o[0]+3)%3===1);
+  return {pos:pos,txt:PHN3[o[0]]+'-'+PHN3[o[1]]+'-'+PHN3[o[2]]};
+}
+function seqDraw(c,w,h){
+  var r=seqCalc(),cy=h*0.46;
+  var xs=[w*0.14,w*0.29,w*0.44];
+  for(var i=0;i<3;i++){
+    var ph=SEQ.order[i];
+    vline(c,xs[i],70,h-46,PHC3[ph],4);
+    c.save();c.fillStyle='#0b1017';c.strokeStyle=PHC3[ph];c.lineWidth=2;
+    c.beginPath();c.arc(xs[i],70,12,0,TAU);c.fill();c.stroke();c.restore();
+    cvText(c,PHN3[ph],xs[i],70,PHC3[ph],11,'center',true);
+    cvText(c,['U','V','W'][i],xs[i],h-30,'#5d6d80',10,'center');
+  }
+  var mx=w*0.76,my=cy,R=58;
+  c.save();c.fillStyle='#111922';c.strokeStyle='#2b3947';c.lineWidth=2;
+  c.beginPath();c.arc(mx,my,R,0,TAU);c.fill();c.stroke();c.restore();
+  cvText(c,'M',mx,my-10,'#e7eef7',20,'center',true);
+  cvText(c,'3~',mx,my+16,'#94a3b8',11,'center');
+  var a0=-Math.PI*0.32,a1=Math.PI*0.86;
+  c.save();c.strokeStyle='#fcd34d';c.lineWidth=3;
+  c.beginPath();c.arc(mx,my,R+18,a0,a1,!r.pos);c.stroke();
+  var ex=mx+(R+18)*Math.cos(a1),ey=my+(R+18)*Math.sin(a1);
+  var ta=a1+(r.pos?Math.PI/2:-Math.PI/2);
+  c.fillStyle='#fcd34d';c.beginPath();
+  c.moveTo(ex,ey);
+  c.lineTo(ex-9*Math.cos(ta-0.4),ey-9*Math.sin(ta-0.4));
+  c.lineTo(ex-9*Math.cos(ta+0.4),ey-9*Math.sin(ta+0.4));
+  c.closePath();c.fill();c.restore();
+  cvText(c,r.pos?'正转':'反转',mx,my+R+40,r.pos?'#4ade80':'#f87171',13,'center',true);
+  cvTag(c,r.pos?'正序 A-B-C':'逆序',mx,my+R+74,r.pos?'#4ade80':'#f87171',10);
+}
+function seqSwap(a,b){
+  if(a<0||b<0||a===b)return;
+  var t=SEQ.order[a];SEQ.order[a]=SEQ.order[b];SEQ.order[b]=t;
+  SEQ.sel=-1;SEQ.drag=-1;SFX.tick();seqSync();
+}
+function seqPick(pos){
+  if(SEQ.sel<0){SEQ.sel=pos;SFX.tick();seqSync();}
+  else if(SEQ.sel===pos){SEQ.sel=-1;SFX.tick();seqSync();}
+  else seqSwap(SEQ.sel,pos);
+}
+function seqSync(){
+  var box=$('wireBox');box.innerHTML='';
+  for(var i=0;i<3;i++){
+    (function(pos){
+      var ph=SEQ.order[pos],b=document.createElement('button');
+      b.className='wire'+(SEQ.sel===pos?' on':'');
+      b.setAttribute('draggable','true');
+      b.innerHTML='<i style="background:'+PHC3[ph]+'"></i>'+PHN3[ph]+' 相';
+      b.addEventListener('dragstart',function(e){
+        SEQ.drag=pos;b.classList.add('drag');
+        if(e.dataTransfer){e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',String(pos));}
+      });
+      b.addEventListener('dragend',function(){b.classList.remove('drag');});
+      b.addEventListener('dragover',function(e){e.preventDefault();});
+      b.addEventListener('drop',function(e){
+        e.preventDefault();
+        var from=SEQ.drag>=0?SEQ.drag:+e.dataTransfer.getData('text/plain');
+        seqSwap(from,pos);
+      });
+      b.addEventListener('click',function(){seqPick(pos);});
+      box.appendChild(b);
+    })(i);
+  }
+  var r=seqCalc();
+  $('seqOrder').textContent=r.txt;
+  $('seqState').textContent=r.pos?'正序':'逆序';
+  $('seqState').style.color=r.pos?'#bbf7d0':'#fecaca';
+  $('seqDir').textContent=r.pos?'正转':'反转';
+  $('seqDir').style.color=r.pos?'#bbf7d0':'#fecaca';
+  paint('c3Seq');
+}
+
+var FLT={mode:'open'};
+function fltNeu(){
+  var R=[20,40,80];
+  var V=[[220,0],[-110,-190.5256],[-110,190.5256]],U=[],gr=0,gi=0,gs=0,i;
+  for(i=0;i<3;i++){gr+=V[i][0]/R[i];gi+=V[i][1]/R[i];gs+=1/R[i];}
+  var vn=[gr/gs,gi/gs];
+  for(i=0;i<3;i++){
+    var dx=V[i][0]-vn[0],dy=V[i][1]-vn[1];
+    U.push(Math.sqrt(dx*dx+dy*dy));
+  }
+  return {U:U,vnM:Math.sqrt(vn[0]*vn[0]+vn[1]*vn[1])};
+}
+function fltData(){
+  if(FLT.mode==='open'){
+    return {k:['L1 电流','L2 电流','L3 电流'],v:['0.0 A','10.2 A','10.2 A'],st:'单相运行',red:[true,true,true],
+      note:'一根相线断开后，电机没有启动转矩；运行中的电机靠惯性还能转，但变成单相运行，其余两相电流升到约 1.7–2 倍，绕组迅速发热。必须装缺相保护，不能靠“还能转”判断正常。'};
+  }
+  if(FLT.mode==='neu'){
+    var f=fltNeu();
+    return {k:['U_A（20 Ω）','U_B（40 Ω）','U_C（80 Ω）'],v:[f.U[0].toFixed(0)+' V',f.U[1].toFixed(0)+' V',f.U[2].toFixed(0)+' V'],
+      st:'中性点位移 '+f.vnM.toFixed(0)+' V',red:[true,true,true],
+      note:'中性线断开后，中性点漂移 '+f.vnM.toFixed(0)+' V。阻抗最大的 C 相升到 '+f.U[2].toFixed(0)+' V，灯会烧毁；阻抗最小的 A 相只有 '+f.U[0].toFixed(0)+' V，明显变暗。'};
+  }
+  return {k:['L1 电流','L2 电流','L3 电流'],v:['6.0 A','6.0 A','6.0 A'],st:'相序 逆序 · 反转',red:[false,false,false],
+    note:'相序接反时电压、电流都正常，唯一的变化是旋转磁场反向、电机反转。水泵、压缩机等不允许反转的设备会损坏，所以要用相序表确认，或装相序保护器；调整时对调任意两根线。'};
+}
+function fltDraw(c,w,h){
+  var mid=h*0.42;
+  if(FLT.mode==='neu'){
+    var f=fltNeu();
+    var cx=w*0.26,cy=88,R=54;
+    var angs=[-90,30,150];
+    for(var i=0;i<3;i++){
+      var a=angs[i]*Math.PI/180;
+      arrow(c,cx,cy,cx+R*Math.cos(a),cy+R*Math.sin(a),PHC3[i],2);
+    }
+    c.save();c.fillStyle='#fcd34d';c.beginPath();c.arc(cx,cy,4,0,TAU);c.fill();c.restore();
+    neuLamps(c,w,h,f.U);
+    cvTag(c,'中性线断开',92,24,'#f87171',10);
+    cvText(c,'N′ 位移 '+f.vnM.toFixed(0)+' V',cx,cy+R+18,'#fcd34d',10,'center');
+  }else{
+    var xs=[64,120,176],ys=[mid-52,mid,mid+52];
+    var names=FLT.mode==='seq'?['A','C','B']:['A','B','C'];
+    for(i=0;i<3;i++){
+      hline(c,xs[i],xs[i]+64,ys[i],PHC3[i],2.4);
+      cvText(c,names[i],xs[i]-12,ys[i],PHC3[i],11,'right',true);
+      if(FLT.mode==='open'&&i===0){
+        c.save();c.strokeStyle='#f87171';c.lineWidth=2.4;
+        c.beginPath();c.moveTo(112,ys[i]-9);c.lineTo(130,ys[i]+9);c.moveTo(130,ys[i]-9);c.lineTo(112,ys[i]+9);c.stroke();c.restore();
+        cvTag(c,'断相',121,ys[i]-26,'#f87171',9.5);
+      }
+    }
+    var mx=w*0.72,my=mid,R=58;
+    c.save();c.fillStyle='#111922';c.strokeStyle='#2b3947';c.lineWidth=2;
+    c.beginPath();c.arc(mx,my,R,0,TAU);c.fill();c.stroke();c.restore();
+    cvText(c,'M',mx,my-10,'#e7eef7',20,'center',true);
+    cvText(c,'3~',mx,my+16,'#94a3b8',11,'center');
+    var pos=FLT.mode!=='seq';
+    var a0=-Math.PI*0.32,a1=Math.PI*0.86;
+    c.save();c.strokeStyle='#fcd34d';c.lineWidth=3;
+    c.beginPath();c.arc(mx,my,R+18,a0,a1,!pos);c.stroke();
+    var ex=mx+(R+18)*Math.cos(a1),ey=my+(R+18)*Math.sin(a1);
+    var ta=a1+(pos?Math.PI/2:-Math.PI/2);
+    c.fillStyle='#fcd34d';c.beginPath();c.moveTo(ex,ey);
+    c.lineTo(ex-9*Math.cos(ta-0.4),ey-9*Math.sin(ta-0.4));
+    c.lineTo(ex-9*Math.cos(ta+0.4),ey-9*Math.sin(ta+0.4));
+    c.closePath();c.fill();c.restore();
+    cvText(c,pos?'正转':'反转',mx,my+R+40,pos?'#4ade80':'#f87171',12,'center',true);
+    if(FLT.mode==='open')cvTag(c,'缺相运行 · 过热',mx,my-R-20,'#f87171',10);
+    else cvTag(c,'相序接反',mx,my-R-20,'#f87171',10);
+  }
+}
+function fltSync(){
+  var d=fltData();
+  $('fltK1').textContent=d.k[0];$('fltK2').textContent=d.k[1];$('fltK3').textContent=d.k[2];
+  var vs=['fltV1','fltV2','fltV3'];
+  for(var i=0;i<3;i++){
+    $(vs[i]).textContent=d.v[i];
+    $(vs[i]).style.color=d.red[i]?'#fecaca':'#bbf7d0';
+  }
+  $('fltState').textContent=d.st;
+  $('fltState').style.color=FLT.mode==='seq'?'#fecaca':'#fde68a';
+  $('fltNote').textContent=d.note;
+  var cs=document.querySelectorAll('[data-flt]');
+  for(i=0;i<cs.length;i++)cs[i].classList.toggle('on',cs[i].getAttribute('data-flt')===FLT.mode);
+  paint('c3Fault');
+}
+
+/* ============ 15 三相功率 ============ */
+var P3W={mode:'Y',UL:380,IL:10,cos:0.8};
+function pwCalc(){
+  var phi=Math.acos(P3W.cos);
+  var S=Math.sqrt(3)*P3W.UL*P3W.IL;
+  var P=S*P3W.cos,Q=S*Math.sin(phi);
+  var up=P3W.mode==='Y'?P3W.UL/Math.sqrt(3):P3W.UL;
+  var ip=P3W.mode==='Y'?P3W.IL:P3W.IL/Math.sqrt(3);
+  return {phi:phi,S:S,P:P,Q:Q,up:up,ip:ip,Pp:3*up*ip*P3W.cos};
+}
+function pwDraw(c,w,h){
+  var r=pwCalc();
+  var x0=58,y0=h-56,availW=Math.max(120,w*0.45),availH=Math.max(90,h-104);
+  var sc=Math.min(availW/Math.max(r.S,1),availH/Math.max(r.S,1));
+  var px=x0+r.P*sc,qy=y0-r.Q*sc;
+  hline(c,x0,x0+availW+16,y0,'#22303f',1);
+  vline(c,x0,y0-availH-16,y0,'#22303f',1);
+  hline(c,x0,px,y0,'#38bdf8',3);
+  vline(c,px,qy,y0,'#a78bfa',3);
+  arrow(c,x0,y0,px,qy,'#2dd4bf',2.2);
+  c.save();c.strokeStyle='#2b3947';c.lineWidth=1;c.strokeRect(px-10,y0-10,10,10);c.restore();
+  c.save();c.strokeStyle='#fcd34d';c.lineWidth=1.4;c.beginPath();c.arc(x0,y0,30,-r.phi,0);c.stroke();c.restore();
+  cvText(c,'φ='+(r.phi*180/Math.PI).toFixed(1)+'°',x0+36,y0-12,'#fcd34d',10.5,'left');
+  cvText(c,'P = '+(r.P/1000).toFixed(2)+' kW',(x0+px)/2,y0+18,'#38bdf8',10.5,'center',true);
+  cvText(c,'Q = '+(r.Q/1000).toFixed(2)+' kvar',px+10,(qy+y0)/2,'#a78bfa',10.5,'left',true);
+  cvText(c,'S = '+(r.S/1000).toFixed(2)+' kVA',(x0+px)/2-18,(qy+y0)/2-22,'#2dd4bf',10.5,'center',true);
+
+  var fx=w*0.54;
+  cvText(c,'线值法',fx,36,'#9fb0c2',11,'left',true);
+  cvText(c,'P = √3·UL·IL·cosφ',fx,58,'#cfe0f0',12,'left');
+  cvText(c,'= '+(r.P/1000).toFixed(2)+' kW',fx,78,'#38bdf8',12,'left',true);
+  cvText(c,'相值法 · '+(P3W.mode==='Y'?'星形':'三角形'),fx,112,'#9fb0c2',11,'left',true);
+  cvText(c,'P = 3·Up·Ip·cosφ',fx,134,'#cfe0f0',12,'left');
+  cvText(c,'= '+(r.Pp/1000).toFixed(2)+' kW',fx,154,'#2dd4bf',12,'left',true);
+  cvTag(c,'两种算法一致',fx+66,186,'#4ade80',10);
+  cvText(c,P3W.mode==='Y'?'Y：Up=UL/√3，Ip=IL':'△：Up=UL，Ip=IL/√3',fx,216,'#8c9cb0',10.5,'left');
+  cvText(c,'换接法：Up、Ip 变，P 不变',fx,238,'#8c9cb0',10.5,'left');
+  cvText(c,'P、Q、S 构成直角三角形',fx,260,'#5d6d80',10,'left');
+}
+function pwSync(){
+  P3W.UL=+$('pwUL').value;P3W.IL=+$('pwIL').value;P3W.cos=+$('pwCos').value;
+  $('pwULVal').textContent=P3W.UL+' V';
+  $('pwILVal').textContent=P3W.IL.toFixed(1)+' A';
+  $('pwCosVal').textContent=P3W.cos.toFixed(2);
+  var r=pwCalc();
+  $('pwP').textContent=(r.P/1000).toFixed(2)+' kW';
+  $('pwQ').textContent=(r.Q/1000).toFixed(2)+' kvar';
+  $('pwS').textContent=(r.S/1000).toFixed(2)+' kVA';
+  $('pwUp').textContent=r.up.toFixed(1)+' V';
+  $('pwIp').textContent=r.ip.toFixed(2)+' A';
+  $('pwPp').textContent=(r.Pp/1000).toFixed(2)+' kW';
+  $('pwNote').textContent=P3W.mode==='Y'
+    ?'星形：Up=UL/√3、Ip=IL。切到三角形后 Up 变成 UL、Ip 变成 IL/√3，相值都变了，但用线值算出的 P 仍是 '+(r.P/1000).toFixed(2)+' kW。'
+    :'三角形：Up=UL、Ip=IL/√3。切回星形后 Up、Ip 改变，但线值不变，P 仍是 '+(r.P/1000).toFixed(2)+' kW。';
+  var ms=document.querySelectorAll('[data-pwmode]');
+  for(var i=0;i<ms.length;i++)ms[i].classList.toggle('on',ms[i].getAttribute('data-pwmode')===P3W.mode);
+  paint('pwCalc');
+}
+
+var PWI={cos:0.8};
+function pwiData(){
+  var UI=(380/Math.sqrt(3))*10,phi=Math.acos(PWI.cos),avg=UI*PWI.cos;
+  return {UI:UI,phi:phi,avg:avg,p1max:avg+UI,p1min:avg-UI,p3:3*avg};
+}
+function pwiDraw(c,w,h){
+  var d=pwiData();
+  var x0=52,y0=20,ww=w-92,hh=h-120;
+  var yMax=Math.max(d.p3,d.p1max)*1.08,yMin=Math.min(0,d.p1min)*1.12;
+  if(yMax-yMin<1)yMax=yMin+1;
+  function yOf(v){return y0+hh*(yMax-v)/(yMax-yMin);}
+  grid(c,x0,y0,ww,hh,8,4);
+  var yz=yOf(0);
+  hline(c,x0,x0+ww,yz,'rgba(148,163,184,.45)',1,[4,4]);
+  cvText(c,'0',x0-8,yz,'#5d6d80',9,'right');
+  c.save();c.strokeStyle='#fcd34d';c.lineWidth=2.2;c.beginPath();
+  for(var i=0;i<=480;i++){
+    var t=i/480*4*Math.PI,v=d.avg-d.UI*Math.cos(2*t-d.phi);
+    var x=x0+ww*i/480,y=yOf(v);
+    if(i)c.lineTo(x,y);else c.moveTo(x,y);
+  }
+  c.stroke();c.restore();
+  var yp3=yOf(d.p3);
+  hline(c,x0,x0+ww,yp3,'#2dd4bf',2.6);
+  var yavg=yOf(d.avg);
+  hline(c,x0,x0+ww,yavg,'rgba(252,211,77,.35)',1,[3,4]);
+  cvText(c,'P₁平均 '+(d.avg/1000).toFixed(2)+' kW',x0+ww-6,yavg-10,'rgba(252,211,77,.85)',9.5,'right');
+  cvText(c,'三相 p₃ = '+(d.p3/1000).toFixed(2)+' kW（恒定）',x0+ww-6,yp3+12,'#2dd4bf',9.5,'right');
+  cvText(c,'t',x0+ww+8,yz,'#5d6d80',9,'left');
+  cvText(c,'T',x0+ww/2,yz+14,'#5d6d80',9,'center');
+  cvText(c,'2T',x0+ww,yz+14,'#5d6d80',9,'center');
+  var ry1=h-58,ry2=h-24,rx0=118,rw=w-rx0-20;
+  cvText(c,'单相转矩',16,ry1,'#fcd34d',10,'left',true);
+  cvText(c,'三相转矩',16,ry2,'#2dd4bf',10,'left',true);
+  sine(c,rx0,ry1,rw,11,0,'#fcd34d',1.8,null,4);
+  hline(c,rx0,rx0+rw,ry2,'#2dd4bf',2);
+  cvText(c,'脉动',rx0+rw-4,ry1-14,'#8c9cb0',9,'right');
+  cvText(c,'平稳',rx0+rw-4,ry2-14,'#8c9cb0',9,'right');
+}
+function pwiSync(){
+  PWI.cos=+$('pwInstCos').value;
+  $('pwInstCosVal').textContent=PWI.cos.toFixed(2);
+  var d=pwiData();
+  $('pwInstP1').textContent=(d.avg/1000).toFixed(2)+' kW';
+  $('pwInstRange').textContent=(d.p1min/1000).toFixed(2)+' ~ '+(d.p1max/1000).toFixed(2)+' kW';
+  $('pwInstP3').textContent=(d.p3/1000).toFixed(2)+' kW';
+  $('pwInstRip').textContent='0';
+  paint('pwInst');
+}
+
+var PWC={cos1:0.7,Qc:30,P:100,UL:380,R:0.05};
+function pwcData(){
+  var q1=PWC.P*Math.tan(Math.acos(PWC.cos1));
+  var q2=q1-PWC.Qc;
+  var s1=Math.sqrt(PWC.P*PWC.P+q1*q1),s2=Math.sqrt(PWC.P*PWC.P+q2*q2);
+  var i1=s1*1000/(Math.sqrt(3)*PWC.UL),i2=s2*1000/(Math.sqrt(3)*PWC.UL);
+  var l1=3*i1*i1*PWC.R,l2=3*i2*i2*PWC.R;
+  var cos2=PWC.P/s2;
+  var need=PWC.P*(Math.tan(Math.acos(PWC.cos1))-Math.tan(Math.acos(0.95)));
+  return {q1:q1,q2:q2,s1:s1,s2:s2,i1:i1,i2:i2,l1:l1,l2:l2,cos2:cos2,need:need,lead:q2<0};
+}
+function pwcDraw(c,w,h){
+  var r=pwcData();
+  var sy1=64,sy2=152,srcX=54,loadX=w*0.40,capX=loadX-38;
+  cvText(c,'三相电源',srcX,26,'#9fb0c2',10,'center',true);
+  c.save();c.strokeStyle='#38bdf8';c.lineWidth=2;c.beginPath();c.arc(srcX,108,20,0,TAU);c.stroke();c.restore();
+  cvText(c,'~',srcX,108,'#38bdf8',18,'center',true);
+  cvText(c,'380 V',srcX,sy2+20,'#5d6d80',9.5,'center');
+  vline(c,srcX,88,sy1,'#38bdf8',2);
+  vline(c,srcX,128,sy2,'#38bdf8',2);
+  hline(c,srcX,loadX,sy1,'#38bdf8',2);
+  hline(c,srcX,loadX,sy2,'#38bdf8',2);
+  /* 线路电阻 */
+  c.save();c.strokeStyle='#f472b6';c.lineWidth=2;c.beginPath();
+  var rz0=srcX+54,rz1=rz0+46;
+  c.moveTo(rz0,sy1);
+  for(var i=1;i<=6;i++)c.lineTo(rz0+(rz1-rz0)*i/6,sy1+(i%2?6:-6));
+  c.stroke();c.restore();
+  cvText(c,'R线',(rz0+rz1)/2,sy1-14,'#f472b6',9.5,'center');
+  /* 电容支路 */
+  vline(c,capX,sy1,100,'#a78bfa',1.8);
+  vline(c,capX,112,sy2,'#a78bfa',1.8);
+  hline(c,capX-11,capX+11,100,'#a78bfa',2.4);
+  hline(c,capX-11,capX+11,112,'#a78bfa',2.4);
+  cvText(c,'C',capX+16,96,'#a78bfa',10,'left',true);
+  cvTag(c,'Qc='+PWC.Qc+' kvar',capX-6,174,'#a78bfa',9.5);
+  /* 负载 */
+  var lbw=Math.min(64,Math.max(48,w*0.11));
+  c.save();c.fillStyle='#111922';c.strokeStyle='#2b3947';c.lineWidth=1.6;
+  c.beginPath();c.rect(loadX,50,lbw,116);c.fill();c.stroke();c.restore();
+  cvText(c,'负载',loadX+lbw/2,96,'#cfe0f0',10,'center',true);
+  cvText(c,'100 kW',loadX+lbw/2,118,'#8c9cb0',9.5,'center');
+  /* 电流箭头 */
+  arrow(c,srcX+22,sy1,srcX+42,sy1,'#2dd4bf',1.8);
+  cvText(c,'I',srcX+32,sy1-11,'#2dd4bf',9.5,'center');
+
+  /* 对比条 */
+  var bx=w*0.58,bw=w-bx-70,bar0=bx+54,maxLen=bw-96;
+  cvText(c,'线电流 I',bx,50,'#9fb0c2',10.5,'left',true);
+  cvText(c,'线损 ΔP',bx,130,'#9fb0c2',10.5,'left',true);
+  function bar(y,label,val,ratio,col,unit){
+    cvText(c,label,bx,y+10,'#8c9cb0',9.5,'left');
+    var len=Math.max(2,maxLen*ratio);
+    c.save();c.fillStyle=col;c.beginPath();
+    if(c.roundRect)c.roundRect(bar0,y-2,len,14,4);else c.rect(bar0,y-2,len,14);
+    c.fill();c.restore();
+    cvText(c,val.toFixed(unit==='A'?0:2)+' '+unit,bar0+len+7,y+5,'#cfe0f0',9.5,'left');
+  }
+  var imax=Math.max(r.i1,r.i2,1),lmax=Math.max(r.l1,r.l2,1);
+  bar(72,'补偿前',r.i1,r.i1/imax,'#f472b6','A');
+  bar(98,'补偿后',r.i2,r.i2/imax,'#2dd4bf','A');
+  bar(152,'补偿前',r.l1/1000,r.l1/lmax,'#f472b6','kW');
+  bar(178,'补偿后',r.l2/1000,r.l2/lmax,'#2dd4bf','kW');
+  cvText(c,'省下线损 '+((r.l1-r.l2)/1000).toFixed(2)+' kW',bx,222,'#bbf7d0',11,'left',true);
+  cvText(c,'cosφ₂ = '+r.cos2.toFixed(3)+(r.lead?'（容性 · 过补偿）':'') ,bx,246,r.lead?'#fecaca':'#8c9cb0',10,'left');
+  cvText(c,'电流下降 '+((1-r.i2/r.i1)*100).toFixed(0)+'%',bx,268,'#2dd4bf',10,'left');
+}
+function pwcSync(){
+  PWC.cos1=+$('pwCompCos').value;PWC.Qc=+$('pwCompQc').value;
+  $('pwCompCosVal').textContent=PWC.cos1.toFixed(2);
+  $('pwCompQcVal').textContent=PWC.Qc+' kvar';
+  var r=pwcData();
+  $('pwCompCos2').textContent=r.cos2.toFixed(3);
+  $('pwCompI').textContent=r.i1.toFixed(0)+' → '+r.i2.toFixed(0)+' A';
+  $('pwCompLoss').textContent=(r.l1/1000).toFixed(2)+' → '+(r.l2/1000).toFixed(2)+' kW';
+  $('pwCompSave').textContent=((r.l1-r.l2)/1000).toFixed(2)+' kW';
+  $('pwCompNeed').textContent=r.need.toFixed(0)+' kvar';
+  $('pwCompNote').textContent=r.lead
+    ?'已过补偿：无功反向，功率因数反而下降，电压可能升高。把 Qc 调小到 '+r.need.toFixed(0)+' kvar 左右即可达到 0.95。'
+    :'电容提供容性无功，抵消一部分感性无功，线电流和线损都下降。补到 0.95 约需 '+r.need.toFixed(0)+' kvar。';
+  paint('pwComp');
+}
+
+var PWT={phi:30,UL:380,IL:10};
+function pwtData(){
+  var ph=PWT.phi*Math.PI/180,base=PWT.UL*PWT.IL;
+  var p1=base*Math.cos(ph-Math.PI/6),p2=base*Math.cos(ph+Math.PI/6);
+  return {p1:p1,p2:p2,sum:p1+p2,cos:Math.cos(ph),phi:PWT.phi};
+}
+function pwtDraw(c,w,h){
+  var r=pwtData();
+  var ly=[56,104,152],lx0=30,lx1=w*0.46;
+  var names=['L1','L2','L3'];
+  for(var i=0;i<3;i++){
+    hline(c,lx0,lx1,ly[i],PHC3[i],2);
+    cvText(c,names[i],lx0-6,ly[i],PHC3[i],10.5,'right',true);
+  }
+  var lbw=Math.min(78,w*0.14);
+  c.save();c.fillStyle='#111922';c.strokeStyle='#2b3947';c.lineWidth=1.6;
+  c.beginPath();c.rect(lx1,30,lbw,150);c.fill();c.stroke();c.restore();
+  cvText(c,'三相负载',lx1+lbw/2,98,'#cfe0f0',10,'center',true);
+  cvText(c,'cosφ='+r.cos.toFixed(2),lx1+lbw/2,120,'#8c9cb0',9.5,'center');
+  var w1x=w*0.24,w2x=w*0.34;
+  c.save();c.strokeStyle='rgba(252,211,77,.55)';c.lineWidth=1.2;c.setLineDash([3,4]);
+  c.beginPath();c.moveTo(w1x,ly[0]+15);c.lineTo(w1x,ly[2]);c.stroke();
+  c.beginPath();c.moveTo(w2x,ly[1]+15);c.lineTo(w2x,ly[2]);c.stroke();
+  c.restore();
+  function meter(x,y,name){
+    c.save();c.fillStyle='#0b1017';c.strokeStyle='#fcd34d';c.lineWidth=1.8;
+    c.beginPath();c.arc(x,y,15,0,TAU);c.fill();c.stroke();c.restore();
+    cvText(c,name,x,y,'#fcd34d',10,'center',true);
+  }
+  meter(w1x,ly[0],'W1');
+  meter(w2x,ly[1],'W2');
+  cvText(c,'I₁',w1x-46,ly[0]-11,'#38bdf8',9.5,'center');
+  cvText(c,'I₂',w2x-46,ly[1]-11,'#2dd4bf',9.5,'center');
+  cvText(c,'U13',w1x+6,ly[2]-8,'#fcd34d',9,'left');
+  cvText(c,'U23',w2x+6,ly[2]-8,'#fcd34d',9,'left');
+  c.save();c.fillStyle='#fcd34d';
+  c.beginPath();c.arc(w1x,ly[2],2.6,0,TAU);c.fill();
+  c.beginPath();c.arc(w2x,ly[2],2.6,0,TAU);c.fill();c.restore();
+
+  var xz=w*0.44,lenMax=w-xz-104,maxA=Math.max(Math.abs(r.p1),Math.abs(r.p2),1);
+  vline(c,xz,208,282,'#22303f',1);
+  function bar(y,label,val){
+    var pos=val>=0;
+    var lim=pos?lenMax:Math.min(lenMax,xz-90);
+    var len=Math.min(lim,Math.abs(val)/maxA*lenMax);
+
+    c.save();c.fillStyle=pos?'#2dd4bf':'#f87171';c.beginPath();
+    if(c.roundRect)c.roundRect(pos?xz:xz-len,y-8,len,16,4);else c.rect(pos?xz:xz-len,y-8,len,16);
+    c.fill();c.restore();
+    cvText(c,label,16,y,'#8c9cb0',10,'left',true);
+    cvText(c,val.toFixed(0)+' W',pos?xz+len+7:xz-len-7,y,pos?'#cfe0f0':'#fecaca',9.5,pos?'left':'right');
+  }
+  bar(224,'W1',r.p1);
+  bar(262,'W2',r.p2);
+  cvText(c,'P₁+P₂ = '+r.sum.toFixed(0)+' W',xz,294,'#bbf7d0',11,'left',true);
+  if(r.p2<-5)cvText(c,'反偏 · 记负值',xz-6,244,'#fecaca',9.5,'right');
+}
+function pwtSync(){
+  PWT.phi=+$('pwTwoPhi').value;
+  $('pwTwoPhiVal').textContent=PWT.phi+'°';
+  var r=pwtData();
+  $('pwTwoP1').textContent=r.p1.toFixed(0)+' W';
+  $('pwTwoP2').textContent=r.p2.toFixed(0)+' W';
+  $('pwTwoP2').style.color=r.p2<-5?'#fecaca':'#e7eef7';
+  $('pwTwoSum').textContent=r.sum.toFixed(0)+' W';
+  $('pwTwoCos').textContent=r.cos.toFixed(3);
+  var st=$('pwTwoState');
+  if(r.p2<-5){st.textContent='W2 反偏 · 记负值';st.style.color='#fecaca';}
+  else if(Math.abs(r.p2)<=5){st.textContent='W2 读数 ≈ 0';st.style.color='#fde68a';}
+  else{st.textContent='两表都正';st.style.color='#bbf7d0';}
+  paint('pwTwo');
+}
+
+function pwrBind(){
+  var qs=document.querySelectorAll('.view[data-view="pwr3"] .quiz');
+  var st={n:0,ok:0,total:qs.length};
+  function upd(){
+    $('pwrScore').textContent=st.ok+' / '+st.total;
+    $('pwrRate').textContent=st.n?Math.round(st.ok/st.n*100)+'%':'—';
+  }
+  for(var qi=0;qi<qs.length;qi++){
+    (function(q){
+      var opts=q.querySelectorAll('.opt');
+      function pick(btn){
+        if(q.getAttribute('data-done'))return;
+        q.setAttribute('data-done','1');
+        var ans=+q.getAttribute('data-ans'),ch=+btn.getAttribute('data-opt'),ok=ch===ans;
+        for(var k=0;k<opts.length;k++){
+          var v=+opts[k].getAttribute('data-opt');
+          if(v===ans)opts[k].classList.add('ok');
+          else if(opts[k]===btn)opts[k].classList.add('bad');
+          else opts[k].classList.add('dim');
+        }
+        q.querySelector('.fb').classList.add('show');
+        st.n++;if(ok)st.ok++;
+        upd();
+        if(ok)SFX.correct();else SFX.wrong();
+      }
+      for(var oi=0;oi<opts.length;oi++)opts[oi].addEventListener('click',function(){pick(this);});
+    })(qs[qi]);
+  }
+  $('pwrReset').onclick=function(){
+    for(var i=0;i<qs.length;i++){
+      var q=qs[i];q.removeAttribute('data-done');
+      var os=q.querySelectorAll('.opt');
+      for(var j=0;j<os.length;j++)os[j].classList.remove('ok','bad','dim');
+      q.querySelector('.fb').classList.remove('show');
+    }
+    st.n=0;st.ok=0;upd();SFX.ui();
+  };
+  upd();
+}
+
+/* ============ 15 练习判分（三相的连接） ============ */
+function c3Bind(){
+  var qs=document.querySelectorAll('.view[data-view="conn3"] .quiz');
+  var st={n:0,ok:0,total:qs.length};
+  function upd(){
+    $('c3Score').textContent=st.ok+' / '+st.total;
+    $('c3Rate').textContent=st.n?Math.round(st.ok/st.n*100)+'%':'—';
+  }
+  for(var qi=0;qi<qs.length;qi++){
+    (function(q){
+      var opts=q.querySelectorAll('.opt');
+      function pick(btn){
+        if(q.getAttribute('data-done'))return;
+        q.setAttribute('data-done','1');
+        var ans=+q.getAttribute('data-ans'),ch=+btn.getAttribute('data-opt'),ok=ch===ans;
+        for(var k=0;k<opts.length;k++){
+          var v=+opts[k].getAttribute('data-opt');
+          if(v===ans)opts[k].classList.add('ok');
+          else if(opts[k]===btn)opts[k].classList.add('bad');
+          else opts[k].classList.add('dim');
+        }
+        q.querySelector('.fb').classList.add('show');
+        st.n++;if(ok)st.ok++;
+        upd();
+        if(ok)SFX.correct();else SFX.wrong();
+      }
+      for(var oi=0;oi<opts.length;oi++)opts[oi].addEventListener('click',function(){pick(this);});
+    })(qs[qi]);
+  }
+  $('c3Reset').onclick=function(){
+    for(var i=0;i<qs.length;i++){
+      var q=qs[i];q.removeAttribute('data-done');
+      var os=q.querySelectorAll('.opt');
+      for(var j=0;j<os.length;j++)os[j].classList.remove('ok','bad','dim');
+      q.querySelector('.fb').classList.remove('show');
+    }
+    st.n=0;st.ok=0;upd();SFX.ui();
+  };
+  upd();
+}
+
+/* ============ 14 练习判分 ============ */
+function quiz2Bind(){
+  var qs=document.querySelectorAll('.view[data-view="quiz2"] .quiz');
+  var st={n:0,ok:0,total:qs.length};
+  function upd(){
+    $('q2Score').textContent=st.ok+' / '+st.total;
+    $('q2Rate').textContent=st.n?Math.round(st.ok/st.n*100)+'%':'—';
+  }
+  for(var qi=0;qi<qs.length;qi++){
+    (function(q){
+      var opts=q.querySelectorAll('.opt');
+      function pick(btn){
+        if(q.getAttribute('data-done'))return;
+        q.setAttribute('data-done','1');
+        var ans=+q.getAttribute('data-ans'),ch=+btn.getAttribute('data-opt'),ok=ch===ans;
+        for(var k=0;k<opts.length;k++){
+          var v=+opts[k].getAttribute('data-opt');
+          if(v===ans)opts[k].classList.add('ok');
+          else if(opts[k]===btn)opts[k].classList.add('bad');
+          else opts[k].classList.add('dim');
+        }
+        q.querySelector('.fb').classList.add('show');
+        st.n++;if(ok)st.ok++;
+        upd();
+        if(ok)SFX.correct();else SFX.wrong();
+      }
+      for(var oi=0;oi<opts.length;oi++)opts[oi].addEventListener('click',function(){pick(this);});
+    })(qs[qi]);
+  }
+  $('q2Reset').onclick=function(){
+    for(var i=0;i<qs.length;i++){
+      var q=qs[i];q.removeAttribute('data-done');
+      var os=q.querySelectorAll('.opt');
+      for(var j=0;j<os.length;j++)os[j].classList.remove('ok','bad','dim');
+      q.querySelector('.fb').classList.remove('show');
+    }
+    st.n=0;st.ok=0;upd();SFX.ui();
+  };
+  upd();
+}
+
+/* ============ 初始化 ============ */
+function each(id,fn){
+  var el=$(id);if(!el)return;
+  el.addEventListener('input',fn);
+  el.addEventListener('change',fn);
+}
+function init(){
+  SFX.initUI();
+
+  registerCanvas('genCanvas',genDraw);
+  registerCanvas('labCanvas',labDraw);
+  registerCanvas('measCanvas',measDraw);
+  registerCanvas('rmsCanvas',rmsDraw);
+  registerCanvas('rCanvas',function(c,w,h){elDraw(c,w,h,'R');});
+  registerCanvas('lCanvas',function(c,w,h){elDraw(c,w,h,'L');});
+  registerCanvas('cCanvas',function(c,w,h){elDraw(c,w,h,'C');});
+  registerCanvas('cmpCanvas',cmpDraw);
+  registerCanvas('sweepCanvas',swDraw);
+  registerCanvas('autoCanvas',autoDraw);
+  registerCanvas('phCanvas',phDraw);
+  registerCanvas('rlcCanvas',rlcDraw);
+  registerCanvas('resCanvas',resDraw);
+  registerCanvas('tpCanvas',tpDraw);
+  registerCanvas('connCanvas',connDraw);
+  registerCanvas('rotCanvas',rotDraw);
+  registerCanvas('c3Load',c3Draw);
+  registerCanvas('c3Neu',neuDraw);
+  registerCanvas('c3Term',termDraw);
+  registerCanvas('c3Seq',seqDraw);
+  registerCanvas('c3Fault',fltDraw);
+  registerCanvas('pwCalc',pwDraw);
+  registerCanvas('pwInst',pwiDraw);
+  registerCanvas('pwComp',pwcDraw);
+  registerCanvas('pwTwo',pwtDraw);
+
+  /* 导航 */
+  var navs=document.querySelectorAll('.nav-item');
+  for(var i=0;i<navs.length;i++){
+    navs[i].addEventListener('click',function(){
+      switchView(this.getAttribute('data-view'));SFX.ui();
+    });
+  }
+
+  /* 01 产生 */
+  each('genSpeed',function(){
+    GEN.speed=+$('genSpeed').value;
+    $('genSpeedVal').textContent=GEN.speed.toFixed(2)+' r/s';
+    $('genPer').textContent=(1/GEN.speed).toFixed(2)+' s';
+  });
+  $('genPlay').onclick=function(){
+    GEN.on=!GEN.on;
+    this.textContent=GEN.on?'暂停':'继续';
+    this.classList.toggle('on',GEN.on);
+    if(GEN.on)RUN.lastT=performance.now();
+    SFX.ui();
+  };
+  $('genReset').onclick=function(){
+    GEN.th=0;genSyncDom();paint('genCanvas');SFX.snap();
+  };
+
+  /* 02 三要素实验台 */
+  each('labA',labSync);each('labF',labSync);each('labPh',labSync);
+
+  /* 02 相位差测量 */
+  each('curA',measSync);each('curB',measSync);
+  $('measCheck').onclick=measCheck;
+  $('measNew').onclick=function(){measNew();SFX.ui();};
+  $('measAns').addEventListener('keydown',function(e){if(e.key==='Enter')measCheck();});
+
+  /* 03 有效值换算 */
+  each('rmsIn',rmsSync);each('rmsMode',rmsSync);
+  var rchips=document.querySelectorAll('[data-rms]');
+  for(var ri=0;ri<rchips.length;ri++){
+    rchips[ri].addEventListener('click',function(){
+      var v=+this.getAttribute('data-rms');
+      RMS.dc=(v===12);
+      $('rmsIn').value=v;
+      $('rmsMode').value=(!RMS.dc&&v===311)?'peak':'rms';
+      for(var k=0;k<rchips.length;k++)rchips[k].classList.toggle('on',rchips[k]===this);
+      rmsSync();SFX.tick();
+    });
+  }
+
+  /* 04/05/06 单一元件 */
+  ['rU','rF','rR'].forEach(function(id){each(id,function(){elSync('R');});});
+  ['lU','lF','lL'].forEach(function(id){each(id,function(){elSync('L');});});
+  ['cU','cF','cC'].forEach(function(id){each(id,function(){elSync('C');});});
+
+  /* 07 双踪对比 */
+  var echips=document.querySelectorAll('[data-el]');
+  for(var ei=0;ei<echips.length;ei++){
+    echips[ei].addEventListener('click',function(){
+      var k=this.getAttribute('data-el');
+      CMP.sel[k]=!CMP.sel[k];
+      this.classList.toggle('on',CMP.sel[k]);
+      cmpSync();SFX.tick();
+    });
+  }
+  each('cmpF',cmpSync);each('cmpR',cmpSync);each('cmpL',cmpSync);each('cmpC',cmpSync);
+
+  /* 07 频率扫描 */
+  each('swL',swSync);each('swC',swSync);each('swF',swSync);
+
+  /* 10 相量合成 */
+  each('phAm',phSync);each('phAa',phSync);each('phBm',phSync);each('phBa',phSync);
+
+  /* 11 串联 RLC */
+  each('rlcR',rlcSync);each('rlcL',rlcSync);each('rlcC',rlcSync);each('rlcF',rlcSync);
+  $('rlcRes').onclick=function(){
+    var r=rlcCalc();
+    $('rlcF').value=clamp(r.f0,20,500).toFixed(1);
+    rlcSync();SFX.snap();
+  };
+
+  /* 11 谐振扫描 */
+  each('resR',resSync);each('resL',resSync);each('resC',resSync);each('resF',resSync);
+
+  /* 12 三相波形 */
+  each('tpA',tpSync);each('tpF',tpSync);each('tpT',tpSync);
+
+  /* 12 星三角 */
+  each('connUp',connSync);each('connIp',connSync);
+  var cchips=document.querySelectorAll('[data-conn]');
+  for(var ci=0;ci<cchips.length;ci++){
+    cchips[ci].addEventListener('click',function(){
+      CONN.mode=this.getAttribute('data-conn');
+      connSync();SFX.tick();
+    });
+  }
+
+  /* 13 旋转磁场 */
+  var qchips=document.querySelectorAll('[data-rotseq]');
+  for(var qi2=0;qi2<qchips.length;qi2++){
+    qchips[qi2].addEventListener('click',function(){
+      ROT.seq=+this.getAttribute('data-rotseq');
+      for(var k=0;k<qchips.length;k++)qchips[k].classList.toggle('on',qchips[k]===this);
+      rotSyncDom();paint('rotCanvas');SFX.tick();
+    });
+  }
+  $('rotPlay').onclick=function(){
+    ROT.on=!ROT.on;
+    this.textContent=ROT.on?'暂停':'继续';
+    this.classList.toggle('on',ROT.on);
+    SFX.ui();
+  };
+  each('rotSpeed',rotSync);
+
+  /* 14 三相的连接 */
+  each('c3R',c3Sync);
+  var g3chips=document.querySelectorAll('[data-c3grid]');
+  for(var g3=0;g3<g3chips.length;g3++){
+    g3chips[g3].addEventListener('click',function(){
+      C3.grid=+this.getAttribute('data-c3grid');c3Sync();SFX.tick();
+    });
+  }
+  var m3chips=document.querySelectorAll('[data-c3mode]');
+  for(var m3=0;m3<m3chips.length;m3++){
+    m3chips[m3].addEventListener('click',function(){
+      C3.mode=this.getAttribute('data-c3mode');c3Sync();SFX.tick();
+    });
+  }
+  each('neuRa',neuSync);each('neuRb',neuSync);each('neuRc',neuSync);
+  $('neuSw').onclick=function(){NEU.on=!NEU.on;neuSync();SFX.tick();};
+  var t3chips=document.querySelectorAll('[data-c3term]');
+  for(var t3=0;t3<t3chips.length;t3++){
+    t3chips[t3].addEventListener('click',function(){
+      TERM.mode=this.getAttribute('data-c3term');TERM.sel=-1;termSync();SFX.tick();
+    });
+  }
+  $('c3Term').addEventListener('click',function(e){
+    var box=this.getBoundingClientRect();
+    var x=e.clientX-box.left,y=e.clientY-box.top;
+    var pads=termPads(this.clientWidth,this.clientHeight),best=-1,bd=1e9;
+    for(var i=0;i<pads.length;i++){
+      var d=Math.sqrt(Math.pow(x-pads[i].x,2)+Math.pow(y-pads[i].y,2));
+      if(d<28&&d<bd){bd=d;best=i;}
+    }
+    if(best>=0){TERM.sel=best;termSync();SFX.tick();}
+  });
+  var f3chips=document.querySelectorAll('[data-flt]');
+  for(var f3=0;f3<f3chips.length;f3++){
+    f3chips[f3].addEventListener('click',function(){
+      FLT.mode=this.getAttribute('data-flt');fltSync();SFX.tick();
+    });
+  }
+  c3Bind();
+
+  /* 15 三相功率 */
+  each('pwUL',pwSync);each('pwIL',pwSync);each('pwCos',pwSync);
+  var pm3=document.querySelectorAll('[data-pwmode]');
+  for(var pm=0;pm<pm3.length;pm++){
+    pm3[pm].addEventListener('click',function(){
+      P3W.mode=this.getAttribute('data-pwmode');pwSync();SFX.tick();
+    });
+  }
+  each('pwInstCos',pwiSync);
+  each('pwCompCos',pwcSync);each('pwCompQc',pwcSync);
+  $('pwCompAuto').onclick=function(){
+    var need=pwcData().need,el=$('pwCompQc');
+    el.value=Math.max(0,Math.min(160,Math.round(need)));
+    pwcSync();SFX.ui();
+  };
+  each('pwTwoPhi',pwtSync);
+  pwrBind();
+
+  /* 09 练习 */
+  quizBind();
+
+  /* 16 练习 */
+  quiz2Bind();
+
+  /* 初始状态 */
+  genSyncDom();
+  $('genSpeedVal').textContent=GEN.speed.toFixed(2)+' r/s';
+  $('genPer').textContent=(1/GEN.speed).toFixed(2)+' s';
+  labSync();
+  measNew();
+  rmsSync();
+  elSync('R');elSync('L');elSync('C');
+  cmpSync();
+  swSync();
+  phSync();
+  rlcSync();
+  resSync();
+  tpSync();
+  connSync();
+  rotSync();
+  c3Sync();
+  neuSync();
+  termSync();
+  seqSync();
+  fltSync();
+  pwSync();
+  pwiSync();
+  pwcSync();
+  pwtSync();
+  paint('autoCanvas');
+
+  var name=(location.hash||'').replace('#','');
+  switchView(META[name]?name:'gen');
+
+  var rt=0;
+  window.addEventListener('resize',function(){
+    clearTimeout(rt);rt=setTimeout(paintAll,120);
+  });
+  requestAnimationFrame(loop);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+else init();
+})();
+</script>
+</body>
+</html>
