@@ -800,41 +800,44 @@
       <button class="nav-item" data-view="totalCar">
         <span class="nav-no">10</span><span class="nav-text">整车直流电路综合案例</span>
       </button>
+      <button class="nav-item" data-view="autoElectric">
+        <span class="nav-no">11</span><span class="nav-text">汽车电气实战</span>
+      </button>
       <button class="nav-item" data-view="potential">
-        <span class="nav-no">11</span><span class="nav-text">电位的计算</span>
+        <span class="nav-no">12</span><span class="nav-text">电位的计算</span>
       </button>
       <button class="nav-item" data-view="inductor">
-        <span class="nav-no">12</span><span class="nav-text">电感元件</span>
+        <span class="nav-no">13</span><span class="nav-text">电感元件</span>
       </button>
       <button class="nav-item" data-view="capacitor">
-        <span class="nav-no">13</span><span class="nav-text">电容器类型与标记</span>
+        <span class="nav-no">14</span><span class="nav-text">电容器类型与标记</span>
       </button>
       <button class="nav-item" data-view="resistor">
-        <span class="nav-no">14</span><span class="nav-text">电阻：类型与标记</span>
+        <span class="nav-no">15</span><span class="nav-text">电阻：类型与标记</span>
       </button>
       <button class="nav-item" data-view="transient">
-        <span class="nav-no">15</span><span class="nav-text">电路暂态分析</span>
+        <span class="nav-no">16</span><span class="nav-text">电路暂态分析</span>
       </button>
       <button class="nav-item" data-view="meter">
-        <span class="nav-no">16</span><span class="nav-text">万用表测量训练</span>
+        <span class="nav-no">17</span><span class="nav-text">万用表测量训练</span>
       </button>
       <button class="nav-item" data-view="safety">
-        <span class="nav-no">17</span><span class="nav-text">汽车电气安全要点</span>
+        <span class="nav-no">18</span><span class="nav-text">汽车电气安全要点</span>
       </button>
       <button class="nav-item" data-view="quiz">
-        <span class="nav-no">18</span><span class="nav-text">练习与自测</span>
+        <span class="nav-no">19</span><span class="nav-text">练习与自测</span>
       </button>
       <button class="nav-item" data-view="diagram">
-        <span class="nav-no">19</span><span class="nav-text">汽车电路读图</span>
+        <span class="nav-no">20</span><span class="nav-text">汽车电路读图</span>
       </button>
       <button class="nav-item" data-view="fault">
-        <span class="nav-no">20</span><span class="nav-text">故障诊断实战</span>
+        <span class="nav-no">21</span><span class="nav-text">故障诊断实战</span>
       </button>
     </nav>
 
     <div class="side-foot">
       <div class="prog"><div class="prog-bar" style="width:100%"></div></div>
-      <div class="prog-text">16 个视图 · 82 个知识块 · 离线单文件</div>
+      <div class="prog-text">21 个视图 · 94 个知识块 · 离线单文件</div>
     </div>
   </aside>
 
@@ -2718,7 +2721,139 @@
         </div>
       </section>
 
-      <!-- 11 电位的计算 -->
+      <!-- 11 汽车电气实战：继电器 · 保险线束 · LED -->
+      <section class="view" data-view="autoElectric">
+        <div class="view-head"><h1>汽车电气实战：继电器 · 保险丝与线束 · LED 限流</h1>
+          <p>三个维修现场天天遇到的计算：用小电流控制大电流的继电器、保险丝怎么选、线束压降为什么会让大灯变暗、LED 串多大限流电阻。全部用 12 V 整车真实参数。</p></div>
+
+        <div class="block">
+          <div class="block-head"><h2>实战 1：四脚继电器——0.15 A 控制 5 A</h2></div>
+          <div class="stage-sm">
+            <canvas id="aeRlyCanvas" height="340"></canvas>
+            <div class="calc" style="width:340px">
+              <div class="seg" id="aeRlySeg">
+                <button data-mode="off">控制开关断开</button>
+                <button data-mode="on" class="active">控制开关闭合</button>
+              </div>
+              <div class="calc-ctrl">
+                <div class="ctrl-top"><span>线圈电阻 R<sub>coil</sub></span><b id="aeRcv">80 Ω</b></div>
+                <input type="range" id="aeRc" min="50" max="150" step="5" value="80">
+                <div class="ctrl-top"><span>大灯电阻 R<sub>L</sub></span><b id="aeRlv">2.6 Ω</b></div>
+                <input type="range" id="aeRl" min="1" max="8" step="0.1" value="2.6">
+              </div>
+              <div class="calc-ro" id="aeRlyRo" style="line-height:1.9"></div>
+              <div class="pot-note" id="aeRlyMsg"></div>
+            </div>
+          </div>
+          <details class="lsn"><summary>讲义：继电器引脚 85/86/30/87 与"小控大"本质</summary>
+            <div class="lsn-body">
+              <p><b>四个引脚怎么接。</b>85、86 是线圈两端（控制回路，无极性之分）；30 是主电源输入（常电，经保险丝接电瓶正极）；87 是触点输出，接大灯等大负载。线圈通电产生磁力吸合触点，30 与 87 导通。</p>
+              <p><b>为什么要继电器。</b>大灯电流约 5 A，若直接走方向盘下的灯光开关，大电流长期流过细导线和开关触点 → 发热、烧蚀、甚至自燃。改成继电器后，开关只控制线圈：I<sub>coil</sub> = 12.6/80 ≈ 0.16 A，开关和控制线束都很轻松；大电流只走电瓶→保险丝→30→87→大灯这条粗线。</p>
+              <p><b>控制比。</b>I<sub>负载</sub>/I<sub>线圈</sub> 通常 20~50 倍。诊断口诀：按开关听到"嗒"一声说明线圈回路正常；没"嗒"声查控制回路（开关、85/86 脚、搭铁）；有"嗒"声但灯不亮查主回路（保险丝、30/87 脚、触点烧蚀）。</p>
+            </div>
+          </details>
+        </div>
+        <div class="quiz" data-answer="C">
+          <p class="q"><em>诊断</em>开大灯时听到继电器"嗒"地吸合，但大灯不亮；测量 87 脚对搭铁电压为 0 V，30 脚有 12.5 V。最可能的故障是？</p>
+          <div class="opts">
+            <button class="opt" data-opt="A">A. 继电器线圈断路</button>
+            <button class="opt" data-opt="B">B. 大灯开关损坏</button>
+            <button class="opt" data-opt="C">C. 继电器内部触点烧蚀，30→87 未导通</button>
+            <button class="opt" data-opt="D">D. 电瓶亏电</button>
+          </div>
+          <div class="fb" data-exp="<b>选 C。</b>能听到"嗒"声说明线圈通电、机械动作正常，控制回路（开关、85/86）没问题；30 脚有电说明主电源和保险丝正常；87 脚没电 → 触点没有真正导通，常见为触点烧蚀/粘连失效。换继电器即可。"></div>
+        </div>
+
+        <div class="block">
+          <div class="block-head"><h2>实战 2：保险丝选型 + 线束压降计算</h2></div>
+          <div class="stage-sm">
+            <canvas id="aeFuseCanvas" height="340"></canvas>
+            <div class="calc" style="width:340px">
+              <div class="seg" id="aeCondSeg">
+                <button data-mode="normal" class="active">正常工作</button>
+                <button data-mode="short">末端短路</button>
+              </div>
+              <div class="calc-ctrl">
+                <div class="ctrl-top"><span>工作电流 I<sub>w</sub></span><b id="aeIwV">10 A</b></div>
+                <input type="range" id="aeIw" min="2" max="40" step="1" value="10">
+                <div class="ctrl-top"><span>单线长度 L</span><b id="aeLenV">3.0 m</b></div>
+                <input type="range" id="aeLen" min="0.5" max="8" step="0.5" value="3">
+                <div class="ctrl-top"><span>导线截面积</span></div>
+                <div class="seg" id="aeWireSeg">
+                  <button data-s="0.75">0.75</button>
+                  <button data-s="1.5" class="active">1.5</button>
+                  <button data-s="2.5">2.5</button>
+                  <button data-s="4">4.0</button>
+                </div>
+              </div>
+              <div class="calc-ro" id="aeFuseRo" style="line-height:1.9"></div>
+              <div class="pot-note" id="aeFuseMsg"></div>
+            </div>
+          </div>
+          <details class="lsn"><summary>讲义：铜线电阻、3% 压降红线与保险丝额定系列</summary>
+            <div class="lsn-body">
+              <p><b>线束电阻。</b>铜的电阻率 ρ ≈ 0.0185 Ω·mm²/m，导线是来回两根：R<sub>线</sub> = ρ × 2L / S。例如 3 m 长、1.5 mm² 的线束 R = 0.0185×6/1.5 = 0.074 Ω，10 A 时压降 0.74 V，占电瓶电压 5.9%——大灯会明显变暗。</p>
+              <p><b>3% 红线。</b>QC/T 汽车线束标准推荐照明等敏感回路压降不超过电源电压的 3%（12 V 系统即 ≤0.38 V）；一般动力回路放宽到 5%。超标就要换更粗的线：S ≥ ρ·2L·I / ΔU<sub>允许</sub>。</p>
+              <p><b>保险丝怎么选。</b>额定电流取工作电流的 1.25~1.5 倍，并向上靠标准系列（3/5/7.5/10/15/20/25/30/40 A）。选太小会频繁熔断、老化误爆；选太大失去保护意义。短路时电流只受线束电阻限制，可达数百安，保险丝在毫秒~秒级熔断切断回路。</p>
+            </div>
+          </details>
+        </div>
+        <div class="quiz" data-answer="B">
+          <p class="q"><em>计算</em>一个 10 A 的用电设备，单线长 3 m，允许线束压降 0.5 V。至少应选多大截面积的铜线？（ρ=0.0185）</p>
+          <div class="opts">
+            <button class="opt" data-opt="A">A. 0.75 mm²</button>
+            <button class="opt" data-opt="B">B. 2.5 mm²</button>
+            <button class="opt" data-opt="C">C. 1.0 mm²</button>
+            <button class="opt" data-opt="D">D. 6.0 mm²</button>
+          </div>
+          <div class="fb" data-exp="<b>选 B。</b>S ≥ ρ·2L·I/ΔU = 0.0185×(2×3)×10/0.5 = 1.11/0.5 ≈ 2.22 mm²，向上取标准线径 2.5 mm²。验算：R=0.0185×6/2.5=0.0444Ω，压降=10×0.0444=0.444 V ≤ 0.5 V，合格；1.0 mm² 时压降 1.11 V 超标。"></div>
+        </div>
+
+        <div class="block">
+          <div class="block-head"><h2>实战 3：LED 限流电阻——不串电阻必烧</h2></div>
+          <div class="stage-sm">
+            <canvas id="aeLedCanvas" height="340"></canvas>
+            <div class="calc" style="width:340px">
+              <div class="seg" id="aeLedVSeg">
+                <button data-u="12" class="active">12 V 车系</button>
+                <button data-u="24">24 V 车系</button>
+              </div>
+              <div class="calc-ctrl">
+                <div class="ctrl-top"><span>LED 类型（正向压降 V<sub>f</sub>）</span></div>
+                <div class="seg" id="aeVfSeg">
+                  <button data-vf="2.0" class="active">红/黄 2.0V</button>
+                  <button data-vf="3.2">白/蓝 3.2V</button>
+                </div>
+                <div class="ctrl-top"><span>串联颗数 n</span><b id="aeNV">1 颗</b></div>
+                <input type="range" id="aeN" min="1" max="3" step="1" value="1">
+                <div class="ctrl-top"><span>工作电流 I<sub>f</sub></span><b id="aeIfV">20 mA</b></div>
+                <input type="range" id="aeIf" min="5" max="30" step="1" value="20">
+              </div>
+              <div class="calc-ro" id="aeLedRo" style="line-height:1.9"></div>
+              <div class="pot-note" id="aeLedMsg"></div>
+            </div>
+          </div>
+          <details class="lsn"><summary>讲义：R = (U − n·V<sub>f</sub>) / I<sub>f</sub> 与电阻功率校核</summary>
+            <div class="lsn-body">
+              <p><b>为什么必须串电阻。</b>LED 是非线性器件，正向导通后两端电压几乎恒定（红/黄约 2.0 V，白/蓝约 3.2 V），电流随电压急剧上升，直接接 12 V 瞬间过流烧毁。串联电阻吃掉多余电压把电流限制在额定值（小信号 LED 常用 10~20 mA）。</p>
+              <p><b>公式与实例。</b>R = (U − n·V<sub>f</sub>)/I<sub>f</sub>。12 V 车系点一颗红灯、I<sub>f</sub>=20 mA：R = (12−2)/0.02 = 500 Ω，选 E24 标准值 510 Ω。三颗白灯串联：(12−3×3.2)/0.02 = 120 Ω，选 120 Ω。</p>
+              <p><b>别忘了功率。</b>P = I<sub>f</sub>²·R，实际选用电阻额定功率要 ≥ 1.5~2 倍计算值留散热余量。若 n·V<sub>f</sub> ≥ 电源电压，公式给出 R≤0——说明串联颗数太多，必须减少颗数或提高电源电压。</p>
+            </div>
+          </details>
+        </div>
+        <div class="quiz" data-answer="A">
+          <p class="q"><em>计算</em>24 V 卡车电路上点 2 颗串联白光 LED（V<sub>f</sub>=3.2 V），工作电流 15 mA，限流电阻约为多大？</p>
+          <div class="opts">
+            <button class="opt" data-opt="A">A. 1.2 kΩ</button>
+            <button class="opt" data-opt="B">B. 510 Ω</button>
+            <button class="opt" data-opt="C">C. 100 Ω</button>
+            <button class="opt" data-opt="D">D. 不需要电阻</button>
+          </div>
+          <div class="fb" data-exp="<b>选 A。</b>R = (24 − 2×3.2)/0.015 = 17.6/0.015 ≈ 1173 Ω，向上取 E24 标准值 1.2 kΩ。验算功率 P = 0.015²×1200 ≈ 0.27 W，选 0.5 W 电阻留余量。"></div>
+        </div>
+      </section>
+
+      <!-- 12 电位的计算 -->
       <section class="view" data-view="potential">
         <div class="view-head">
           <h1>电位的计算：沿路径一段段走</h1>
@@ -5438,7 +5573,11 @@
     fuse: '#f472b6',
     load: '#38bdf8',
     batt: '#2dd4bf',
-    node: '#38bdf8'
+    node: '#38bdf8',
+    ok: '#4ade80',
+    warn: '#fbbf24',
+    danger: '#f87171',
+    dim: '#475569'
   };
 
   function resize() {
@@ -5846,6 +5985,163 @@
     c.lineTo(x + 7, y + 6 * dir);
     c.closePath();
     c.fill();
+  }
+
+  /* ================= 汽车元件共享绘图库（fitView 逻辑坐标系内调用） ================= */
+  function axGrid(c, vw, vh) {
+    c.save();
+    c.fillStyle = 'rgba(62,79,97,.22)';
+    for (var x = 0; x <= vw; x += 34) {
+      for (var y = 0; y <= vh; y += 34) c.fillRect(x, y, 1.4, 1.4);
+    }
+    c.restore();
+  }
+  function axWire(c, pts, color, width) {
+    c.save();
+    c.strokeStyle = color || COL.wire;
+    c.lineWidth = width || 2;
+    c.beginPath();
+    c.moveTo(pts[0][0], pts[0][1]);
+    for (var i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]);
+    c.stroke();
+    c.restore();
+  }
+  /* 沿折线流动的电流点：phase 为递增像素偏移，gap 点间距 */
+  function axFlow(c, pts, phase, color, gap) {
+    if (!pts || pts.length < 2) return;
+    var segs = [], total = 0, i, dx, dy, len;
+    for (i = 0; i < pts.length - 1; i++) {
+      dx = pts[i + 1][0] - pts[i][0]; dy = pts[i + 1][1] - pts[i][1];
+      len = Math.sqrt(dx * dx + dy * dy);
+      if (len < 0.01) continue;
+      segs.push({ len: len, ux: dx / len, uy: dy / len });
+      total += len;
+    }
+    if (total < 1 || !segs.length) return;
+    gap = gap || 46;
+    c.save();
+    c.fillStyle = color || COL.cur;
+    c.shadowColor = color || COL.cur;
+    c.shadowBlur = 7;
+    for (var off = ((phase % gap) + gap) % gap; off < total; off += gap) {
+      var d = off, si = 0;
+      while (si < segs.length && d > segs[si].len) { d -= segs[si].len; si++; }
+      if (si >= segs.length) continue;
+      var s = segs[si];
+      c.beginPath();
+      c.arc(pts[si][0] + s.ux * d, pts[si][1] + s.uy * d, 3.2, 0, Math.PI * 2);
+      c.fill();
+    }
+    c.restore();
+  }
+  function axNode(c, x, y, color) {
+    c.save();
+    c.fillStyle = color || COL.node;
+    c.beginPath(); c.arc(x, y, 4.5, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+  /* 搭铁（车架）符号：竖线 + 三条递减横线，顶点 (x,y) */
+  function axGround(c, x, y, color) {
+    c.save();
+    c.strokeStyle = color || COL.muted;
+    c.lineWidth = 2;
+    c.beginPath();
+    c.moveTo(x, y); c.lineTo(x, y + 9);
+    c.moveTo(x - 13, y + 9); c.lineTo(x + 13, y + 9);
+    c.moveTo(x - 8, y + 15); c.lineTo(x + 8, y + 15);
+    c.moveTo(x - 3.5, y + 21); c.lineTo(x + 3.5, y + 21);
+    c.stroke();
+    c.restore();
+  }
+  /* 蓄电池：竖直线上的两组极板，中心 (x,y)，+ 在上方 */
+  function axBattery(c, x, y, color) {
+    c.save();
+    c.strokeStyle = color || COL.batt;
+    c.lineWidth = 2.4;
+    c.beginPath();
+    c.moveTo(x, y - 26); c.lineTo(x, y - 13);
+    c.moveTo(x - 15, y - 13); c.lineTo(x + 15, y - 13);   /* 长极板 + */
+    c.moveTo(x, y - 13); c.lineTo(x, y - 4);
+    c.moveTo(x - 7, y - 4); c.lineTo(x + 7, y - 4);       /* 短极板 */
+    c.moveTo(x, y - 4); c.lineTo(x, y + 5);
+    c.moveTo(x - 15, y + 5); c.lineTo(x + 15, y + 5);
+    c.moveTo(x, y + 5); c.lineTo(x, y + 14);
+    c.moveTo(x - 7, y + 14); c.lineTo(x + 7, y + 14);
+    c.moveTo(x, y + 14); c.lineTo(x, y + 26);
+    c.stroke();
+    cvText(c, '+', x + 14, y - 13, color || COL.batt, 13, 'left', true);
+    cvText(c, '−', x + 10, y + 14, color || COL.batt, 13, 'left', true);
+    c.restore();
+  }
+  /* 熔断器：矩形 + 内部熔丝，blown=true 时熔断发红 */
+  function axFuse(c, x, y, blown) {
+    c.save();
+    c.strokeStyle = blown ? COL.danger : COL.fuse;
+    c.lineWidth = 2;
+    c.strokeRect(x - 20, y - 11, 40, 22);
+    c.beginPath();
+    if (blown) {
+      c.moveTo(x - 20, y); c.lineTo(x - 7, y);
+      c.moveTo(x - 3, y - 5); c.lineTo(x + 4, y + 5);
+      c.moveTo(x + 7, y); c.lineTo(x + 20, y);
+    } else {
+      c.moveTo(x - 20, y); c.lineTo(x + 20, y);
+    }
+    c.stroke();
+    c.restore();
+  }
+  /* 车灯：圆 + 叉，on=true 发光 */
+  function axLamp(c, x, y, on, color) {
+    c.save();
+    c.strokeStyle = color || COL.warn;
+    c.lineWidth = 2;
+    if (on) { c.shadowColor = COL.warn; c.shadowBlur = 14; }
+    c.beginPath(); c.arc(x, y, 16, 0, Math.PI * 2); c.stroke();
+    c.beginPath();
+    c.moveTo(x - 10, y - 10); c.lineTo(x + 10, y + 10);
+    c.moveTo(x + 10, y - 10); c.lineTo(x - 10, y + 10);
+    c.stroke();
+    c.restore();
+  }
+  /* 电机：圆 + M，on=true 高亮 */
+  function axMotor(c, x, y, on) {
+    c.save();
+    c.strokeStyle = on ? COL.load : COL.muted;
+    c.lineWidth = 2;
+    if (on) { c.shadowColor = COL.load; c.shadowBlur = 12; }
+    c.beginPath(); c.arc(x, y, 18, 0, Math.PI * 2); c.stroke();
+    cvText(c, 'M', x, y + 1, on ? COL.load : COL.muted, 15, 'center', true);
+    c.restore();
+  }
+  /* 继电器线圈：矩形 + 半圆弧绕组 */
+  function axRelayCoil(c, x, y, energized) {
+    var col = energized ? COL.ok : COL.muted;
+    c.save();
+    c.strokeStyle = col;
+    c.lineWidth = 2;
+    c.strokeRect(x - 24, y - 13, 48, 26);
+    c.beginPath();
+    for (var i = 0; i < 3; i++) {
+      c.arc(x - 12 + i * 12, y, 5.5, Math.PI * 0.5, Math.PI * 1.5);
+    }
+    c.stroke();
+    c.restore();
+    cvText(c, '线圈', x, y - 24, col, 11, 'center', false);
+  }
+  /* 开关：铰点 (x1,y1)，闭合时杠杆落到 (x2,y2) */
+  function axSwitch(c, x1, y1, x2, y2, closed, color) {
+    c.save();
+    c.strokeStyle = color || (closed ? COL.switchOn : COL.switchOff);
+    c.lineWidth = 2;
+    c.fillStyle = c.strokeStyle;
+    c.beginPath(); c.arc(x1, y1, 3, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.arc(x2, y2, 3, 0, Math.PI * 2); c.fill();
+    c.beginPath();
+    c.moveTo(x1, y1);
+    if (closed) c.lineTo(x2, y2);
+    else c.lineTo(x2 - 4, y2 - 11);
+    c.stroke();
+    c.restore();
   }
 
   /* ================= 知识块 02：五要素 ================= */
@@ -13217,14 +13513,17 @@
   }
   function initYDelta() {
     registerCanvas('ydCanvas', drawYDelta);
-    document.querySelectorAll('ydSeg button').forEach(function(b){b.addEventListener('click',function(){
-      document.querySelectorAll('ydSeg button').forEach(function(x){x.classList.remove('active');});
+    var ydseg = $('ydSeg');
+    if (ydseg) ydseg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      ydseg.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
       b.classList.add('active');
       YD.mode = b.dataset.mode;
-      document.getElementById('ydYin').style.display = (YD.mode==='y2d') ? '' : 'none';
-      document.getElementById('ydDin').style.display = (YD.mode==='d2y') ? '' : 'none';
+      $('ydYin').style.display = (YD.mode === 'y2d') ? '' : 'none';
+      $('ydDin').style.display = (YD.mode === 'd2y') ? '' : 'none';
+      SFX.ui();
       ydSync();
-    });});
+    });
     ['ydY1','ydY2','ydY3'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){
       YD.RY1 = parseFloat(document.getElementById('ydY1').value);
       YD.RY2 = parseFloat(document.getElementById('ydY2').value);
@@ -13398,18 +13697,21 @@
   }
   function initMixedTransient() {
     registerCanvas('mtCanvas', drawMixedTransient);
-    document.querySelectorAll('mtSeg button').forEach(function(b){b.addEventListener('click',function(){
-      document.querySelectorAll('mtSeg button').forEach(function(x){x.classList.remove('active');});
+    var mtseg = $('mtSeg');
+    if (mtseg) mtseg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      mtseg.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
       b.classList.add('active');
       MTR.mode = b.dataset.mode;
+      SFX.ui();
       mtSync();
-    });});
+    });
     ['mtUoc','mtR0','mtL'].forEach(function(id){document.getElementById(id).addEventListener('input',mtSync);});
     mtSync();
   }
 
   /* ================= B6: 整车直流综合案例 ================= */
-  var TC = { mode: 'normal', Uoc: 12.6, R0: 0.02, Rcoil: 70, RL: 2.6, Rfuse: 0.01, Rcontact: 0.01 };
+  var TC = { mode: 'normal', Uoc: 12.6, R0: 0.02, Rcoil: 70, RL: 2.6, Rfuse: 0.01, Rcontact: 0.01, phase: 0 };
   function tcCalc() {
     // 用节点电压法解 V_A, V_B（对地参考）
     // 正常工况：节点 A 接 R0 串 Uoc，分两路：Rcoil 到地；(Rfuse + Rcontact + RL) 到地
@@ -13449,6 +13751,7 @@
   function drawTotalCar(c, w, h) {
     c.clearRect(0,0,w,h); c.fillStyle='#0b1017'; c.fillRect(0,0,w,h);
     fitView(c, w, h, 700, 340);
+    axGrid(c, 700, 340);
     c.lineWidth = 2;
     // 电瓶 左边
     var batX = 60, batY = 170;
@@ -13481,8 +13784,8 @@
     c.strokeRect(370, fy-72, 60, 24);
     cvText(c, '继电器', 400, fy-61, '#8af', 11, 'center', false);
     // 线圈 → 搭铁
-    c.beginPath(); c.moveTo(440, fy-60); c.lineTo(440, fy-120); c.stroke();
-    cvText(c, '搭铁', 440, fy-126, '#8af', 11, 'center', false);
+    c.beginPath(); c.moveTo(440, fy-60); c.lineTo(440, fy-124); c.stroke();
+    axGround(c, 440, fy-124, '#8af');
     // A → 继电器触点
     c.strokeStyle = TC.relayOn ? '#4f8' : '#666';
     c.beginPath(); c.moveTo(300, fy); c.lineTo(300, fy+60); c.lineTo(440, fy+60); c.stroke();
@@ -13507,9 +13810,19 @@
     cvText(c, '大灯', 600, fy+65, '#ff8', 12, 'center', true);
     cvText(c, TC.relayOn && TC.mode!=='fuse' ? TC.Iload.toFixed(1)+'A' : '不亮', 600, fy+85, TC.relayOn?'#4f8':'#666', 11, 'center', false);
     // 搭铁符号（底部）
-    c.strokeStyle = '#8af';
-    c.beginPath(); c.moveTo(300, fy+150); c.lineTo(300, fy+165); c.stroke();
-    cvText(c, '整车搭铁（参考点 0V）', 350, fy+170, '#8af', 11, 'left', false);
+    axGround(c, 300, fy+150, '#8af');
+    cvText(c, '整车搭铁（参考点 0V）', 350, fy+168, '#8af', 11, 'left', false);
+    // 电流流动动画
+    if (TC.mode === 'shortA') {
+      axFlow(c, [[80, fy],[200, fy],[210, fy],[300, fy]], TC.phase * 2.4, '#f87171', 28);
+    } else {
+      axFlow(c, [[80, fy],[200, fy],[210, fy],[300, fy]], TC.phase, '#2dd4bf');
+      if (TC.relayOn) axFlow(c, [[300, fy],[360, fy],[360, fy-60],[440, fy-60]], TC.phase, '#2dd4bf');
+      if (TC.relayOn && TC.mode !== 'fuse') {
+        if (TC.mode === 'shortB') axFlow(c, [[300, fy],[300, fy+60],[440, fy+60],[500, fy+60]], TC.phase * 2.2, '#f87171', 28);
+        else axFlow(c, [[300, fy],[300, fy+60],[440, fy+60],[500, fy+60],[580, fy+60]], TC.phase * 1.3, '#fbbf24');
+      }
+    }
     // 短路/故障高亮
     if (TC.mode === 'shortA') {
       c.fillStyle = '#f66';
@@ -13553,12 +13866,15 @@
   }
   function initTotalCar() {
     registerCanvas('tcCanvas', drawTotalCar);
-    document.querySelectorAll('tcSeg button').forEach(function(b){b.addEventListener('click',function(){
-      document.querySelectorAll('tcSeg button').forEach(function(x){x.classList.remove('active');});
+    var tcseg = $('tcSeg');
+    if (tcseg) tcseg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      tcseg.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
       b.classList.add('active');
       TC.mode = b.dataset.mode;
+      SFX.ui();
       tcSync();
-    });});
+    });
     ['tcUoc','tcR0','tcRc','tcRL'].forEach(function(id){document.getElementById(id).addEventListener('input',tcSync);});
     tcSync();
   }
@@ -13567,6 +13883,310 @@
   initPowerSource();
   initMixedTransient();
   initTotalCar();
+
+  /* ================= B7：汽车电气实战（继电器 / 保险线束 / LED） ================= */
+  var AE = {
+    phase: 0,
+    rly: { on: true, Rcoil: 80, RL: 2.6, Icoil: 0, Ilamp: 0 },
+    fuse: { Iw: 10, Len: 3, S: 1.5, cond: 'normal', Rw: 0, Ud: 0, pct: 0, rating: 0, Isc: 0 },
+    led: { U: 12, Vf: 2.0, If: 20, n: 1, R: 0, P: 0, Rstd: 0, bad: false }
+  };
+  var AE_RHO = 0.0185;                 /* 铜电阻率 Ω·mm²/m */
+  var AE_FUSES = [3, 5, 7.5, 10, 15, 20, 25, 30, 40];
+  var AE_E24 = [10, 11, 12, 13, 15, 16, 18, 20, 22, 24, 27, 30, 33, 36, 39, 43, 47, 51, 56, 62, 68, 75, 82, 91];
+  function aePickE24(r) {
+    if (!(r > 0)) return 0;
+    /* 把尾数归一化到 E24 区间 [10,100)，dec 为对应的百位数量级 */
+    var dec = Math.pow(10, Math.floor(Math.log10(r / 10)));
+    var m = r / dec;
+    for (var i = 0; i < AE_E24.length; i++) {
+      if (AE_E24[i] >= m) return AE_E24[i] * dec;
+    }
+    return 10 * dec;
+  }
+  function aeFmtR(r) {
+    if (r >= 1000) return (r / 1000).toFixed(r % 1000 === 0 ? 0 : 1) + ' kΩ';
+    if (r >= 100) return r.toFixed(0) + ' Ω';
+    return r.toFixed(1) + ' Ω';
+  }
+
+  /* ---------- B7-1 继电器 ---------- */
+  function aeRlyCalc() {
+    AE.rly.Icoil = 12.6 / AE.rly.Rcoil;
+    AE.rly.Ilamp = AE.rly.on ? 12.6 / AE.rly.RL : 0;
+  }
+  function drawAeRelay(c, w, h) {
+    c.clearRect(0, 0, w, h);
+    c.fillStyle = '#0b1017'; c.fillRect(0, 0, w, h);
+    fitView(c, w, h, 760, 340);
+    axGrid(c, 760, 340);
+    var on = AE.rly.on;
+    cvText(c, '控制回路（细线 · 小电流）', 380, 22, COL.muted, 12, 'center', false);
+    /* 控制回路走线 */
+    axBattery(c, 60, 95);
+    axWire(c, [[60, 69], [60, 55], [520, 55]], COL.wire);
+    axSwitch(c, 175, 55, 245, 55, on);
+    axRelayCoil(c, 400, 55, on);
+    axWire(c, [[520, 55], [520, 95]], COL.wire);
+    axGround(c, 520, 95);
+    axWire(c, [[60, 121], [60, 140], [520, 140], [520, 116]], COL.wireDim);
+    cvTag(c, '85', 372, 78, COL.muted);
+    cvTag(c, '86', 428, 78, COL.muted);
+    if (on) axFlow(c, [[60, 69], [60, 55], [175, 55], [245, 55], [376, 55], [424, 55], [520, 55], [520, 95]], AE.phase, COL.cur);
+    /* 机械联动虚线 */
+    c.save();
+    c.strokeStyle = on ? COL.ok : COL.dim;
+    c.setLineDash([5, 5]);
+    c.beginPath(); c.moveTo(400, 72); c.lineTo(400, 196); c.stroke();
+    c.restore();
+    cvText(c, '机械联动', 438, 135, on ? COL.ok : COL.dim, 10, 'left', false);
+    /* 主回路 */
+    cvText(c, '主回路（粗线 · 大电流）', 380, 172, COL.muted, 12, 'center', false);
+    axBattery(c, 60, 250);
+    axWire(c, [[60, 224], [60, 210], [650, 210]], on ? COL.wire : COL.wireDim);
+    axFuse(c, 200, 210, false);
+    axSwitch(c, 360, 210, 430, 210, on, on ? COL.ok : COL.dim);
+    cvTag(c, '30', 352, 192, COL.muted);
+    cvTag(c, '87', 438, 192, COL.muted);
+    axLamp(c, 570, 210, on);
+    axWire(c, [[650, 210], [650, 250]], on ? COL.wire : COL.wireDim);
+    axGround(c, 650, 250);
+    axWire(c, [[60, 276], [60, 295], [650, 295], [650, 271]], COL.wireDim);
+    if (on) axFlow(c, [[60, 224], [60, 210], [180, 210], [220, 210], [360, 210], [430, 210], [554, 210], [586, 210], [650, 210], [650, 250]], AE.phase * 1.4, COL.warn);
+    cvText(c, on ? '大灯点亮  I=' + AE.rly.Ilamp.toFixed(1) + ' A' : '触点断开 · 大灯不亮', 570, 248, on ? COL.warn : COL.dim, 11, 'center', false);
+    cvText(c, 'I_coil=' + AE.rly.Icoil.toFixed(3) + ' A', 240, 88, on ? COL.cur : COL.dim, 11, 'center', false);
+  }
+  function aeRlySync() {
+    AE.rly.Rcoil = parseFloat($('aeRc').value);
+    AE.rly.RL = parseFloat($('aeRl').value);
+    aeRlyCalc();
+    $('aeRcv').textContent = AE.rly.Rcoil + ' Ω';
+    $('aeRlv').textContent = AE.rly.RL.toFixed(1) + ' Ω';
+    var ratio = AE.rly.on ? (AE.rly.Ilamp / AE.rly.Icoil) : 0;
+    $('aeRlyRo').innerHTML = '线圈电流 I<sub>coil</sub> = 12.6/' + AE.rly.Rcoil + ' = <b>' + AE.rly.Icoil.toFixed(3) + ' A</b><br>'
+      + '大灯电流 I<sub>L</sub> = <b>' + (AE.rly.on ? AE.rly.Ilamp.toFixed(2) + ' A' : '0（断开）') + '</b><br>'
+      + '控制比 I<sub>L</sub>/I<sub>coil</sub> = <b>' + (AE.rly.on ? ratio.toFixed(0) + ' 倍' : '—') + '</b>';
+    $('aeRlyMsg').textContent = AE.rly.on
+      ? '小电流 ' + AE.rly.Icoil.toFixed(2) + ' A 控制大电流 ' + AE.rly.Ilamp.toFixed(1) + ' A，开关和细线束不发热'
+      : '开关断开 → 线圈无磁 → 触点释放 → 主回路切断，大灯熄灭';
+    paint('aeRlyCanvas');
+  }
+
+  /* ---------- B7-2 保险丝 + 线束压降 ---------- */
+  function aeFuseCalc() {
+    var f = AE.fuse;
+    f.Rw = AE_RHO * 2 * f.Len / f.S;
+    if (f.cond === 'short') {
+      f.Isc = 12.6 / f.Rw;
+      f.Ud = 12.6; f.pct = 100;
+    } else {
+      f.Ud = f.Iw * f.Rw;
+      f.pct = f.Ud / 12.6 * 100;
+      f.Isc = 0;
+    }
+    var need = 1.25 * f.Iw;
+    f.rating = AE_FUSES[AE_FUSES.length - 1];
+    for (var i = 0; i < AE_FUSES.length; i++) {
+      if (AE_FUSES[i] >= need) { f.rating = AE_FUSES[i]; break; }
+    }
+  }
+  function drawAeFuse(c, w, h) {
+    c.clearRect(0, 0, w, h);
+    c.fillStyle = '#0b1017'; c.fillRect(0, 0, w, h);
+    fitView(c, w, h, 760, 340);
+    axGrid(c, 760, 340);
+    var f = AE.fuse, short = f.cond === 'short';
+    var stCol = f.pct <= 3 ? COL.ok : (f.pct <= 5 ? COL.warn : COL.danger);
+    /* 主回路 */
+    axBattery(c, 70, 170);
+    axWire(c, [[70, 144], [70, 110], [650, 110]], short ? COL.wireDim : COL.wire);
+    axFuse(c, 200, 110, short);
+    cvText(c, 'F ' + f.rating + 'A', 200, 88, short ? COL.danger : COL.fuse, 11, 'center', true);
+    /* 线束段高亮 */
+    c.save();
+    c.strokeStyle = stCol; c.lineWidth = 3.5;
+    c.beginPath(); c.moveTo(240, 110); c.lineTo(470, 110); c.stroke();
+    c.restore();
+    cvText(c, '线束 ' + f.Len.toFixed(1) + 'm ×2 · ' + f.S + ' mm² · R=' + f.Rw.toFixed(4) + 'Ω', 355, 88, stCol, 11, 'center', false);
+    axMotor(c, 560, 110, !short);
+    axWire(c, [[650, 110], [650, 150]], COL.wireDim);
+    axGround(c, 650, 150);
+    axWire(c, [[70, 196], [70, 215], [650, 215], [650, 171]], COL.wireDim);
+    if (!short) axFlow(c, [[70, 144], [70, 110], [180, 110], [220, 110], [240, 110], [470, 110], [542, 110], [578, 110], [650, 110], [650, 150]], AE.phase, COL.cur);
+    /* 短路支路 */
+    if (short) {
+      c.save();
+      c.strokeStyle = COL.danger; c.lineWidth = 2.5;
+      c.beginPath(); c.moveTo(470, 110); c.lineTo(470, 150); c.stroke();
+      c.restore();
+      axGround(c, 470, 150, COL.danger);
+      axFlow(c, [[220, 110], [240, 110], [470, 110], [470, 150]], AE.phase * 2, COL.danger, 30);
+      cvText(c, '⚠ 末端搭铁短路  I_sc=' + f.Isc.toFixed(0) + 'A', 380, 250, COL.danger, 14, 'center', true);
+      cvText(c, '保险丝毫秒级熔断，切断回路', 380, 275, COL.danger, 11, 'center', false);
+    } else {
+      /* 状态徽标 */
+      c.save();
+      c.fillStyle = 'rgba(11,16,23,.85)';
+      c.fillRect(30, 250, 300, 52);
+      c.strokeStyle = stCol; c.lineWidth = 1.5; c.strokeRect(30, 250, 300, 52);
+      c.restore();
+      cvText(c, '压降 ' + f.Ud.toFixed(2) + ' V = ' + f.pct.toFixed(1) + '%', 180, 270, stCol, 14, 'center', true);
+      cvText(c, f.pct <= 3 ? '✓ 满足 ≤3% 红线' : (f.pct <= 5 ? '△ 超过 3%，灯微暗' : '✗ 超过 5%，必须换粗线'), 180, 290, stCol, 11, 'center', false);
+    }
+  }
+  function aeFuseSync() {
+    var f = AE.fuse;
+    f.Iw = parseFloat($('aeIw').value);
+    f.Len = parseFloat($('aeLen').value);
+    aeFuseCalc();
+    $('aeIwV').textContent = f.Iw + ' A';
+    $('aeLenV').textContent = f.Len.toFixed(1) + ' m';
+    if (f.cond === 'short') {
+      $('aeFuseRo').innerHTML = '线束电阻 R<sub>线</sub> = <b>' + f.Rw.toFixed(4) + ' Ω</b><br>'
+        + '短路电流 I<sub>sc</sub> = 12.6/R<sub>线</sub> = <b style="color:#f87171">' + f.Isc.toFixed(0) + ' A</b><br>'
+        + '保险丝 <b>' + f.rating + ' A</b> 立即熔断';
+      $('aeFuseMsg').textContent = '短路电流只受线束电阻限制，动辄数百上千安；保险丝是最后一道防线';
+    } else {
+      var stCol = f.pct <= 3 ? '#4ade80' : (f.pct <= 5 ? '#fbbf24' : '#f87171');
+      $('aeFuseRo').innerHTML = '线束电阻 R<sub>线</sub> = ρ·2L/S = <b>' + f.Rw.toFixed(4) + ' Ω</b><br>'
+        + '压降 ΔU = I·R = <b style="color:' + stCol + '">' + f.Ud.toFixed(2) + ' V（' + f.pct.toFixed(1) + '%）</b><br>'
+        + '建议保险丝 ≥1.25×' + f.Iw + 'A → 选 <b>' + f.rating + ' A</b>';
+      $('aeFuseMsg').textContent = f.pct <= 3 ? '压降合格，线径与长度匹配' : (f.pct <= 5 ? '压降偏大，敏感灯光会变暗，建议加粗一档' : '压降严重超标，必须换更粗的线束或缩短路径');
+    }
+    paint('aeFuseCanvas');
+  }
+
+  /* ---------- B7-3 LED 限流 ---------- */
+  function aeLedCalc() {
+    var s = AE.led;
+    var vNeed = s.n * s.Vf;
+    s.bad = vNeed >= s.U;
+    s.R = s.bad ? 0 : (s.U - vNeed) / (s.If / 1000);
+    s.P = s.bad ? 0 : Math.pow(s.If / 1000, 2) * s.R;
+    s.Rstd = aePickE24(s.R);
+  }
+  function drawAeLed(c, w, h) {
+    c.clearRect(0, 0, w, h);
+    c.fillStyle = '#0b1017'; c.fillRect(0, 0, w, h);
+    fitView(c, w, h, 760, 340);
+    axGrid(c, 760, 340);
+    var s = AE.led;
+    axBattery(c, 70, 170);
+    axWire(c, [[70, 144], [70, 110], [650, 110]], s.bad ? COL.wireDim : COL.wire);
+    /* 限流电阻 */
+    c.save();
+    c.strokeStyle = s.bad ? COL.danger : COL.load; c.lineWidth = 2;
+    c.strokeRect(207, 98, 46, 24);
+    c.restore();
+    cvText(c, s.bad ? 'R≤0' : 'R=' + aeFmtR(s.Rstd), 230, 84, s.bad ? COL.danger : COL.load, 11, 'center', true);
+    /* LED 链 */
+    var ledCol = s.Vf >= 3 ? '#e0f2fe' : '#f87171';
+    for (var i = 0; i < s.n; i++) {
+      var cx = 380 + i * 90;
+      c.save();
+      c.strokeStyle = s.bad ? COL.dim : ledCol;
+      c.lineWidth = 2;
+      if (!s.bad) { c.shadowColor = ledCol; c.shadowBlur = 10; }
+      c.beginPath(); c.arc(cx, 110, 15, 0, Math.PI * 2); c.stroke();
+      c.beginPath();
+      c.moveTo(cx - 6, 116); c.lineTo(cx - 6, 104); c.lineTo(cx + 4, 110); c.closePath();
+      c.moveTo(cx + 5, 104); c.lineTo(cx + 5, 116);
+      c.stroke();
+      c.restore();
+      cvText(c, 'LED' + (i + 1), cx, 140, s.bad ? COL.dim : ledCol, 10, 'center', false);
+    }
+    axWire(c, [[650, 110], [650, 150]], COL.wireDim);
+    axGround(c, 650, 150);
+    axWire(c, [[70, 196], [70, 215], [650, 215], [650, 171]], COL.wireDim);
+    if (!s.bad) axFlow(c, [[70, 144], [70, 110], [207, 110], [253, 110], [365, 110], [650, 110], [650, 150]], AE.phase, ledCol);
+    if (s.bad) {
+      cvText(c, '⚠ n·Vf = ' + (s.n * s.Vf).toFixed(1) + 'V ≥ 电源 ' + s.U + 'V', 380, 250, COL.danger, 14, 'center', true);
+      cvText(c, '串联颗数太多，电流无法限制——减少 LED 颗数或提高电源电压', 380, 275, COL.danger, 11, 'center', false);
+    } else {
+      cvText(c, 'R = (' + s.U + ' − ' + s.n + '×' + s.Vf.toFixed(1) + ') / ' + s.If + 'mA = ' + aeFmtR(s.R), 380, 255, COL.text, 13, 'center', true);
+      cvText(c, '选 E24 标准值 ' + aeFmtR(s.Rstd) + ' · 电阻功率 ' + s.P.toFixed(3) + ' W（建议额定 ≥2 倍）', 380, 278, COL.muted, 11, 'center', false);
+    }
+  }
+  function aeLedSync() {
+    var s = AE.led;
+    s.U = parseFloat($('aeLedVSeg').querySelector('button.active').getAttribute('data-u'));
+    s.Vf = parseFloat($('aeVfSeg').querySelector('button.active').getAttribute('data-vf'));
+    s.n = parseInt($('aeN').value, 10);
+    s.If = parseFloat($('aeIf').value);
+    aeLedCalc();
+    $('aeNV').textContent = s.n + ' 颗';
+    $('aeIfV').textContent = s.If + ' mA';
+    if (s.bad) {
+      $('aeLedRo').innerHTML = '需要压降 = ' + s.U + ' − ' + s.n + '×' + s.Vf.toFixed(1) + ' = <b style="color:#f87171">' + (s.U - s.n * s.Vf).toFixed(1) + ' V</b><br>限流电阻 R ≤ 0，无法工作';
+      $('aeLedMsg').textContent = '减少串联颗数，或改用更高电压的电源';
+    } else {
+      $('aeLedRo').innerHTML = 'R = (' + s.U + ' − ' + s.n + '×' + s.Vf.toFixed(1) + ') / ' + (s.If / 1000).toFixed(3) + ' = <b>' + aeFmtR(s.R) + '</b><br>'
+        + 'E24 标准值选 <b>' + aeFmtR(s.Rstd) + '</b><br>'
+        + '电阻功耗 P = I²R = <b>' + s.P.toFixed(3) + ' W</b>';
+      $('aeLedMsg').textContent = '实际电阻功率取计算值 1.5~2 倍留散热余量';
+    }
+    paint('aeLedCanvas');
+  }
+
+  function initAutoElectric() {
+    registerCanvas('aeRlyCanvas', drawAeRelay);
+    registerCanvas('aeFuseCanvas', drawAeFuse);
+    registerCanvas('aeLedCanvas', drawAeLed);
+    /* 继电器：控制开关 + 滑杆 */
+    var rlySeg = $('aeRlySeg');
+    rlySeg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      rlySeg.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      AE.rly.on = b.getAttribute('data-mode') === 'on';
+      SFX.ui();
+      aeRlySync();
+    });
+    ['aeRc', 'aeRl'].forEach(function (id) { $(id).addEventListener('input', aeRlySync); });
+    /* 保险线束：工况 + 线径 seg + 滑杆 */
+    var condSeg = $('aeCondSeg');
+    condSeg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      condSeg.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      AE.fuse.cond = b.getAttribute('data-mode');
+      SFX.ui();
+      aeFuseSync();
+    });
+    var wireSeg = $('aeWireSeg');
+    wireSeg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      wireSeg.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      AE.fuse.S = parseFloat(b.getAttribute('data-s'));
+      SFX.ui();
+      aeFuseSync();
+    });
+    ['aeIw', 'aeLen'].forEach(function (id) { $(id).addEventListener('input', aeFuseSync); });
+    /* LED：电压 + Vf seg + 滑杆 */
+    var vSeg = $('aeLedVSeg');
+    vSeg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      vSeg.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      SFX.ui();
+      aeLedSync();
+    });
+    var vfSeg = $('aeVfSeg');
+    vfSeg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      vfSeg.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      SFX.ui();
+      aeLedSync();
+    });
+    ['aeN', 'aeIf'].forEach(function (id) { $(id).addEventListener('input', aeLedSync); });
+    aeRlySync();
+    aeFuseSync();
+    aeLedSync();
+  }
+  initAutoElectric();
+
   var META = {
     workbench: ['电路工坊', '单个回路 · 实时电流与电压'],
     basics: ['电路组成与基本物理量', '电位 · 内阻 · 温度 · 压降 · 发热'],
@@ -13578,6 +14198,7 @@
     powerSource: ['电源等效与内阻', '电压源↔电流源 · U–I 曲线 · 新旧电瓶对比 · 发电机并联'],
     mixedTransient: ['戴维南 + 暂态（混合分析）', '先算 U<sub>oc</sub>/R<sub>0</sub> → τ = L/R 或 RC · 过渡曲线 · 汽车电感暂态'],
     totalCar: ['整车直流电路综合案例', '电瓶→保险丝→继电器→负载 · 戴维南层层嵌套 · 短路故障电压传导'],
+    autoElectric: ['汽车电气实战', '四脚继电器小控大 · 保险丝选型与线束压降 · LED 限流电阻计算'],
     potential: ['电位的计算', '参考点 · 路径累加 · 搭铁 · 单线制'],
     inductor: ['电感元件', '自感 · 楞次定律 · e=−L·di/dt · 汽车线圈'],
     capacitor: ['电容器类型与标记', 'MLCC · 电解 · 读码 · 极性 · 选型'],
@@ -13678,6 +14299,16 @@
     if (curView === 'inductor') indTick(now);
     if (curView === 'capacitor') capTick(now);
     if (curView === 'transient' && TR.playing) trTick(now);
+    if (curView === 'autoElectric') {
+      AE.phase += 2.2;
+      paint('aeRlyCanvas');
+      paint('aeFuseCanvas');
+      paint('aeLedCanvas');
+    }
+    if (curView === 'totalCar') {
+      TC.phase += 2.2;
+      paint('tcCanvas');
+    }
     requestAnimationFrame(tick);
   }
 
